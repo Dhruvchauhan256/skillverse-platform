@@ -2,9 +2,9 @@ const express = require("express");
 const app = express();
 
 app.get("/", (req, res) => {
-  res.send("🔥 NEW SERVER IS RUNNING (UPDATED CODE)");
+  res.send("🔥 SKILLVERSE FRESH SERVER WORKING");
 });
 
 app.listen(5000, () => {
-  console.log("SERVER STARTED FRESH");
+  console.log("SERVER STARTED");
 });
