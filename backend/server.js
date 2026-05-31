@@ -2,9 +2,11 @@ const express = require("express");
 const app = express();
 
 app.get("/", (req, res) => {
-  res.send("SkillVerse Backend Running 🚀");
+  res.json({
+    success: true,
+    message: "SkillVerse API Running 🚀"
+  });
 });
-
 const PORT = 5000;
 
 // FORCE IPv4 binding
