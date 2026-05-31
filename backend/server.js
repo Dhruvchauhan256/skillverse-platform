@@ -7,6 +7,7 @@ app.get("/", (req, res) => {
 
 const PORT = 5000;
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log("Server started on http://localhost:" + PORT);
+// FORCE IPv4 binding
+app.listen(PORT, "127.0.0.1", () => {
+  console.log("Server running on http://127.0.0.1:" + PORT);
 });
