@@ -55,15 +55,14 @@ body{
 
 /* HERO */
 
+
 .hero{
     text-align:center;
-    padding:120px 20px;
-    background:linear-gradient(
-    135deg,
-    #081726,
-    #0d2740,
-    #103d63
-    );
+    padding:140px 20px;
+    background:
+    radial-gradient(circle at top left,#00e5ff33,transparent 30%),
+    radial-gradient(circle at top right,#00e5ff22,transparent 25%),
+    linear-gradient(135deg,#06111d,#081726,#0d2740);
 }
 
 .hero h1{
