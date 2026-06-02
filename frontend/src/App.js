@@ -1,11 +1,21 @@
-import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   return (
-    <div>
-      <h1>🚀 SkillVerse</h1>
-      <h2>India's Smart Freelance Marketplace</h2>
-      <p>React + Express + MongoDB + Bootstrap</p>
+    <div className="container text-center mt-5">
+      <h1 className="display-3 fw-bold">🚀 SkillVerse</h1>
+
+      <p className="lead">
+        India's Smart Freelance Marketplace
+      </p>
+
+      <button className="btn btn-primary me-3">
+        Hire Freelancer
+      </button>
+
+      <button className="btn btn-success">
+        Become Freelancer
+      </button>
     </div>
   );
 }
