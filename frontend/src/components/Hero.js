@@ -2,34 +2,49 @@ import React from "react";
 
 function Hero() {
   return (
-    <section className="hero">
+    <section className="bg-dark text-white py-5">
 
-      <h1>India's Smart Freelance Marketplace</h1>
+      <div className="container text-center">
 
-      <p>
-        Hire top freelancers and grow your business faster.
-      </p>
+        <h1 className="display-3 fw-bold">
+          India's Smart Freelance Marketplace
+        </h1>
 
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Search freelancers, skills, services..."
-        />
+        <p className="lead mt-3">
+          Hire experts, grow your business, and work with top freelancers.
+        </p>
 
-        <button>
-          Search
-        </button>
-      </div>
+        <div className="row justify-content-center mt-4">
 
-      <div className="hero-buttons">
+          <div className="col-md-8">
+            <div className="input-group">
 
-        <button>
-          Hire Freelancer
-        </button>
+              <input
+                type="text"
+                className="form-control form-control-lg"
+                placeholder="Search freelancers, skills, services..."
+              />
 
-        <button>
-          Become Freelancer
-        </button>
+              <button className="btn btn-info">
+                Search
+              </button>
+
+            </div>
+          </div>
+
+        </div>
+
+        <div className="mt-4">
+
+          <button className="btn btn-primary btn-lg me-3">
+            Hire Freelancer
+          </button>
+
+          <button className="btn btn-success btn-lg">
+            Become Freelancer
+          </button>
+
+        </div>
 
       </div>
 
