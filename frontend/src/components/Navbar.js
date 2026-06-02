@@ -2,9 +2,10 @@ import React from "react";
 
 function Navbar() {
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
       <div className="container">
-        <a className="navbar-brand fw-bold" href="/">
+
+        <a className="navbar-brand fw-bold fs-3 text-info" href="/">
           SkillVerse
         </a>
 
@@ -18,10 +19,8 @@ function Navbar() {
         </button>
 
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <a className="nav-link" href="/">Home</a>
-            </li>
+
+          <ul className="navbar-nav ms-auto align-items-center">
 
             <li className="nav-item">
               <a className="nav-link" href="/">Find Work</a>
@@ -32,16 +31,23 @@ function Navbar() {
             </li>
 
             <li className="nav-item">
-              <a className="nav-link" href="/">Login</a>
+              <a className="nav-link" href="/">Categories</a>
             </li>
 
             <li className="nav-item">
-              <a className="btn btn-primary ms-2" href="/">
-                Sign Up
-              </a>
+              <a className="nav-link" href="/">Login</a>
             </li>
+
+            <li className="nav-item ms-2">
+              <button className="btn btn-info fw-bold">
+                Join Now
+              </button>
+            </li>
+
           </ul>
+
         </div>
+
       </div>
     </nav>
   );
