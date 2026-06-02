@@ -11,6 +11,7 @@ import FeaturedFreelancers from "./components/FeaturedFreelancers";
 import Reviews from "./components/Reviews";
 import CTA from "./components/CTA";
 import Footer from "./components/Footer";
+import Login from "./pages/Login";
 
 // Pages (temporary placeholders)
 const FindWork = () => <h2 className="text-center mt-5">Find Work Page</h2>;
@@ -43,6 +44,7 @@ function App() {
         <Route path="/find-talent" element={<FindTalent />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </>
   );
