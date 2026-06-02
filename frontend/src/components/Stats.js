@@ -2,20 +2,24 @@ import React from "react";
 
 function Stats() {
   return (
-    <section className="stats">
-      <div>
-        <h2>10K+</h2>
-        <p>Freelancers</p>
-      </div>
+    <section className="container py-5">
+      <div className="row text-center">
 
-      <div>
-        <h2>5K+</h2>
-        <p>Projects Completed</p>
-      </div>
+        <div className="col-md-4">
+          <h2 className="fw-bold text-primary">10K+</h2>
+          <p>Freelancers</p>
+        </div>
 
-      <div>
-        <h2>100+</h2>
-        <p>Categories</p>
+        <div className="col-md-4">
+          <h2 className="fw-bold text-success">5K+</h2>
+          <p>Projects Completed</p>
+        </div>
+
+        <div className="col-md-4">
+          <h2 className="fw-bold text-danger">100+</h2>
+          <p>Categories</p>
+        </div>
+
       </div>
     </section>
   );
