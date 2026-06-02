@@ -3,14 +3,15 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import { Routes, Route } from "react-router-dom";
 
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import Stats from "./components/Stats";
-import Categories from "./components/Categories";
-import FeaturedFreelancers from "./components/FeaturedFreelancers";
-import Reviews from "./components/Reviews";
-import CTA from "./components/CTA";
-import Footer from "./components/Footer";
+import Navbar from "./components/layout/Navbar";
+import Footer from "./components/layout/Footer";
+
+import Hero from "./components/home/Hero";
+import Stats from "./components/home/Stats";
+import Categories from "./components/home/Categories";
+import FeaturedFreelancers from "./components/home/FeaturedFreelancers";
+import Reviews from "./components/home/Reviews";
+import CTA from "./components/home/CTA";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -39,11 +40,10 @@ function App() {
           }
         />
 
-        <Route path="/find-work" element={<FindWork />} />
-        <Route path="/find-talent" element={<FindTalent />} />
-
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Register />} />
+        <Route path="/find-work" element={<FindWork />} />
+        <Route path="/find-talent" element={<FindTalent />} />
       </Routes>
     </>
   );
