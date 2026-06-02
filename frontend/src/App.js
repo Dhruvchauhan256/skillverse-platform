@@ -9,13 +9,15 @@ function App() {
         India's Smart Freelance Marketplace
       </p>
 
-      <button className="btn btn-primary me-3">
-        Hire Freelancer
-      </button>
+      <div className="mt-4">
+        <button className="btn btn-primary me-3">
+          Hire Freelancer
+        </button>
 
-      <button className="btn btn-success">
-        Become Freelancer
-      </button>
+        <button className="btn btn-success">
+          Become Freelancer
+        </button>
+      </div>
     </div>
   );
 }
