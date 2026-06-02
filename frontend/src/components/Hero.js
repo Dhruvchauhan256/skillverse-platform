@@ -2,32 +2,37 @@ import React from "react";
 
 function Hero() {
   return (
-    <section className="container text-center py-5">
-      <h1 className="display-3 fw-bold">
-        India's Smart Freelance Marketplace
-      </h1>
+    <section className="hero">
 
-      <p className="lead mt-3">
+      <h1>India's Smart Freelance Marketplace</h1>
+
+      <p>
         Hire top freelancers and grow your business faster.
       </p>
 
-      <div className="mt-4">
+      <div className="search-box">
         <input
           type="text"
-          className="form-control w-50 mx-auto"
           placeholder="Search freelancers, skills, services..."
         />
+
+        <button>
+          Search
+        </button>
       </div>
 
-      <div className="mt-4">
-        <button className="btn btn-primary btn-lg me-3">
+      <div className="hero-buttons">
+
+        <button>
           Hire Freelancer
         </button>
 
-        <button className="btn btn-success btn-lg">
+        <button>
           Become Freelancer
         </button>
+
       </div>
+
     </section>
   );
 }
