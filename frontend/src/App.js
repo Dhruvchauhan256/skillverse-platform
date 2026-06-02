@@ -16,15 +16,28 @@ import CTA from "./components/home/CTA";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
-const FindWork = () => <h2>Find Work Page</h2>;
-const FindTalent = () => <h2>Find Talent Page</h2>;
+// Pages
+const FindWork = () => (
+  <div className="text-center mt-5">
+    <h2>Find Work Page</h2>
+  </div>
+);
+
+const FindTalent = () => (
+  <div className="text-center mt-5">
+    <h2>Find Talent Page</h2>
+  </div>
+);
 
 function App() {
   return (
     <>
+      {/* GLOBAL NAVBAR */}
       <Navbar />
 
       <Routes>
+
+        {/* HOME PAGE */}
         <Route
           path="/"
           element={
@@ -40,10 +53,14 @@ function App() {
           }
         />
 
+        {/* AUTH PAGES */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Register />} />
+
+        {/* OTHER PAGES */}
         <Route path="/find-work" element={<FindWork />} />
         <Route path="/find-talent" element={<FindTalent />} />
+
       </Routes>
     </>
   );
