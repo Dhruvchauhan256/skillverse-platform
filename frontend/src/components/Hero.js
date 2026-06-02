@@ -1,51 +1,25 @@
 import React from "react";
+import "./hero.css";
 
 function Hero() {
   return (
-    <section className="bg-dark text-white py-5">
+    <section className="hero-section">
 
-      <div className="container text-center">
-
-        <h1 className="display-3 fw-bold">
-          India's Smart Freelance Marketplace
+      <div className="hero-content">
+        <h1>
+          Hire Top Freelancers <br />
+          & Grow Your Business 🚀
         </h1>
 
-        <p className="lead mt-3">
-          Hire experts, grow your business, and work with top freelancers.
+        <p>
+          SkillVerse connects clients with top skilled developers, designers,
+          and digital experts worldwide.
         </p>
 
-        <div className="row justify-content-center mt-4">
-
-          <div className="col-md-8">
-            <div className="input-group">
-
-              <input
-                type="text"
-                className="form-control form-control-lg"
-                placeholder="Search freelancers, skills, services..."
-              />
-
-              <button className="btn btn-info">
-                Search
-              </button>
-
-            </div>
-          </div>
-
+        <div className="hero-buttons">
+          <button className="btn-primary">Hire Talent</button>
+          <button className="btn-secondary">Find Work</button>
         </div>
-
-        <div className="mt-4">
-
-          <button className="btn btn-primary btn-lg me-3">
-            Hire Freelancer
-          </button>
-
-          <button className="btn btn-success btn-lg">
-            Become Freelancer
-          </button>
-
-        </div>
-
       </div>
 
     </section>
