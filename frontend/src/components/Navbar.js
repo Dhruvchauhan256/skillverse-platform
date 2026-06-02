@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
@@ -23,7 +24,7 @@ function Navbar() {
           <ul className="navbar-nav ms-auto align-items-center">
 
             <li className="nav-item">
-              <a className="nav-link" href="/">Find Work</a>
+              <Link className="nav-link" to="/find-work">Find Work</Link>
             </li>
 
             <li className="nav-item">
@@ -39,9 +40,9 @@ function Navbar() {
             </li>
 
             <li className="nav-item ms-2">
-              <button className="btn btn-info fw-bold">
-                Join Now
-              </button>
+              <Link to="/signup" className="btn btn-info fw-bold">
+                  Join Now
+              </Link>
             </li>
 
           </ul>
