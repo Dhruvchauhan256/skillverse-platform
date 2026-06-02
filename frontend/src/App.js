@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Stats from "./components/Stats";
+import Categories from "./components/Categories";
 import Footer from "./components/Footer";
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
       <Navbar />
       <Hero />
       <Stats />
+      <Categories />
       <Footer />
     </>
   );
