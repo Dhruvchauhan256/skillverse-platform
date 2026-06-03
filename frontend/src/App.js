@@ -5,7 +5,7 @@ import { Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
-
+import FreelancerProfile from "./pages/freelancer/FreelancerProfile";
 import Hero from "./components/home/Hero";
 import Stats from "./components/home/Stats";
 import Categories from "./components/home/Categories";
@@ -53,7 +53,8 @@ function App() {
         <Route path="/signup" element={<Register />} />
         <Route path="/find-work" element={<FindWork />} />
         <Route path="/find-talent" element={<FindTalent />} />
-          <Route path="/dashboard" element={<FreelancerDashboard />} />
+        <Route path="/dashboard" element={<FreelancerDashboard />} />
+        <Route path="/freelancer-profile" element={<FreelancerProfile />} />
       </Routes>
     </>
   );
