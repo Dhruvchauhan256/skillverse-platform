@@ -8,6 +8,13 @@ function CategorySearch() {
   const [search, setSearch] = React.useState("");
   const [recentSearches, setRecentSearches] = React.useState([]);
 
+  const trending = [
+  "React Developer",
+  "UI Designer",
+  "Full Stack",
+  "Node.js Expert"
+];
+  
   const freelancers = [
     {
       name: "John Doe",
