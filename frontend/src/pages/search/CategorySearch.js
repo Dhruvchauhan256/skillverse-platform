@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import FreelancerCard from "../../components/search/FreelancerCard";
+import FreelancerCard from "../../components/freelancer/FreelancerCard";
 
 function CategorySearch() {
   const [category, setCategory] = useState("React");
