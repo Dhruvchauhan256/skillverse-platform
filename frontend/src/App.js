@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 
 // Pages
+import FreelancerProfile from "./pages/freelancer/FreelancerProfile";
 import Home from "./pages/Home";
 import FreelancerDashboard from "./pages/dashboard/FreelancerDashboard";
 import ClientProfile from "./pages/client/ClientProfile";
@@ -66,7 +67,7 @@ function App() {
         {/* MESSAGES */}
         <Route path="/messages" element={<Messages />} />
           <Route path="/" element={<h1>HOME TEST WORKING</h1>} />
-
+    <Route path="/freelancer/:name" element={<FreelancerProfile />} />
       </Routes>
     </>
   );
