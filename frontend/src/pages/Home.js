@@ -33,7 +33,9 @@ const navigate = useNavigate();
 
           <div className="hero-search">
             <input type="text" placeholder="Search freelancers, skills..." />
-            <button>Search</button>
+            <button onClick={() => navigate("/search")}>
+                  Search
+            </button>
           </div>
 
           <div className="hero-tags">
