@@ -1,9 +1,9 @@
-console.log("🔥 HOME PAGE IS RENDERING");
-
 import React from "react";
 import "./Home.css";
 
 function Home() {
+  console.log("🔥 HOME PAGE IS RENDERING");
+
   const categories = [
     "Web Development",
     "UI/UX Design",
