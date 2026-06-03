@@ -141,3 +141,13 @@ h2 {
   border-radius: 6px;
   cursor: pointer;
 }
+.category-card,
+.freelancer-card {
+  transition: all 0.3s ease;
+}
+
+.category-card:hover,
+.freelancer-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
