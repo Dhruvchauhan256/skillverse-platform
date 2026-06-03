@@ -65,6 +65,7 @@ function App() {
 
         {/* MESSAGES */}
         <Route path="/messages" element={<Messages />} />
+          <Route path="/" element={<h1>HOME TEST WORKING</h1>} />
 
       </Routes>
     </>
