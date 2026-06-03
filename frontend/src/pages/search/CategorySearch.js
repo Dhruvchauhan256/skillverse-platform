@@ -3,9 +3,6 @@ import FreelancerCard from "../../components/freelancer/FreelancerCard";
 import "./CategorySearch.css";
 
 function CategorySearch() {
-  const recommended = [...freelancers]
-  .sort((a, b) => b.rating - a.rating)
-  .slice(0, 2);
   const [sortBy, setSortBy] = useState("rating");
   const [selectedSkill, setSelectedSkill] = useState("all");
   const [search, setSearch] = useState("");
@@ -45,6 +42,11 @@ function CategorySearch() {
     },
   ];
 
+  // ⭐ RECOMMENDED (FIXED ORDER)
+  const recommended = [...freelancers]
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 2);
+
   // Load recent searches
   useEffect(() => {
     const saved =
@@ -70,12 +72,12 @@ function CategorySearch() {
     }
   };
 
-  // ⭐ SMART RANKING FUNCTION (MUST BE ABOVE USAGE)
+  // ⭐ SMART RANKING
   const getScore = (f) => {
     let score = 0;
 
-    score += f.rating * 10; // rating weight
-    score += (f.reviews || 0) * 0.02; // reviews
+    score += f.rating * 10;
+    score += (f.reviews || 0) * 0.02;
 
     if (
       selectedSkill !== "all" &&
@@ -98,7 +100,7 @@ function CategorySearch() {
     return score;
   };
 
-  // FILTER + SEARCH + RANKING (CLEAN PIPELINE)
+  // FILTER + SEARCH + RANKING
   let filtered = freelancers
     .filter((f) => {
       const matchSkill =
@@ -112,7 +114,6 @@ function CategorySearch() {
       return matchSkill && matchSearch;
     })
     .sort((a, b) => {
-      // override with smart ranking ALWAYS
       if (sortBy === "rating") {
         return getScore(b) - getScore(a);
       } else if (sortBy === "price_low") {
@@ -120,7 +121,6 @@ function CategorySearch() {
       } else if (sortBy === "price_high") {
         return b.hourlyRate - a.hourlyRate;
       }
-
       return 0;
     });
 
@@ -153,6 +153,18 @@ function CategorySearch() {
               {item}
             </span>
           ))}
+        </div>
+      )}
+
+      {/* RECOMMENDED */}
+      {search === "" && (
+        <div className="recommended-section">
+          <h3>Recommended for you</h3>
+          <div className="recommended-grid">
+            {recommended.map((user, i) => (
+              <FreelancerCard key={i} user={user} />
+            ))}
+          </div>
         </div>
       )}
 
