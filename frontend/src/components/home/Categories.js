@@ -1,5 +1,5 @@
 import React from "react";
-import CategoryCard from "../CategoryCard";
+import CategoryCard from "../ui/CategoryCard";
 
 function Categories() {
   const categories = [
