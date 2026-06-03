@@ -8,7 +8,7 @@ import ProjectList from "./pages/projects/ProjectList";
 import SubmitProposal from "./pages/projects/SubmitProposal";
 import Messages from "./pages/messages/Messages";
 import Navbar from "./components/common/Navbar";
-import Footer from "./components/layout/Footer";
+import Footer from "./components/common/Footer";
 import FreelancerProfile from "./pages/freelancer/FreelancerProfile";
 import Hero from "./components/home/Hero";
 import Stats from "./components/home/Stats";
