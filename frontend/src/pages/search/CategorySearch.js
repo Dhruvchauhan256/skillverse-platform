@@ -1,20 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FreelancerCard from "../../components/freelancer/FreelancerCard";
 import "./CategorySearch.css";
 
 function CategorySearch() {
   const [sortBy, setSortBy] = useState("rating");
   const [selectedSkill, setSelectedSkill] = useState("all");
-  const [search, setSearch] = React.useState("");
-  const [recentSearches, setRecentSearches] = React.useState([]);
+  const [search, setSearch] = useState("");
+  const [recentSearches, setRecentSearches] = useState([]);
 
   const trending = [
-  "React Developer",
-  "UI Designer",
-  "Full Stack",
-  "Node.js Expert"
-];
-  
+    "React Developer",
+    "UI Designer",
+    "Full Stack",
+    "Node.js Expert",
+  ];
+
   const freelancers = [
     {
       name: "John Doe",
@@ -42,14 +42,38 @@ function CategorySearch() {
     },
   ];
 
-  // FILTER LOGIC
-  let filtered = freelancers;
+  // Load recent searches from localStorage
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("recentSearches")) || [];
+    setRecentSearches(saved);
+  }, []);
 
-  if (selectedSkill !== "all") {
-    filtered = filtered.filter((f) =>
-      f.skills.includes(selectedSkill)
-    );
-  }
+  // Save search to recent
+  const handleSearch = (value) => {
+    setSearch(value);
+
+    if (value.trim() !== "") {
+      const updated = [
+        value,
+        ...recentSearches.filter((item) => item !== value),
+      ].slice(0, 5);
+
+      setRecentSearches(updated);
+      localStorage.setItem("recentSearches", JSON.stringify(updated));
+    }
+  };
+
+  // FILTER LOGIC (SEARCH + SKILL)
+  let filtered = freelancers.filter((f) => {
+    const matchSearch =
+      f.name.toLowerCase().includes(search.toLowerCase()) ||
+      f.title.toLowerCase().includes(search.toLowerCase());
+
+    const matchSkill =
+      selectedSkill === "all" || f.skills.includes(selectedSkill);
+
+    return matchSearch && matchSkill;
+  });
 
   // SORTING LOGIC (UPWORK STYLE)
   if (sortBy === "rating") {
@@ -61,35 +85,68 @@ function CategorySearch() {
   }
 
   return (
-    <div className="search-layout">
+    <div>
 
-      {/* SIDEBAR FILTER */}
-      <div className="search-sidebar">
-        <h3>Filters</h3>
-
-        <label>Sort By</label>
-        <select onChange={(e) => setSortBy(e.target.value)}>
-          <option value="rating">Top Rated</option>
-          <option value="price_low">Price: Low to High</option>
-          <option value="price_high">Price: High to Low</option>
-        </select>
-
-        <label>Skill</label>
-        <select onChange={(e) => setSelectedSkill(e.target.value)}>
-          <option value="all">All</option>
-          <option value="React">React</option>
-          <option value="Node.js">Node.js</option>
-          <option value="UI/UX">UI/UX</option>
-        </select>
+      {/* SEARCH BAR */}
+      <div className="search-topbar">
+        <input
+          type="text"
+          placeholder="Search freelancers..."
+          value={search}
+          onChange={(e) => handleSearch(e.target.value)}
+        />
       </div>
 
-      {/* RESULTS */}
-      <div className="search-results">
-        {filtered.map((user, index) => (
-          <FreelancerCard key={index} user={user} />
+      {/* TRENDING */}
+      <div className="trending">
+        {trending.map((item, i) => (
+          <span key={i} onClick={() => handleSearch(item)}>
+            {item}
+          </span>
         ))}
       </div>
 
+      {/* RECENT SEARCHES */}
+      {recentSearches.length > 0 && (
+        <div className="recent">
+          {recentSearches.map((item, i) => (
+            <span key={i} onClick={() => setSearch(item)}>
+              {item}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div className="search-layout">
+
+        {/* SIDEBAR FILTER */}
+        <div className="search-sidebar">
+          <h3>Filters</h3>
+
+          <label>Sort By</label>
+          <select onChange={(e) => setSortBy(e.target.value)}>
+            <option value="rating">Top Rated</option>
+            <option value="price_low">Price: Low to High</option>
+            <option value="price_high">Price: High to Low</option>
+          </select>
+
+          <label>Skill</label>
+          <select onChange={(e) => setSelectedSkill(e.target.value)}>
+            <option value="all">All</option>
+            <option value="React">React</option>
+            <option value="Node.js">Node.js</option>
+            <option value="UI/UX">UI/UX</option>
+          </select>
+        </div>
+
+        {/* RESULTS */}
+        <div className="search-results">
+          {filtered.map((user, index) => (
+            <FreelancerCard key={index} user={user} />
+          ))}
+        </div>
+
+      </div>
     </div>
   );
 }
