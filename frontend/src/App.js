@@ -12,9 +12,8 @@ import Categories from "./components/home/Categories";
 import FeaturedFreelancers from "./components/home/FeaturedFreelancers";
 import Reviews from "./components/home/Reviews";
 import CTA from "./components/home/CTA";
-
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 
 // Pages
 const FindWork = () => (
