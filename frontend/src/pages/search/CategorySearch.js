@@ -84,6 +84,36 @@ function CategorySearch() {
     filtered.sort((a, b) => b.hourlyRate - a.hourlyRate);
   }
 
+  const getScore = (f) => {
+  let score = 0;
+
+  // rating weight (MOST IMPORTANT)
+  score += f.rating * 10;
+
+  // reviews weight
+  score += (f.reviews || 0) * 0.02;
+
+  // skill match boost
+  if (selectedSkill !== "all" && f.skills.includes(selectedSkill)) {
+    score += 20;
+  }
+
+  // search relevance boost
+  if (
+    f.name.toLowerCase().includes(search.toLowerCase()) ||
+    f.title.toLowerCase().includes(search.toLowerCase())
+  ) {
+    score += 15;
+  }
+
+  // price balance (prefer mid-range freelancers slightly)
+  if (f.hourlyRate >= 15 && f.hourlyRate <= 30) {
+    score += 5;
+  }
+
+  return score;
+};
+  
   return (
     <div>
 
