@@ -1,5 +1,6 @@
 import React from "react";
 import "./Home.css";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   const categories = [
@@ -12,7 +13,8 @@ function Home() {
     "Logo Design",
     "Content Writing",
   ];
-
+const navigate = useNavigate();
+  
   const freelancers = [
     { name: "John Doe", skill: "React Developer", rating: 4.8 },
     { name: "Aman Patel", skill: "UI Designer", rating: 4.6 },
