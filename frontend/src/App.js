@@ -3,7 +3,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 
 // Pages
-import FreelancerProfile from "./pages/freelancer/FreelancerProfile";
 import Home from "./pages/Home";
 import FreelancerDashboard from "./pages/dashboard/FreelancerDashboard";
 import ClientProfile from "./pages/client/ClientProfile";
@@ -41,7 +40,7 @@ function App() {
 
       <Routes>
 
-        {/* HOME PAGE (FIXED) */}
+        {/* HOME */}
         <Route path="/" element={<Home />} />
 
         {/* AUTH */}
@@ -56,7 +55,6 @@ function App() {
 
         {/* DASHBOARD */}
         <Route path="/dashboard" element={<FreelancerDashboard />} />
-        <Route path="/freelancer-profile" element={<FreelancerProfile />} />
         <Route path="/client-profile" element={<ClientProfile />} />
 
         {/* PROJECTS */}
@@ -66,8 +64,11 @@ function App() {
 
         {/* MESSAGES */}
         <Route path="/messages" element={<Messages />} />
-          <Route path="/" element={<h1>HOME TEST WORKING</h1>} />
-    <Route path="/freelancer/:name" element={<FreelancerProfile />} />
+
+        {/* FREELANCER PROFILE */}
+        <Route path="/freelancer/:name" element={<FreelancerProfile />} />
+        <Route path="/freelancer-profile" element={<FreelancerProfile />} />
+
       </Routes>
     </>
   );
