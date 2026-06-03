@@ -18,7 +18,7 @@ import Reviews from "./components/home/Reviews";
 import CTA from "./components/home/CTA";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import FreelancerSearch from "./pages/freelancers/FreelancerSearch";
+import FreelancerSearch from "./pages/freelancer/FreelancerSearch";
 
 // Pages
 const FindWork = () => (
