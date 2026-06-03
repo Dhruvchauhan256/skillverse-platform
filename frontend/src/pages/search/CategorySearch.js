@@ -3,6 +3,9 @@ import FreelancerCard from "../../components/freelancer/FreelancerCard";
 import "./CategorySearch.css";
 
 function CategorySearch() {
+  const recommended = [...freelancers]
+  .sort((a, b) => b.rating - a.rating)
+  .slice(0, 2);
   const [sortBy, setSortBy] = useState("rating");
   const [selectedSkill, setSelectedSkill] = useState("all");
   const [search, setSearch] = useState("");
