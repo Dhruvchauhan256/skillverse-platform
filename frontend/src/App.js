@@ -18,6 +18,7 @@ import Reviews from "./components/home/Reviews";
 import CTA from "./components/home/CTA";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import FreelancerSearch from "./pages/freelancers/FreelancerSearch";
 
 // Pages
 const FindWork = () => (
@@ -64,6 +65,7 @@ function App() {
         <Route path="/projects" element={<ProjectList />} />
         <Route path="/proposal" element={<SubmitProposal />} />
         <Route path="/messages" element={<Messages />} />
+        <Route path="/freelancers" element={<FreelancerSearch />} />
       </Routes>
     </>
   );
