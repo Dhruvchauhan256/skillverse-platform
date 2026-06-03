@@ -5,13 +5,19 @@ function SearchBar() {
 
   return (
     <div className="container my-4">
-      <input
-        type="text"
-        className="form-control form-control-lg"
-        placeholder="Search freelancers, skills or projects..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+      <div className="input-group">
+        <input
+          type="text"
+          className="form-control form-control-lg"
+          placeholder="Search freelancers, skills, projects..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+        <button className="btn btn-primary">
+          Search
+        </button>
+      </div>
     </div>
   );
 }
