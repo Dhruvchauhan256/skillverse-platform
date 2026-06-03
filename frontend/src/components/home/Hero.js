@@ -23,8 +23,27 @@ function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          SkillVerse is your premium freelance marketplace for developers, designers & creators.
+          SkillVerse is your premium freelance marketplace for developers,
+          designers & creators.
         </motion.p>
+
+        {/* Search Bar */}
+        <motion.div
+          className="hero-search"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <input
+            type="text"
+            placeholder="Search freelancers, skills, services..."
+            className="hero-search-input"
+          />
+
+          <button className="hero-search-btn">
+            Search
+          </button>
+        </motion.div>
 
         <motion.div
           className="hero-buttons"
