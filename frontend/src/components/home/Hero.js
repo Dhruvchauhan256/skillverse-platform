@@ -10,12 +10,12 @@ function Hero() {
       <div className="container hero-content">
 
         <motion.h1
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.7 }}
         >
           Hire Top Freelancers <br />
-          & Grow Your Business 🚀
+          Like Fiverr 🚀
         </motion.h1>
 
         <motion.p
@@ -23,13 +23,13 @@ function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          SkillVerse connects clients with top developers, designers and digital experts worldwide.
+          SkillVerse is your premium freelance marketplace for developers, designers & creators.
         </motion.p>
 
         <motion.div
           className="hero-buttons"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.5 }}
         >
           <button className="btn-primary">Hire Talent</button>
