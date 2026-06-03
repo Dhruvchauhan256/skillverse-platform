@@ -1,26 +1,44 @@
 import React from "react";
+import "./FreelancerCard.css";
 
 function FreelancerCard({ user }) {
   return (
-    <div className="card p-3 shadow-sm mb-3">
-      <div className="d-flex justify-content-between">
-        <h5>{user.name}</h5>
-        <span>⭐ {user.rating}</span>
+    <div className="freelancer-card">
+      
+      {/* TOP SECTION */}
+      <div className="freelancer-top">
+        <img
+          className="freelancer-avatar"
+          src={user.avatar || "https://via.placeholder.com/80"}
+          alt={user.name}
+        />
+
+        <div className="freelancer-info">
+          <h3 className="freelancer-name">{user.name}</h3>
+          <p className="freelancer-title">{user.title || "Freelancer"}</p>
+
+          <div className="freelancer-rating">
+            ⭐ {user.rating || 4.5} ({user.reviews || 120})
+          </div>
+        </div>
       </div>
 
-      <p className="text-muted">{user.role}</p>
-
-      <div className="mb-2">
-        {user.skills.map((skill, i) => (
-          <span key={i} className="badge bg-primary me-1">
+      {/* SKILLS */}
+      <div className="freelancer-skills">
+        {(user.skills || ["React", "Node.js", "UI/UX"]).map((skill, index) => (
+          <span key={index} className="skill-badge">
             {skill}
           </span>
         ))}
       </div>
 
-      <button className="btn btn-sm btn-dark">
-        View Profile
-      </button>
+      {/* FOOTER */}
+      <div className="freelancer-footer">
+        <button className="view-btn">View Profile</button>
+        <span className="price">
+          ${user.hourlyRate || 20}/hr
+        </span>
+      </div>
     </div>
   );
 }
