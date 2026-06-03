@@ -54,6 +54,7 @@ function App() {
         <Route path="/signup" element={<Register />} />
         <Route path="/find-work" element={<FindWork />} />
         <Route path="/find-talent" element={<FindTalent />} />
+          <Route path="/dashboard" element={<FreelancerDashboard />} />
       </Routes>
     </>
   );
