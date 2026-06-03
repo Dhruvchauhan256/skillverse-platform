@@ -5,6 +5,8 @@ import "./CategorySearch.css";
 function CategorySearch() {
   const [sortBy, setSortBy] = useState("rating");
   const [selectedSkill, setSelectedSkill] = useState("all");
+  const [search, setSearch] = React.useState("");
+  const [recentSearches, setRecentSearches] = React.useState([]);
 
   const freelancers = [
     {
