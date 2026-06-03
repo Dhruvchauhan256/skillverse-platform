@@ -1,3 +1,5 @@
+console.log("🔥 HOME PAGE IS RENDERING");
+
 import React from "react";
 import "./Home.css";
 
