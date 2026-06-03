@@ -64,16 +64,18 @@ function CategorySearch() {
   };
 
   // FILTER LOGIC (SEARCH + SKILL)
-  let filtered = freelancers.filter((f) => {
+  let filtered = freelancers
+  .filter((f) => {
+    const matchSkill =
+      selectedSkill === "all" || f.skills.includes(selectedSkill);
+
     const matchSearch =
       f.name.toLowerCase().includes(search.toLowerCase()) ||
       f.title.toLowerCase().includes(search.toLowerCase());
 
-    const matchSkill =
-      selectedSkill === "all" || f.skills.includes(selectedSkill);
-
-    return matchSearch && matchSkill;
-  });
+    return matchSkill && matchSearch;
+  })
+  .sort((a, b) => getScore(b) - getScore(a));
 
   // SORTING LOGIC (UPWORK STYLE)
   if (sortBy === "rating") {
