@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import FreelancerCard from "../../components/freelancer/FreelancerCard";
+import "./CategorySearch.css";
 
 function CategorySearch() {
   const [sortBy, setSortBy] = useState("rating");
