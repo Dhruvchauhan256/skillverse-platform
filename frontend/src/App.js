@@ -19,6 +19,7 @@ import CTA from "./components/home/CTA";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import FreelancerSearch from "./pages/freelancer/FreelancerSearch";
+import CategorySearch from "./pages/search/CategorySearch";
 
 // Pages
 const FindWork = () => (
@@ -66,6 +67,7 @@ function App() {
         <Route path="/proposal" element={<SubmitProposal />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/freelancers" element={<FreelancerSearch />} />
+        <Route path="/search" element={<CategorySearch />} />
       </Routes>
     </>
   );
