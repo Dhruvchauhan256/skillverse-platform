@@ -55,7 +55,6 @@ function App() {
         <Route path="/find-talent" element={<FindTalent />} />
         <Route path="/dashboard" element={<FreelancerDashboard />} />
         <Route path="/freelancer-profile" element={<FreelancerProfile />} />
-        <Route path="/freelancer-profile" element={<FreelancerProfile />} />
         <Route path="/client-profile" element={<ClientProfile />} />
         <Route path="/post-project" element={<PostProject />} />
         <Route path="/projects" element={<ProjectList />} />
