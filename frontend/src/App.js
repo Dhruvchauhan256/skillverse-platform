@@ -7,7 +7,7 @@ import PostProject from "./pages/projects/PostProject";
 import ProjectList from "./pages/projects/ProjectList";
 import SubmitProposal from "./pages/projects/SubmitProposal";
 import Messages from "./pages/messages/Messages";
-import Navbar from "./components/layout/Navbar";
+import Navbar from "./components/common/Navbar";
 import Footer from "./components/layout/Footer";
 import FreelancerProfile from "./pages/freelancer/FreelancerProfile";
 import Hero from "./components/home/Hero";
