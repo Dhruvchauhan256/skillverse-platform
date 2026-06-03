@@ -32,12 +32,9 @@ const FindTalent = () => (
 function App() {
   return (
     <>
-      {/* GLOBAL NAVBAR */}
       <Navbar />
 
       <Routes>
-
-        {/* HOME PAGE */}
         <Route
           path="/"
           element={
@@ -53,14 +50,10 @@ function App() {
           }
         />
 
-        {/* AUTH PAGES */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Register />} />
-
-        {/* OTHER PAGES */}
         <Route path="/find-work" element={<FindWork />} />
         <Route path="/find-talent" element={<FindTalent />} />
-
       </Routes>
     </>
   );
