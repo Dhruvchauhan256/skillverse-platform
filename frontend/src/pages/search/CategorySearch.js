@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import FreelancerCard from "../../components/freelancer/FreelancerCard";
 import "./CategorySearch.css";
+import { useLocation } from "react-router-dom";
 
 function CategorySearch() {
+  const location = useLocation();
+  const initialSearch = location.state?.query || "";
+
+  const [search, setSearch] = useState(initialSearch);
   const [sortBy, setSortBy] = useState("rating");
   const [selectedSkill, setSelectedSkill] = useState("all");
-  const [search, setSearch] = useState("");
   const [recentSearches, setRecentSearches] = useState([]);
 
   const trending = [
@@ -42,19 +46,19 @@ function CategorySearch() {
     },
   ];
 
-  // ⭐ RECOMMENDED (FIXED ORDER)
+  // ⭐ RECOMMENDED SECTION
   const recommended = [...freelancers]
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 2);
 
-  // Load recent searches
+  // LOAD RECENT SEARCHES
   useEffect(() => {
     const saved =
       JSON.parse(localStorage.getItem("recentSearches")) || [];
     setRecentSearches(saved);
   }, []);
 
-  // Save search
+  // SAVE SEARCH
   const handleSearch = (value) => {
     setSearch(value);
 
@@ -72,7 +76,7 @@ function CategorySearch() {
     }
   };
 
-  // ⭐ SMART RANKING
+  // ⭐ SMART SCORE SYSTEM (UPWORK STYLE)
   const getScore = (f) => {
     let score = 0;
 
@@ -100,7 +104,7 @@ function CategorySearch() {
     return score;
   };
 
-  // FILTER + SEARCH + RANKING
+  // FILTER + SORT + SEARCH
   let filtered = freelancers
     .filter((f) => {
       const matchSkill =
@@ -145,7 +149,7 @@ function CategorySearch() {
         ))}
       </div>
 
-      {/* RECENT */}
+      {/* RECENT SEARCHES */}
       {recentSearches.length > 0 && (
         <div className="recent">
           {recentSearches.map((item, i) => (
