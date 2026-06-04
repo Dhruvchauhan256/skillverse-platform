@@ -121,6 +121,11 @@ const navigate = useNavigate();
         <button>Get Started</button>
       </section>
 
+        <div className="gig-grid">
+  {gigs.map((gig, i) => (
+    <GigCard key={i} gig={gig} />
+  ))}
+</div>
     </div>
   );
 }
