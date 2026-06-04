@@ -1,8 +1,31 @@
 import React from "react";
 import "./Home.css";
 import { useNavigate } from "react-router-dom";
+import GigCard from "../components/gigs/GigCard";
 
 function Home() {
+
+  const gigs = [
+  {
+    title: "I will design modern React website",
+    seller: "John Doe",
+    rating: 4.9,
+    reviews: 120,
+    price: 50,
+    image: "https://source.unsplash.com/300x200/?website",
+    avatar: "https://i.pravatar.cc/40"
+  },
+  {
+    title: "I will build your business UI",
+    seller: "Aman Patel",
+    rating: 4.8,
+    reviews: 98,
+    price: 35,
+    image: "https://source.unsplash.com/300x200/?design",
+    avatar: "https://i.pravatar.cc/41"
+  }
+];
+  
   const categories = [
     "Web Development",
     "UI/UX Design",
