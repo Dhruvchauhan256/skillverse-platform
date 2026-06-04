@@ -15,6 +15,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import FreelancerSearch from "./pages/freelancer/FreelancerSearch";
 import CategorySearch from "./pages/search/CategorySearch";
+import JobsPage from "./pages/JobsPage";
 
 // Components
 import Navbar from "./components/common/Navbar";
@@ -68,8 +69,9 @@ function App() {
         {/* FREELANCER PROFILE */}
         <Route path="/freelancer/:name" element={<FreelancerProfile />} />
         <Route path="/freelancer-profile" element={<FreelancerProfile />} />
-
-      </Routes>
+        <Route path="/jobs" element={<JobsPage />} />
+      
+          </Routes>
     </>
   );
 }
