@@ -1,117 +1,71 @@
 import React, { useState } from "react";
-import "../../styles/auth.css";
-import { Link } from "react-router-dom";
+import "./Auth.css";
 
 function Register() {
-  const [formData, setFormData] = useState({
-    name: "",
+  const [form, setForm] = useState({
+    username: "",
     email: "",
-    password: "",
-    role: "freelancer",
-    remember: false,
+    password: ""
   });
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    console.log("Register Data:", formData);
-
-    alert("Frontend Signup Successful!");
+    console.log(form);
   };
 
   return (
     <div className="auth-container">
+
       <div className="auth-card">
-        <h2>Create Your SkillVerse Account</h2>
 
-        <p className="text-muted">
-          Join as a Freelancer or Client
-        </p>
+        <h2>Create account</h2>
+        <p>Join SkillVerse and start freelancing</p>
 
+        {/* SOCIAL */}
+        <button className="google-btn">Continue with Google</button>
+        <button className="facebook-btn">Continue with Facebook</button>
+        <button className="apple-btn">Continue with Apple</button>
+
+        <div className="divider">OR</div>
+
+        {/* FORM */}
         <form onSubmit={handleSubmit}>
+
           <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            value={formData.name}
+            name="username"
+            placeholder="Username"
             onChange={handleChange}
-            required
           />
 
           <input
-            type="email"
             name="email"
-            placeholder="Email Address"
-            value={formData.email}
+            placeholder="Email address"
             onChange={handleChange}
-            required
           />
 
           <input
-            type="password"
             name="password"
+            type="password"
             placeholder="Password"
-            value={formData.password}
             onChange={handleChange}
-            required
           />
 
-          <select
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-            className="form-select mb-3"
-          >
-            <option value="freelancer">Freelancer</option>
-            <option value="client">Client</option>
-          </select>
-
-          <div className="form-check mb-3 text-start">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="remember"
-              name="remember"
-              checked={formData.remember}
-              onChange={handleChange}
-            />
-
-            <label
-              className="form-check-label"
-              htmlFor="remember"
-            >
-              Remember Me
-            </label>
-          </div>
-
-          <button type="submit">
-            Create Account
+          <button className="primary-btn" type="submit">
+            Create account
           </button>
+
         </form>
 
-        <div className="mt-3">
-          <Link
-            to="/forgot-password"
-            className="text-decoration-none"
-          >
-            Forgot Password?
-          </Link>
-        </div>
-
-        <p className="mt-3">
-          Already have an account?{" "}
-          <Link to="/login">Login</Link>
+        <p className="switch">
+          Already have an account? <a href="/login">Login</a>
         </p>
+
       </div>
+
     </div>
   );
 }
