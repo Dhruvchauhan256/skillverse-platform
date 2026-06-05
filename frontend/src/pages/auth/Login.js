@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
 
 function Login() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -34,8 +37,8 @@ function Login() {
 
       console.log("LOGIN RESPONSE:", res.data);
 
-      // OPTIONAL: redirect later
-      // window.location.href = "/dashboard";
+      // Redirect to dashboard
+      navigate("/dashboard");
 
     } catch (error) {
       console.log(error);
@@ -53,7 +56,6 @@ function Login() {
         <h2>Welcome back</h2>
         <p>Login to continue to SkillVerse</p>
 
-        {/* FORM */}
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -78,7 +80,7 @@ function Login() {
 
         <p className="switch">
           Don't have an account?{" "}
-          <a href="/register">Sign up</a>
+          <Link to="/signup">Sign up</Link>
         </p>
       </div>
     </div>
