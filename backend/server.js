@@ -1,7 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+
 const authRoutes = require("./routes/authRoutes");
+const gigRoutes = require("./routes/gigRoutes");
+const projectRoutes = require("./routes/projectRoutes");
 
 dotenv.config();
 
@@ -11,8 +14,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Auth Routes
+// Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/gigs", gigRoutes);
+app.use("/api/projects", projectRoutes);
 
 // Home Route
 app.get("/", (req, res) => {
@@ -31,6 +36,14 @@ app.get("/api/health", (req, res) => {
 app.get("/api/test", (req, res) => {
   res.json({
     message: "Backend Connected Successfully ✅",
+  });
+});
+
+// 404 Route
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Route not found",
   });
 });
 

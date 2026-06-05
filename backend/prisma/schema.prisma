@@ -8,56 +8,48 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      String   @default("user")
-  createdAt DateTime @default(now())
-
-  freelancerProfile FreelancerProfile?
+  id                String             @id @default(uuid())
+  name              String
+  email             String             @unique
+  password          String
+  role              String             @default("user")
+  createdAt         DateTime           @default(now())
   clientProfile     ClientProfile?
-
-  gigs     Gig[]
-  projects Project[]
+  freelancerProfile FreelancerProfile?
+  gigs              Gig[]
+  projects          Project[]
 }
 
 model FreelancerProfile {
-  id         String @id @default(uuid())
+  id         String   @id @default(uuid())
   title      String
   bio        String
   skills     String
   hourlyRate Int
   country    String
-
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
+  userId     String   @unique
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
 }
 
 model ClientProfile {
-  id          String  @id @default(uuid())
+  id          String   @id @default(uuid())
   companyName String?
   description String?
-
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
+  userId      String   @unique
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 model Gig {
-  id          String   @id @default(uuid())
-  title       String
-  description String
-  price       Int
-  category    String
-
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  price        Int
+  category     String
   freelancerId String
-  freelancer   User @relation(fields: [freelancerId], references: [id])
-
-  createdAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+  freelancer   User     @relation(fields: [freelancerId], references: [id])
 }
 
 model Project {
@@ -65,10 +57,11 @@ model Project {
   title       String
   description String
   budget      Int
+  category    String
   status      String   @default("open")
 
-  clientId String
-  client   User @relation(fields: [clientId], references: [id])
+  clientId    String
+  createdAt   DateTime @default(now())
 
-  createdAt DateTime @default(now())
+  client      User @relation(fields: [clientId], references: [id])
 }
