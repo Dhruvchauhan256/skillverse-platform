@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import "./Auth.css";
 
 function Register() {
@@ -48,22 +49,12 @@ function Register() {
         <h2>Create account</h2>
         <p>Join SkillVerse and start freelancing</p>
 
-        {/* SOCIAL BUTTONS */}
-        <button className="google-btn">
-          Continue with Google
-        </button>
-
-        <button className="facebook-btn">
-          Continue with Facebook
-        </button>
-
-        <button className="apple-btn">
-          Continue with Apple
-        </button>
+        <button className="google-btn">Continue with Google</button>
+        <button className="facebook-btn">Continue with Facebook</button>
+        <button className="apple-btn">Continue with Apple</button>
 
         <div className="divider">OR</div>
 
-        {/* FORM */}
         <form onSubmit={handleSubmit}>
           <input
             name="username"
@@ -94,7 +85,7 @@ function Register() {
 
         <p className="switch">
           Already have an account?{" "}
-          <a href="/login">Login</a>
+          <Link to="/login">Login</Link>
         </p>
       </div>
     </div>
