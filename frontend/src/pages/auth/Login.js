@@ -1,57 +1,86 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "./Auth.css";
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
 
-  const handleLogin = (e) => {
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ email, password });
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        {
+          email: form.email,
+          password: form.password,
+        }
+      );
+
+      // Save JWT token
+      localStorage.setItem("token", res.data.token);
+
+      alert("Login Successful ✅");
+
+      console.log("LOGIN RESPONSE:", res.data);
+
+      // OPTIONAL: redirect later
+      // window.location.href = "/dashboard";
+
+    } catch (error) {
+      console.log(error);
+
+      alert(
+        error.response?.data?.message ||
+          "Login Failed"
+      );
+    }
   };
 
   return (
     <div className="auth-container">
-
       <div className="auth-card">
-
         <h2>Welcome back</h2>
         <p>Login to continue to SkillVerse</p>
 
-        {/* SOCIAL LOGIN */}
-        <button className="google-btn">Continue with Google</button>
-        <button className="facebook-btn">Continue with Facebook</button>
-        <button className="apple-btn">Continue with Apple</button>
-
-        <div className="divider">OR</div>
-
-        {/* EMAIL LOGIN */}
-        <form onSubmit={handleLogin}>
+        {/* FORM */}
+        <form onSubmit={handleSubmit}>
           <input
             type="email"
+            name="email"
             placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={form.email}
+            onChange={handleChange}
           />
 
           <input
             type="password"
+            name="password"
             placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={form.password}
+            onChange={handleChange}
           />
 
-          <button type="submit" className="primary-btn">
+          <button className="primary-btn" type="submit">
             Login
           </button>
         </form>
 
         <p className="switch">
-          Don't have an account? <a href="/signup">Sign up</a>
+          Don't have an account?{" "}
+          <a href="/register">Sign up</a>
         </p>
-
       </div>
-
     </div>
   );
 }
