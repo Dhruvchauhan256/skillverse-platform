@@ -14,4 +14,61 @@ model User {
   password  String
   role      String   @default("user")
   createdAt DateTime @default(now())
+
+  freelancerProfile FreelancerProfile?
+  clientProfile     ClientProfile?
+
+  gigs     Gig[]
+  projects Project[]
+}
+
+model FreelancerProfile {
+  id         String @id @default(uuid())
+  title      String
+  bio        String
+  skills     String
+  hourlyRate Int
+  country    String
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model ClientProfile {
+  id          String  @id @default(uuid())
+  companyName String?
+  description String?
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Gig {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  price       Int
+  category    String
+
+  freelancerId String
+  freelancer   User @relation(fields: [freelancerId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  budget      Int
+  status      String   @default("open")
+
+  clientId String
+  client   User @relation(fields: [clientId], references: [id])
+
+  createdAt DateTime @default(now())
 }
