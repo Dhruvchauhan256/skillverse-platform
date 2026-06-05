@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const authRoutes = require("./routes/authRoutes");
 
 dotenv.config();
 
@@ -9,6 +10,9 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Auth Routes
+app.use("/api/auth", authRoutes);
 
 // Home Route
 app.get("/", (req, res) => {
@@ -29,10 +33,6 @@ app.get("/api/test", (req, res) => {
     message: "Backend Connected Successfully ✅",
   });
 });
-
-// Future Routes
-// const authRoutes = require("./routes/authRoutes");
-// app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT || 5000;
 
