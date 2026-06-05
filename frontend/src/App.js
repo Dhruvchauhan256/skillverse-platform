@@ -19,9 +19,8 @@ import JobsPage from "./pages/JobsPage";
 
 // Components
 import Navbar from "./components/common/Navbar";
-import Footer from "./components/common/Footer";
 
-// Simple pages
+// Simple Pages
 const FindWork = () => (
   <div className="text-center mt-5">
     <h2>Find Work Page</h2>
@@ -40,7 +39,6 @@ function App() {
       <Navbar />
 
       <Routes>
-
         {/* HOME */}
         <Route path="/" element={<Home />} />
 
@@ -69,9 +67,10 @@ function App() {
         {/* FREELANCER PROFILE */}
         <Route path="/freelancer/:name" element={<FreelancerProfile />} />
         <Route path="/freelancer-profile" element={<FreelancerProfile />} />
+
+        {/* JOBS */}
         <Route path="/jobs" element={<JobsPage />} />
-      
-          </Routes>
+      </Routes>
     </>
   );
 }
