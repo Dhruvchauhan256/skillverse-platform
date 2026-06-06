@@ -12,7 +12,7 @@ function Home() {
     rating: 4.9,
     reviews: 120,
     price: 50,
-    image: "https://source.unsplash.com/300x200/?website",
+    image:"https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800",
     avatar: "https://i.pravatar.cc/40"
   },
   {
@@ -21,7 +21,7 @@ function Home() {
     rating: 4.8,
     reviews: 98,
     price: 35,
-    image: "https://source.unsplash.com/300x200/?design",
+    image:"https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800",
     avatar: "https://i.pravatar.cc/41"
   }
 ];
