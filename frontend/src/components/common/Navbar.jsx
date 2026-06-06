@@ -27,9 +27,22 @@ function Navbar() {
               <Link className="signup-btn" to="/signup">Join</Link>
             </>
           ) : (
-            <Link className="dashboard-btn" to="/dashboard">
-              Dashboard
-            </Link>
+            <>
+  <Link className="dashboard-btn" to="/dashboard">
+    Dashboard
+  </Link>
+
+  <button
+    className="logout-btn"
+    onClick={() => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/";
+    }}
+  >
+    Logout
+  </button>
+</>
           )}
 
         </div>
