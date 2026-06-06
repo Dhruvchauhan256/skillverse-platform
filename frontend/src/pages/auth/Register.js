@@ -3,7 +3,9 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
 
-function Register() {
+function Register() 
+{
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     username: "",
     email: "",
