@@ -1,72 +1,140 @@
 .auth-container {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f5f7fb;
+  background:
+    linear-gradient(
+      135deg,
+      #0f172a,
+      #1e293b,
+      #0f172a
+    );
+  padding: 20px;
 }
 
 .auth-card {
-  width: 380px;
-  background: white;
-  padding: 30px;
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 450px;
+
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255,255,255,0.1);
+
+  border-radius: 20px;
+  padding: 35px;
+
+  box-shadow:
+    0 15px 40px rgba(0,0,0,0.25);
+
   text-align: center;
 }
 
 .auth-card h2 {
-  margin-bottom: 5px;
+  color: white;
+  font-weight: 700;
+  margin-bottom: 8px;
 }
 
 .auth-card p {
-  color: gray;
-  font-size: 13px;
-  margin-bottom: 15px;
+  color: #cbd5e1;
+  margin-bottom: 20px;
 }
 
 .auth-card input {
   width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+  padding: 14px;
+
+  margin-bottom: 14px;
+
+  border: 1px solid rgba(255,255,255,0.15);
+
+  background: rgba(255,255,255,0.08);
+
+  color: white;
+
+  border-radius: 12px;
+
+  outline: none;
+
+  transition: all 0.3s ease;
+}
+
+.auth-card input::placeholder {
+  color: #cbd5e1;
+}
+
+.auth-card input:focus {
+  border-color: #00d4ff;
+  box-shadow: 0 0 12px rgba(0,212,255,0.4);
 }
 
 .primary-btn {
   width: 100%;
-  background: #1dbf73;
-  color: white;
-  padding: 10px;
   border: none;
-  border-radius: 8px;
-  margin-top: 10px;
+
+  padding: 14px;
+
+  border-radius: 12px;
+
+  background: #00d4ff;
+
+  color: #000;
+
+  font-weight: 700;
+
   cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
 }
 
 .google-btn,
 .facebook-btn,
 .apple-btn {
   width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: white;
+  padding: 12px;
+  margin-bottom: 10px;
+
+  border-radius: 12px;
+
+  background: rgba(255,255,255,0.08);
+
+  border: 1px solid rgba(255,255,255,0.12);
+
+  color: white;
+
   cursor: pointer;
+
+  transition: 0.3s;
 }
 
-.google-btn:hover { background: #f1f1f1; }
-.facebook-btn:hover { background: #f1f1f1; }
-.apple-btn:hover { background: #f1f1f1; }
+.google-btn:hover,
+.facebook-btn:hover,
+.apple-btn:hover {
+  background: rgba(255,255,255,0.12);
+}
 
 .divider {
-  margin: 10px 0;
-  font-size: 12px;
-  color: gray;
+  color: #cbd5e1;
+  margin: 18px 0;
 }
 
 .switch {
-  margin-top: 10px;
-  font-size: 13px;
+  margin-top: 16px;
+  color: #cbd5e1;
+}
+
+.switch a {
+  color: #00d4ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.switch a:hover {
+  text-decoration: underline;
 }
