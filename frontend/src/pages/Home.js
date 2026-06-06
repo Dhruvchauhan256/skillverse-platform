@@ -121,11 +121,84 @@ const navigate = useNavigate();
         <button>Get Started</button>
       </section>
 
-        <div className="gig-grid">
-  {gigs.map((gig, i) => (
-    <GigCard key={i} gig={gig} />
-  ))}
-</div>
+      <section className="gigs-section">
+  <h2>Popular Services</h2>
+
+  <div className="gig-grid">
+    {gigs.map((gig, i) => (
+      <GigCard key={i} gig={gig} />
+    ))}
+  </div>
+</section>
+
+<section className="trusted-section">
+  <h2>Trusted By</h2>
+
+  <div className="trusted-grid">
+    <div>Google</div>
+    <div>Microsoft</div>
+    <div>Amazon</div>
+    <div>Meta</div>
+    <div>Netflix</div>
+  </div>
+</section>
+
+<section className="how-it-works">
+  <h2>How SkillVerse Works</h2>
+
+  <div className="steps-grid">
+    <div className="step-card">
+      <h3>1️⃣ Post Project</h3>
+      <p>Create your project in minutes.</p>
+    </div>
+
+    <div className="step-card">
+      <h3>2️⃣ Receive Proposals</h3>
+      <p>Get proposals from top freelancers.</p>
+    </div>
+
+    <div className="step-card">
+      <h3>3️⃣ Hire Talent</h3>
+      <p>Choose the best freelancer.</p>
+    </div>
+
+    <div className="step-card">
+      <h3>4️⃣ Pay Securely</h3>
+      <p>Safe payments with escrow protection.</p>
+    </div>
+  </div>
+</section>
+
+<section className="testimonial-section">
+  <h2>What Clients Say</h2>
+
+  <div className="testimonial-grid">
+    <div className="testimonial-card">
+      ⭐⭐⭐⭐⭐
+      <p>
+        SkillVerse helped us hire a React developer within
+        24 hours.
+      </p>
+      <h4>Rahul Sharma</h4>
+    </div>
+
+    <div className="testimonial-card">
+      ⭐⭐⭐⭐⭐
+      <p>
+        Better experience than most freelancer platforms.
+      </p>
+      <h4>Priya Patel</h4>
+    </div>
+
+    <div className="testimonial-card">
+      ⭐⭐⭐⭐⭐
+      <p>
+        Fast hiring process and excellent freelancers.
+      </p>
+      <h4>Arjun Mehta</h4>
+    </div>
+  </div>
+</section>
     </div>
   );
 }
