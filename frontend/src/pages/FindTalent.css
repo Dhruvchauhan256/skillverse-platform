@@ -52,3 +52,25 @@
   text-align: center;
   box-shadow: 0 5px 15px rgba(0,0,0,.08);
 }
+.talent-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.talent-filters select {
+  padding: 12px 15px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  min-width: 180px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+}
+
+.talent-filters select:focus {
+  outline: none;
+  border-color: #1dbf73;
+}
