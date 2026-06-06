@@ -33,9 +33,12 @@ function Register()
         }
       );
 
-      alert("Registration Successful!");
-      console.log(response.data);
-    } catch (error) {
+      alert("Registration Successful! Please login.");
+
+console.log(response.data);
+
+navigate("/login");
+} catch (error) {
       console.log(error);
 
       alert(
