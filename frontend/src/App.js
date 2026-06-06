@@ -3,6 +3,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 
 // Pages
+import FindTalent from "./pages/FindTalent";
+import FindWork from "./pages/FindWork";
 import Home from "./pages/Home";
 import FreelancerDashboard from "./pages/dashboard/FreelancerDashboard";
 import ClientProfile from "./pages/client/ClientProfile";
@@ -19,19 +21,6 @@ import JobsPage from "./pages/JobsPage";
 
 // Components
 import Navbar from "./components/common/Navbar";
-
-// Simple Pages
-const FindWork = () => (
-  <div className="text-center mt-5">
-    <h2>Find Work Page</h2>
-  </div>
-);
-
-const FindTalent = () => (
-  <div className="text-center mt-5">
-    <h2>Find Talent Page</h2>
-  </div>
-);
 
 function App() {
   return (
