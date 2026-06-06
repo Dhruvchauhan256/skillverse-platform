@@ -33,6 +33,12 @@ function Login() {
       // Save JWT token
       localStorage.setItem("token", res.data.token);
 
+if (res.data.user) {
+  localStorage.setItem(
+    "user",
+    JSON.stringify(res.data.user)
+  );
+}
       alert("Login Successful ✅");
 
       console.log("LOGIN RESPONSE:", res.data);
