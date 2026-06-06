@@ -1,48 +1,23 @@
 import React from "react";
 import "./Home.css";
 import { useNavigate } from "react-router-dom";
-import GigCard from "../components/gigs/GigCard";
 
 function Home() {
+  const navigate = useNavigate();
 
-  const gigs = [
-  {
-    title: "I will design modern React website",
-    seller: "John Doe",
-    rating: 4.9,
-    reviews: 120,
-    price: 50,
-    image:"https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800",
-    avatar: "https://i.pravatar.cc/40"
-  },
-  {
-    title: "I will build your business UI",
-    seller: "Aman Patel",
-    rating: 4.8,
-    reviews: 98,
-    price: 35,
-    image:"https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800",
-    avatar: "https://i.pravatar.cc/41"
-  }
-];
-  
   const categories = [
     "Web Development",
     "UI/UX Design",
     "Mobile Apps",
     "Video Editing",
-    "SEO",
+    "SEO & Marketing",
     "AI Services",
     "Logo Design",
     "Content Writing",
-  ];
-const navigate = useNavigate();
-  
-  const freelancers = [
-    { name: "John Doe", skill: "React Developer", rating: 4.8 },
-    { name: "Aman Patel", skill: "UI Designer", rating: 4.6 },
-    { name: "Sara Khan", skill: "Full Stack Developer", rating: 4.9 },
-    { name: "Rahul Mehta", skill: "Node.js Expert", rating: 4.7 },
+    "Data Entry",
+    "Accounting & GST",
+    "Legal Services",
+    "Cyber Security",
   ];
 
   return (
@@ -51,13 +26,21 @@ const navigate = useNavigate();
       {/* HERO */}
       <section className="hero">
         <div className="hero-content">
-          <h1>Find the perfect freelance services for your business</h1>
-          <p>Trusted by companies worldwide to hire top talent</p>
+          <h1>India's Freelancer Marketplace Built For Growth</h1>
+
+          <p>
+            Hire skilled freelancers, post projects, receive proposals,
+            and manage payments in one place.
+          </p>
 
           <div className="hero-search">
-            <input type="text" placeholder="Search freelancers, skills..." />
+            <input
+              type="text"
+              placeholder="Search services, skills, projects..."
+            />
+
             <button onClick={() => navigate("/search")}>
-                  Search
+              Search
             </button>
           </div>
 
@@ -67,11 +50,12 @@ const navigate = useNavigate();
             <span>UI Design</span>
             <span>SEO</span>
             <span>AI</span>
+            <span>Video Editing</span>
           </div>
         </div>
       </section>
 
-      {/* CATEGORY GRID */}
+      {/* CATEGORIES */}
       <section className="categories-section">
         <h2>Browse Categories</h2>
 
@@ -84,121 +68,147 @@ const navigate = useNavigate();
         </div>
       </section>
 
-      {/* FREELANCERS */}
-      <section className="freelancers-section">
-        <h2>Featured Freelancers</h2>
+      {/* WHY SKILLVERSE */}
+      <section className="skillverse-benefits">
+        <h2>Why Choose SkillVerse?</h2>
 
-        <div className="freelancer-grid">
-          {freelancers.map((f, i) => (
-            <div key={i} className="freelancer-card">
-              <h3>{f.name}</h3>
-              <p>{f.skill}</p>
-              <span>⭐ {f.rating}</span>
-            </div>
-          ))}
+        <div className="benefits-grid">
+
+          <div className="benefit-card">
+            <h3>💰 8% Commission</h3>
+            <p>
+              Lower platform fees compared to many global
+              freelance marketplaces.
+            </p>
+          </div>
+
+          <div className="benefit-card">
+            <h3>🇮🇳 India First Platform</h3>
+            <p>
+              Designed specifically for Indian freelancers,
+              startups and businesses.
+            </p>
+          </div>
+
+          <div className="benefit-card">
+            <h3>📱 UPI Payments</h3>
+            <p>
+              Fast and simple payments using India's preferred
+              payment method.
+            </p>
+          </div>
+
+          <div className="benefit-card">
+            <h3>🧾 GST Ready</h3>
+            <p>
+              GST-compliant invoicing and business-friendly
+              workflows.
+            </p>
+          </div>
+
+          <div className="benefit-card">
+            <h3>🤖 AI Matching</h3>
+            <p>
+              Smart freelancer and project matching powered by AI.
+            </p>
+          </div>
+
+          <div className="benefit-card">
+            <h3>🔒 Escrow Protection</h3>
+            <p>
+              Secure milestone-based payments for clients
+              and freelancers.
+            </p>
+          </div>
+
         </div>
       </section>
 
-      {/* STATS */}
-      <section className="stats">
-        <div>
-          <h3>10K+</h3>
-          <p>Freelancers</p>
+      {/* HOW IT WORKS */}
+      <section className="how-it-works">
+        <h2>How SkillVerse Works</h2>
+
+        <div className="steps-grid">
+
+          <div className="step-card">
+            <h3>1️⃣ Post a Project</h3>
+            <p>
+              Create a project and describe your requirements.
+            </p>
+          </div>
+
+          <div className="step-card">
+            <h3>2️⃣ Receive Proposals</h3>
+            <p>
+              Skilled freelancers submit proposals for your work.
+            </p>
+          </div>
+
+          <div className="step-card">
+            <h3>3️⃣ Hire & Collaborate</h3>
+            <p>
+              Choose the best freelancer and communicate directly.
+            </p>
+          </div>
+
+          <div className="step-card">
+            <h3>4️⃣ Secure Payment</h3>
+            <p>
+              Release payments safely through milestone protection.
+            </p>
+          </div>
+
         </div>
-        <div>
-          <h3>5K+</h3>
-          <p>Projects</p>
-        </div>
-        <div>
-          <h3>99%</h3>
-          <p>Success Rate</p>
+      </section>
+
+      {/* INDIA FOCUSED */}
+      <section className="skillverse-benefits">
+        <h2>Built For India</h2>
+
+        <div className="benefits-grid">
+
+          <div className="benefit-card">
+            <h3>🗣 Hinglish Friendly</h3>
+            <p>
+              Designed for India's communication style.
+            </p>
+          </div>
+
+          <div className="benefit-card">
+            <h3>🎓 Fresher Friendly</h3>
+            <p>
+              Opportunities for BCA, MCA, B.Tech and fresh graduates.
+            </p>
+          </div>
+
+          <div className="benefit-card">
+            <h3>🏙 Tier 2 & Tier 3 Focus</h3>
+            <p>
+              Connecting talent beyond metro cities.
+            </p>
+          </div>
+
+          <div className="benefit-card">
+            <h3>📲 WhatsApp Updates</h3>
+            <p>
+              Faster notifications and communication.
+            </p>
+          </div>
+
         </div>
       </section>
 
       {/* CTA */}
       <section className="cta">
-        <h2>Start hiring top talent or grow your freelance career</h2>
-        <button>Get Started</button>
+        <h2>
+          Join India's Next Generation Freelance Marketplace
+        </h2>
+
+        <button onClick={() => navigate("/signup")}>
+          Create Free Account
+        </button>
       </section>
 
-      <section className="gigs-section">
-  <h2>Popular Services</h2>
-
-  <div className="gig-grid">
-    {gigs.map((gig, i) => (
-      <GigCard key={i} gig={gig} />
-    ))}
-  </div>
-</section>
-
-<section className="trusted-section">
-  <h2>Trusted By</h2>
-
-  <div className="trusted-grid">
-    <div>Google</div>
-    <div>Microsoft</div>
-    <div>Amazon</div>
-    <div>Meta</div>
-    <div>Netflix</div>
-  </div>
-</section>
-
-<section className="how-it-works">
-  <h2>How SkillVerse Works</h2>
-
-  <div className="steps-grid">
-    <div className="step-card">
-      <h3>1️⃣ Post Project</h3>
-      <p>Create your project in minutes.</p>
-    </div>
-
-    <div className="step-card">
-      <h3>2️⃣ Receive Proposals</h3>
-      <p>Get proposals from top freelancers.</p>
-    </div>
-
-    <div className="step-card">
-      <h3>3️⃣ Hire Talent</h3>
-      <p>Choose the best freelancer.</p>
-    </div>
-
-    <div className="step-card">
-      <h3>4️⃣ Pay Securely</h3>
-      <p>Safe payments with escrow protection.</p>
-    </div>
-  </div>
-</section>
-
-<section className="testimonial-section">
-  <h2>What Clients Say</h2>
-
-  <div className="testimonial-grid">
-    <div className="testimonial-card">
-      ⭐⭐⭐⭐⭐
-      <p>
-        SkillVerse helped us hire a React developer within
-        24 hours.
-      </p>
-      <h4>Rahul Sharma</h4>
-    </div>
-
-    <div className="testimonial-card">
-      ⭐⭐⭐⭐⭐
-      <p>
-        Better experience than most freelancer platforms.
-      </p>
-      <h4>Priya Patel</h4>
-    </div>
-
-    <div className="testimonial-card">
-      ⭐⭐⭐⭐⭐
-      <p>
-        Fast hiring process and excellent freelancers.
-      </p>
-      <h4>Arjun Mehta</h4>
-    </div>
-  </div>
-</section>
     </div>
   );
 }
