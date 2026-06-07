@@ -13,7 +13,7 @@ const fetchProfile = async () => {
 try {
 const token = localStorage.getItem("token");
 
-```
+
   const res = await axios.get(
     "http://localhost:5000/api/profile/me",
     {
@@ -29,7 +29,7 @@ const token = localStorage.getItem("token");
 } catch (error) {
   console.log(error);
 }
-```
+
 
 };
 
@@ -37,7 +37,7 @@ return ( <div className="dashboard">
 {user && ( <div className="panel mb-4"> <h2>Welcome, {user.name}</h2> <p>Email: {user.email}</p> <p>Role: {user.role}</p> </div>
 )}
 
-```
+
   <div className="stats-grid">
     <div className="stat-card">
       <h3>Total Earnings</h3>
@@ -77,7 +77,7 @@ return ( <div className="dashboard">
     </div>
   </div>
 </div>
-```
+
 
 );
 }
