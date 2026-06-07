@@ -3,7 +3,7 @@ import "./ClientDashboard.css";
 
 function ClientDashboard() {
   return (
-    <div className="client-dashboard">
+    <div className="dashboard">
 
       <div className="dashboard-header">
         <h1>Client Dashboard</h1>
@@ -13,97 +13,62 @@ function ClientDashboard() {
       </div>
 
       {/* STATS */}
-
       <div className="stats-grid">
 
         <div className="stat-card">
-          <h2>12</h2>
-          <p>Total Projects</p>
+          <h3>Active Projects</h3>
+          <p>12</p>
         </div>
 
         <div className="stat-card">
-          <h2>4</h2>
-          <p>Active Projects</p>
+          <h3>Total Freelancers</h3>
+          <p>37</p>
         </div>
 
         <div className="stat-card">
-          <h2>17</h2>
-          <p>Pending Proposals</p>
+          <h3>Pending Proposals</h3>
+          <p>15</p>
         </div>
 
         <div className="stat-card">
-          <h2>3</h2>
-          <p>Hired Freelancers</p>
+          <h3>Total Spend</h3>
+          <p>$4,850</p>
         </div>
 
       </div>
 
-      {/* PROJECTS */}
+      {/* CONTENT */}
+      <div className="dashboard-grid">
 
-      <div className="dashboard-section">
-        <h2>My Projects</h2>
+        <div className="panel">
+          <h3>Recent Projects</h3>
 
-        <div className="project-item">
-          Build MERN SaaS Dashboard
+          <div className="project-item">
+            <strong>MERN Website Development</strong>
+            <p>12 proposals received</p>
+          </div>
+
+          <div className="project-item">
+            <strong>Mobile App UI Design</strong>
+            <p>7 proposals received</p>
+          </div>
+
+          <div className="project-item">
+            <strong>SEO Optimization</strong>
+            <p>5 proposals received</p>
+          </div>
+
         </div>
 
-        <div className="project-item">
-          E-Commerce Website Development
+        <div className="panel">
+          <h3>Recent Activity</h3>
+
+          <p>✔ New proposal received</p>
+          <p>✔ Freelancer hired</p>
+          <p>✔ Project milestone completed</p>
+          <p>✔ Payment released</p>
         </div>
 
-        <div className="project-item">
-          SEO Marketing Campaign
-        </div>
-      </div>
-
-      {/* PROPOSALS */}
-
-      <div className="dashboard-section">
-        <h2>Received Proposals</h2>
-
-        <div className="proposal-item">
-          Rahul Sharma submitted a proposal
-        </div>
-
-        <div className="proposal-item">
-          Priya Patel submitted a proposal
-        </div>
-
-        <div className="proposal-item">
-          Amit Kumar submitted a proposal
-        </div>
-      </div>
-
-      {/* SAVED */}
-
-      <div className="dashboard-section">
-        <h2>Saved Freelancers</h2>
-
-        <div className="saved-item">
-          React Developer
-        </div>
-
-        <div className="saved-item">
-          UI/UX Designer
-        </div>
-
-        <div className="saved-item">
-          SEO Expert
-        </div>
-      </div>
-
-      {/* MESSAGES */}
-
-      <div className="dashboard-section">
-        <h2>Recent Messages</h2>
-
-        <div className="message-item">
-          New message from freelancer
-        </div>
-
-        <div className="message-item">
-          Project update received
-        </div>
       </div>
 
     </div>
