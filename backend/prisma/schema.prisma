@@ -57,11 +57,9 @@ model Project {
   title       String
   description String
   budget      Int
-  category    String
   status      String   @default("open")
-
   clientId    String
   createdAt   DateTime @default(now())
-
-  client      User @relation(fields: [clientId], references: [id])
+  category    String
+  client      User     @relation(fields: [clientId], references: [id])
 }
