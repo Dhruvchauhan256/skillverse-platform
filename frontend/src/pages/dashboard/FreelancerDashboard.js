@@ -18,7 +18,7 @@ const token = localStorage.getItem("token");
     "http://localhost:5000/api/profile/me",
     {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: "Bearer " + token,
       },
     }
   );
@@ -34,20 +34,11 @@ const token = localStorage.getItem("token");
 };
 
 return ( <div className="dashboard">
+{user && ( <div className="panel mb-4"> <h2>Welcome, {user.name}</h2> <p>Email: {user.email}</p> <p>Role: {user.role}</p> </div>
+)}
 
 ```
-  {/* USER INFO */}
-  {user && (
-    <div className="panel mb-4">
-      <h2>Welcome, {user.name}</h2>
-      <p>Email: {user.email}</p>
-      <p>Role: {user.role}</p>
-    </div>
-  )}
-
-  {/* TOP STATS */}
   <div className="stats-grid">
-
     <div className="stat-card">
       <h3>Total Earnings</h3>
       <p>$1,240</p>
@@ -67,12 +58,9 @@ return ( <div className="dashboard">
       <h3>Profile Views</h3>
       <p>1,532</p>
     </div>
-
   </div>
 
-  {/* MAIN CONTENT */}
   <div className="dashboard-grid">
-
     <div className="panel">
       <h3>Recent Activity</h3>
       <p>✔ You sent a proposal to "React Dashboard Project"</p>
@@ -87,9 +75,7 @@ return ( <div className="dashboard">
       </div>
       <p>80% complete</p>
     </div>
-
   </div>
-
 </div>
 ```
 
