@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import FindTalent from "./pages/FindTalent";
 import FindWork from "./pages/FindWork";
 import FreelancerDashboard from "./pages/dashboard/FreelancerDashboard";
+import ClientDashboard from "./pages/dashboard/ClientDashboard";
 import ClientProfile from "./pages/client/ClientProfile";
 import PostProject from "./pages/projects/PostProject";
 import ProjectList from "./pages/projects/ProjectList";
@@ -116,6 +117,14 @@ function App() {
           element={<FreelancerProfile />}
         />
       </Routes>
+            <Route
+  path="/client-dashboard"
+  element={
+    <ProtectedRoute>
+      <ClientDashboard />
+    </ProtectedRoute>
+  }
+/>
     </>
   );
 }
