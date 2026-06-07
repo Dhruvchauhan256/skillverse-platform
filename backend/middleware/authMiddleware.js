@@ -1,3 +1,6 @@
+
+DHRUV HARISH CHAUHAN@LAPTOP-AAUELRQ1 MINGW64 ~/skillverse-platform/backend (main)
+$ cat middleware/authMiddleware.js
 const protect = (req, res, next) => {
   console.log("AUTH HEADER:", req.headers.authorization);
 
@@ -28,3 +31,4 @@ const protect = (req, res, next) => {
     });
   }
 };
+DHRUV HARISH CHAUHAN@LAPTOP-AAUELRQ1 MINGW64 ~/skillverse-platform/backend (main)
