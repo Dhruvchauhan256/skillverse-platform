@@ -18,6 +18,7 @@ import Register from "./pages/auth/Register";
 import FreelancerSearch from "./pages/freelancer/FreelancerSearch";
 import CategorySearch from "./pages/search/CategorySearch";
 import JobsPage from "./pages/JobsPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Components
 import Navbar from "./components/common/Navbar";
@@ -57,6 +58,7 @@ function App() {
         <Route path="/freelancer/:name" element={<FreelancerProfile />} />
         <Route path="/freelancer-profile" element={<FreelancerProfile />} />
 
+    <Route path="/dashboard" element={<ProtectedRoute> <FreelancerDashboard /></ProtectedRoute>}/>
         {/* JOBS */}
         <Route path="/jobs" element={<JobsPage />} />
       </Routes>
