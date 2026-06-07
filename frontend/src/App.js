@@ -45,7 +45,7 @@ function App() {
         <Route path="/search" element={<CategorySearch />} />
         <Route path="/jobs" element={<JobsPage />} />
 
-        {/* PROTECTED DASHBOARD */}
+        {/* DASHBOARD */}
         <Route
           path="/dashboard"
           element={
@@ -55,7 +55,7 @@ function App() {
           }
         />
 
-        {/* PROTECTED CLIENT PROFILE */}
+        {/* CLIENT PROFILE */}
         <Route
           path="/client-profile"
           element={
@@ -65,7 +65,7 @@ function App() {
           }
         />
 
-        {/* PROTECTED PROJECTS */}
+        {/* POST PROJECT */}
         <Route
           path="/post-project"
           element={
@@ -75,6 +75,7 @@ function App() {
           }
         />
 
+        {/* PROPOSAL */}
         <Route
           path="/proposal"
           element={
@@ -84,9 +85,17 @@ function App() {
           }
         />
 
-        <Route path="/projects" element={<ProjectList />} />
+        {/* PROJECT LIST */}
+        <Route
+          path="/projects"
+          element={
+            <ProtectedRoute>
+              <ProjectList />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* PROTECTED MESSAGES */}
+        {/* MESSAGES */}
         <Route
           path="/messages"
           element={
