@@ -3,9 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 
 // Pages
+import Home from "./pages/Home";
 import FindTalent from "./pages/FindTalent";
 import FindWork from "./pages/FindWork";
-import Home from "./pages/Home";
 import FreelancerDashboard from "./pages/dashboard/FreelancerDashboard";
 import ClientProfile from "./pages/client/ClientProfile";
 import PostProject from "./pages/projects/PostProject";
@@ -13,11 +13,13 @@ import ProjectList from "./pages/projects/ProjectList";
 import SubmitProposal from "./pages/projects/SubmitProposal";
 import Messages from "./pages/messages/Messages";
 import FreelancerProfile from "./pages/freelancer/FreelancerProfile";
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
 import FreelancerSearch from "./pages/freelancer/FreelancerSearch";
 import CategorySearch from "./pages/search/CategorySearch";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 import JobsPage from "./pages/JobsPage";
+
+// Protected Route
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Components
@@ -41,26 +43,69 @@ function App() {
         <Route path="/find-talent" element={<FindTalent />} />
         <Route path="/freelancers" element={<FreelancerSearch />} />
         <Route path="/search" element={<CategorySearch />} />
+        <Route path="/jobs" element={<JobsPage />} />
 
-        {/* DASHBOARD */}
-        <Route path="/dashboard" element={<FreelancerDashboard />} />
-        <Route path="/client-profile" element={<ClientProfile />} />
+        {/* PROTECTED DASHBOARD */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <FreelancerDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* PROJECTS */}
-        <Route path="/post-project" element={<PostProject />} />
+        {/* PROTECTED CLIENT PROFILE */}
+        <Route
+          path="/client-profile"
+          element={
+            <ProtectedRoute>
+              <ClientProfile />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* PROTECTED PROJECTS */}
+        <Route
+          path="/post-project"
+          element={
+            <ProtectedRoute>
+              <PostProject />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/proposal"
+          element={
+            <ProtectedRoute>
+              <SubmitProposal />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/projects" element={<ProjectList />} />
-        <Route path="/proposal" element={<SubmitProposal />} />
 
-        {/* MESSAGES */}
-        <Route path="/messages" element={<Messages />} />
+        {/* PROTECTED MESSAGES */}
+        <Route
+          path="/messages"
+          element={
+            <ProtectedRoute>
+              <Messages />
+            </ProtectedRoute>
+          }
+        />
 
         {/* FREELANCER PROFILE */}
-        <Route path="/freelancer/:name" element={<FreelancerProfile />} />
-        <Route path="/freelancer-profile" element={<FreelancerProfile />} />
+        <Route
+          path="/freelancer/:name"
+          element={<FreelancerProfile />}
+        />
 
-    <Route path="/dashboard" element={<ProtectedRoute> <FreelancerDashboard /></ProtectedRoute>}/>
-        {/* JOBS */}
-        <Route path="/jobs" element={<JobsPage />} />
+        <Route
+          path="/freelancer-profile"
+          element={<FreelancerProfile />}
+        />
       </Routes>
     </>
   );
