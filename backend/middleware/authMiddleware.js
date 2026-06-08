@@ -26,13 +26,13 @@ const protect = (req, res, next) => {
 
     next();
   } catch (error) {
-    console.log(error);
+  console.log("JWT ERROR:", error.message);
 
-    return res.status(401).json({
-      success: false,
-      message: "Invalid token",
-    });
-  }
+  return res.status(401).json({
+    success: false,
+    message: "Invalid token",
+  });
+}
 };
 
 module.exports = protect;
