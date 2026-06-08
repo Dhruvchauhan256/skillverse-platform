@@ -26,9 +26,8 @@ exports.getCurrentUser = async (req, res) => {
       success: true,
       user: userData,
     });
-
   } catch (error) {
-    console.log(error);
+    console.error("GET CURRENT USER ERROR:", error);
 
     res.status(500).json({
       success: false,
@@ -40,6 +39,8 @@ exports.getCurrentUser = async (req, res) => {
 // UPDATE FREELANCER PROFILE
 exports.updateFreelancerProfile = async (req, res) => {
   try {
+    console.log("REQUEST BODY:", req.body);
+
     const {
       title,
       bio,
@@ -47,6 +48,20 @@ exports.updateFreelancerProfile = async (req, res) => {
       hourlyRate,
       country,
     } = req.body;
+
+    // Validation
+    if (
+      !title ||
+      !bio ||
+      !skills ||
+      !hourlyRate ||
+      !country
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
 
     const existingProfile =
       await prisma.freelancerProfile.findUnique({
@@ -87,15 +102,15 @@ exports.updateFreelancerProfile = async (req, res) => {
 
     res.status(200).json({
       success: true,
+      message: "Freelancer profile updated successfully",
       profile,
     });
-
   } catch (error) {
-    console.log(error);
+    console.error("UPDATE PROFILE ERROR:", error);
 
     res.status(500).json({
       success: false,
-      message: "Server Error",
+      message: error.message,
     });
   }
 };
