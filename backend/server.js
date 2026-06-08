@@ -15,7 +15,8 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-
+console.log("✅ Loading user routes...");
+app.use("/api/users", userRoutes);
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/gigs", gigRoutes);
