@@ -8,10 +8,18 @@ const {
   updateFreelancerProfile,
 } = require("../controllers/userController");
 
-// Current User
+// TEST ROUTE
+router.get("/test", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "User Routes Working ✅",
+  });
+});
+
+// GET CURRENT USER
 router.get("/me", protect, getCurrentUser);
 
-// Freelancer Profile
+// UPDATE FREELANCER PROFILE
 router.put(
   "/freelancer/profile",
   protect,
