@@ -51,6 +51,14 @@ exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Validation
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and Password are required",
+      });
+    }
+
     const user = await prisma.user.findUnique({
       where: { email },
     });
@@ -62,7 +70,10 @@ exports.loginUser = async (req, res) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
 
     if (!isMatch) {
       return res.status(400).json({
@@ -72,9 +83,14 @@ exports.loginUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, role: user.role },
+      {
+        id: user.id,
+        role: user.role,
+      },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      {
+        expiresIn: "7d",
+      }
     );
 
     const { password: _, ...userWithoutPassword } = user;
@@ -87,6 +103,7 @@ exports.loginUser = async (req, res) => {
 
   } catch (error) {
     console.log("LOGIN ERROR:", error);
+
     return res.status(500).json({
       success: false,
       message: "Server Error",
