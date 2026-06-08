@@ -51,7 +51,12 @@ app.use((req, res) => {
     message: "Route not found",
   });
 });
-
+app.get("/api/debug", (req, res) => {
+  res.json({
+    success: true,
+    message: "Debug route working",
+  });
+});
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
