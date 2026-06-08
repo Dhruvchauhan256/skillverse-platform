@@ -1,19 +1,19 @@
 const jwt = require("jsonwebtoken");
 
 const protect = (req, res, next) => {
-  console.log("AUTH HEADER:", req.headers.authorization);
-
-  let token = req.headers.authorization;
-
-  if (!token) {
-    return res.status(401).json({
-      success: false,
-      message: "No token provided",
-    });
-  }
-
   try {
-    token = token.split(" ")[1];
+    console.log("AUTH HEADER:", req.headers.authorization);
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
+        success: false,
+        message: "No token provided",
+      });
+    }
+
+    const token = authHeader.split(" ")[1];
 
     const decoded = jwt.verify(
       token,
@@ -26,7 +26,7 @@ const protect = (req, res, next) => {
 
     next();
   } catch (error) {
-    console.log("JWT ERROR:", error.message);
+    console.error("JWT ERROR:", error.message);
 
     return res.status(401).json({
       success: false,
