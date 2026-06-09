@@ -1,16 +1,15 @@
 const express = require("express");
 const router = express.Router();
 
+const protect = require("../middleware/authMiddleware");
 const {
   createPortfolio,
   getMyPortfolio,
-  updatePortfolio,
   deletePortfolio,
+  updatePortfolio,
 } = require("../controllers/portfolioController");
 
-const { protect } = require("../middleware/authMiddleware");
-
-// IMPORTANT: protect middleware is required
+// MUST USE protect middleware
 router.post("/", protect, createPortfolio);
 router.get("/", protect, getMyPortfolio);
 router.put("/:id", protect, updatePortfolio);
