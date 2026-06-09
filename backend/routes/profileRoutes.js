@@ -3,12 +3,12 @@ const router = express.Router();
 
 const protect = require("../middleware/authMiddleware");
 const {
-  createFreelancerProfile,
+  createProfile,
   getMyProfile,
 } = require("../controllers/profileController");
 
 // CREATE PROFILE
-router.post("/freelancer", protect, createFreelancerProfile);
+router.post("/freelancer", protect, createProfile);
 
 // GET PROFILE
 router.get("/freelancer", protect, getMyProfile);
