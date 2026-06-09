@@ -7,6 +7,14 @@ exports.registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
+    // ✅ VALIDATION (IMPORTANT FIX)
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Name, Email, and Password are required",
+      });
+    }
+
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -29,6 +37,20 @@ exports.registerUser = async (req, res) => {
       },
     });
 
+    // ✅ AUTO CREATE FREELANCER PROFILE (IMPORTANT FIX)
+    if (user.role === "freelancer") {
+      await prisma.freelancerProfile.create({
+        data: {
+          userId: user.id,
+          title: "New Freelancer",
+          bio: "Add your bio",
+          skills: "React, Node.js",
+          hourlyRate: 10,
+          country: "India",
+        },
+      });
+    }
+
     const { password: _, ...userWithoutPassword } = user;
 
     return res.status(201).json({
@@ -39,6 +61,7 @@ exports.registerUser = async (req, res) => {
 
   } catch (error) {
     console.log("REGISTER ERROR:", error);
+
     return res.status(500).json({
       success: false,
       message: "Server Error",
@@ -51,7 +74,7 @@ exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validation
+    // ✅ FIX: validation
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -70,10 +93,7 @@ exports.loginUser = async (req, res) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(
-      password,
-      user.password
-    );
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(400).json({
