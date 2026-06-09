@@ -8,9 +8,12 @@ const {
   deletePortfolio,
 } = require("../controllers/portfolioController");
 
-router.post("/", createPortfolio);
-router.get("/", getMyPortfolio);
-router.put("/:id", updatePortfolio);
-router.delete("/:id", deletePortfolio);
+const { protect } = require("../middleware/authMiddleware");
+
+// IMPORTANT: protect middleware is required
+router.post("/", protect, createPortfolio);
+router.get("/", protect, getMyPortfolio);
+router.put("/:id", protect, updatePortfolio);
+router.delete("/:id", protect, deletePortfolio);
 
 module.exports = router;
