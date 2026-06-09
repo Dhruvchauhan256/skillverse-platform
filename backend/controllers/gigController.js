@@ -1,5 +1,6 @@
 const prisma = require("../prisma/client");
 
+// CREATE GIG
 exports.createGig = async (req, res) => {
   try {
     const { title, description, price, category } = req.body;
@@ -15,7 +16,7 @@ exports.createGig = async (req, res) => {
       data: {
         title,
         description,
-        price,
+        price: Number(price),
         category,
         freelancerId: req.user.id,
       },
@@ -25,6 +26,7 @@ exports.createGig = async (req, res) => {
       success: true,
       gig,
     });
+
   } catch (error) {
     console.log("GIG ERROR:", error);
     res.status(500).json({
@@ -34,18 +36,13 @@ exports.createGig = async (req, res) => {
   }
 };
 
+// GET ALL GIGS
 exports.getAllGigs = async (req, res) => {
   try {
     const gigs = await prisma.gig.findMany();
-
-    res.status(200).json({
-      success: true,
-      gigs,
-    });
+    res.json({ success: true, gigs });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    console.log(error);
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
