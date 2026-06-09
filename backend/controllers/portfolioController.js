@@ -1,6 +1,8 @@
 const prisma = require("../prisma/client");
 
+// ======================
 // CREATE PORTFOLIO
+// ======================
 exports.createPortfolio = async (req, res) => {
   try {
     const { title, description, imageUrl, liveUrl, githubUrl } = req.body;
@@ -12,6 +14,13 @@ exports.createPortfolio = async (req, res) => {
       });
     }
 
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized user",
+      });
+    }
+
     const freelancerProfile = await prisma.freelancerProfile.findUnique({
       where: { userId: req.user.id },
     });
@@ -19,7 +28,7 @@ exports.createPortfolio = async (req, res) => {
     if (!freelancerProfile) {
       return res.status(404).json({
         success: false,
-        message: "Freelancer profile not found",
+        message: "Freelancer profile not found. Create profile first.",
       });
     }
 
@@ -34,23 +43,32 @@ exports.createPortfolio = async (req, res) => {
       },
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Portfolio created successfully",
       portfolio,
     });
   } catch (error) {
     console.error("CREATE PORTFOLIO ERROR:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Server Error",
     });
   }
 };
 
+// ======================
 // GET MY PORTFOLIO
+// ======================
 exports.getMyPortfolio = async (req, res) => {
   try {
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
     const freelancerProfile = await prisma.freelancerProfile.findUnique({
       where: { userId: req.user.id },
     });
@@ -64,57 +82,90 @@ exports.getMyPortfolio = async (req, res) => {
 
     const portfolios = await prisma.portfolio.findMany({
       where: { freelancerId: freelancerProfile.id },
+      orderBy: { createdAt: "desc" },
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       portfolios,
     });
   } catch (error) {
     console.error("GET PORTFOLIO ERROR:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Server Error",
     });
   }
 };
 
-// UPDATE
+// ======================
+// UPDATE PORTFOLIO
+// ======================
 exports.updatePortfolio = async (req, res) => {
   try {
     const { id } = req.params;
+
+    const portfolio = await prisma.portfolio.findUnique({
+      where: { id },
+    });
+
+    if (!portfolio) {
+      return res.status(404).json({
+        success: false,
+        message: "Portfolio not found",
+      });
+    }
 
     const updated = await prisma.portfolio.update({
       where: { id },
       data: req.body,
     });
 
-    res.json({
+    return res.json({
       success: true,
       message: "Updated successfully",
       portfolio: updated,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Server Error" });
+    console.error("UPDATE ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
   }
 };
 
-// DELETE
+// ======================
+// DELETE PORTFOLIO
+// ======================
 exports.deletePortfolio = async (req, res) => {
   try {
     const { id } = req.params;
+
+    const portfolio = await prisma.portfolio.findUnique({
+      where: { id },
+    });
+
+    if (!portfolio) {
+      return res.status(404).json({
+        success: false,
+        message: "Portfolio not found",
+      });
+    }
 
     await prisma.portfolio.delete({
       where: { id },
     });
 
-    res.json({
+    return res.json({
       success: true,
       message: "Deleted successfully",
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Server Error" });
+    console.error("DELETE ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
   }
 };
