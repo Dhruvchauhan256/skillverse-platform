@@ -8,44 +8,11 @@ console.log("🚀 Loading SkillVerse Backend...");
 
 const app = express();
 
-// MIDDLEWARE (IMPORTANT ORDER)
+// MIDDLEWARE
 app.use(cors());
 app.use(express.json());
-exports.createGig = async (req, res) => {
-  try {
-    const { title, description, price, category } = req.body;
 
-    if (!title || !description || !price || !category) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
-    }
-
-    const gig = await prisma.gig.create({
-      data: {
-        title,
-        description,
-        price,
-        category,
-        freelancerId: req.user.id,
-      },
-    });
-
-    res.status(201).json({
-      success: true,
-      gig,
-    });
-
-  } catch (error) {
-    console.log("GIG ERROR:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
-};
-// ROUTES
+// ROUTES IMPORT
 const authRoutes = require("./routes/authRoutes");
 const gigRoutes = require("./routes/gigRoutes");
 const projectRoutes = require("./routes/projectRoutes");
@@ -53,7 +20,7 @@ const profileRoutes = require("./routes/profileRoutes");
 const userRoutes = require("./routes/userRoutes");
 const portfolioRoutes = require("./routes/portfolioRoutes");
 
-// API ROUTES
+// ROUTES USE
 app.use("/api/auth", authRoutes);
 app.use("/api/gigs", gigRoutes);
 app.use("/api/projects", projectRoutes);
@@ -73,7 +40,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// 404
+// 404 HANDLER
 app.use((req, res) => {
   res.status(404).json({
     success: false,
