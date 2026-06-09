@@ -10,6 +10,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+console.log("🚀 Loading SkillVerse Backend...");
+
 // Routes
 const authRoutes = require("./routes/authRoutes");
 const gigRoutes = require("./routes/gigRoutes");
@@ -18,7 +20,7 @@ const profileRoutes = require("./routes/profileRoutes");
 const userRoutes = require("./routes/userRoutes");
 const portfolioRoutes = require("./routes/portfolioRoutes");
 
-// Mount routes (IMPORTANT: all must be valid functions)
+// API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/gigs", gigRoutes);
 app.use("/api/projects", projectRoutes);
@@ -26,20 +28,19 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/portfolio", portfolioRoutes);
 
-// Home Route
+// Test routes
 app.get("/", (req, res) => {
   res.send("SkillVerse Backend Running 🚀");
 });
 
-// Health Check
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
-    message: "SkillVerse API running",
+    message: "API is working",
   });
 });
 
-// 404 handler (KEEP AT LAST)
+// 404
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -50,6 +51,5 @@ app.use((req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log("🚀 Loading SkillVerse Backend...");
   console.log(`🚀 Server running on port ${PORT}`);
 });
