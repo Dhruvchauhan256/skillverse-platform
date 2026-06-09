@@ -1,14 +1,21 @@
 const prisma = require("../prisma/client");
 
-// CREATE PROFILE
+// CREATE FREELANCER PROFILE
 exports.createFreelancerProfile = async (req, res) => {
   try {
     const { title, bio, skills, hourlyRate, country } = req.body;
 
-    if (!title || !bio || !skills) {
-      return res.status(400).json({
+    const userId = req.user.id;
+
+    // CHECK USER EXISTS FIRST
+    const userExists = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!userExists) {
+      return res.status(404).json({
         success: false,
-        message: "Title, bio, skills required",
+        message: "User not found",
       });
     }
 
@@ -17,47 +24,22 @@ exports.createFreelancerProfile = async (req, res) => {
         title,
         bio,
         skills,
-        hourlyRate: Number(hourlyRate) || 0,
+        hourlyRate,
         country,
-        userId: req.user.id,
+        userId,
       },
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       profile,
     });
 
   } catch (error) {
-    console.log("PROFILE CREATE ERROR:", error);
-
-    return res.status(500).json({
+    console.log(error);
+    res.status(500).json({
       success: false,
-      message: error.message, // IMPORTANT for debugging
-    });
-  }
-};
-
-// GET PROFILE
-exports.getMyProfile = async (req, res) => {
-  try {
-    const profile = await prisma.freelancerProfile.findUnique({
-      where: {
-        userId: req.user.id,
-      },
-    });
-
-    return res.status(200).json({
-      success: true,
-      profile,
-    });
-
-  } catch (error) {
-    console.log("GET PROFILE ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: error.message,
+      message: "Server Error",
     });
   }
 };
