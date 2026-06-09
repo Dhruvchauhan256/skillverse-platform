@@ -2,8 +2,6 @@ const jwt = require("jsonwebtoken");
 
 const protect = (req, res, next) => {
   try {
-    console.log("AUTH HEADER:", req.headers.authorization);
-
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -15,19 +13,12 @@ const protect = (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET
-    );
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    console.log("DECODED USER:", decoded);
-
-    req.user = decoded;
+    req.user = decoded; // { id, role, iat, exp }
 
     next();
   } catch (error) {
-    console.error("JWT ERROR:", error.message);
-
     return res.status(401).json({
       success: false,
       message: "Invalid token",
