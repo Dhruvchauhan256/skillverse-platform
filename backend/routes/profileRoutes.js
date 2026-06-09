@@ -2,8 +2,12 @@ const express = require("express");
 const router = express.Router();
 
 const protect = require("../middleware/authMiddleware");
-const { getMyProfile } = require("../controllers/profileController");
+const {
+  createFreelancerProfile,
+  getFreelancerProfile,
+} = require("../controllers/profileController");
 
-router.get("/me", protect, getMyProfile);
+router.post("/freelancer", protect, createFreelancerProfile);
+router.get("/freelancer", protect, getFreelancerProfile);
 
 module.exports = router;
