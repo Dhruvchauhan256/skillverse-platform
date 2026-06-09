@@ -6,13 +6,17 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
+console.log("🚀 Loading SkillVerse Backend...");
+
+// =======================
+// MIDDLEWARE (IMPORTANT: must be before routes)
+// =======================
 app.use(cors());
 app.use(express.json());
 
-console.log("🚀 Loading SkillVerse Backend...");
-
-// Routes
+// =======================
+// ROUTES IMPORT
+// =======================
 const authRoutes = require("./routes/authRoutes");
 const gigRoutes = require("./routes/gigRoutes");
 const projectRoutes = require("./routes/projectRoutes");
@@ -20,7 +24,9 @@ const profileRoutes = require("./routes/profileRoutes");
 const userRoutes = require("./routes/userRoutes");
 const portfolioRoutes = require("./routes/portfolioRoutes");
 
-// API Routes
+// =======================
+// API ROUTES
+// =======================
 app.use("/api/auth", authRoutes);
 app.use("/api/gigs", gigRoutes);
 app.use("/api/projects", projectRoutes);
@@ -28,7 +34,9 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/portfolio", portfolioRoutes);
 
-// Test routes
+// =======================
+// TEST ROUTES
+// =======================
 app.get("/", (req, res) => {
   res.send("SkillVerse Backend Running 🚀");
 });
@@ -40,7 +48,16 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// 404
+app.get("/api/test", (req, res) => {
+  res.json({
+    success: true,
+    message: "Backend Connected Successfully ✅",
+  });
+});
+
+// =======================
+// 404 HANDLER (MUST BE LAST)
+// =======================
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -48,6 +65,9 @@ app.use((req, res) => {
   });
 });
 
+// =======================
+// START SERVER
+// =======================
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
