@@ -12,6 +12,17 @@ exports.createPortfolio = async (req, res) => {
       });
     }
 
+    const freelancerProfile = await prisma.freelancerProfile.findUnique({
+      where: { userId: req.user.id },
+    });
+
+    if (!freelancerProfile) {
+      return res.status(404).json({
+        success: false,
+        message: "Freelancer profile not found",
+      });
+    }
+
     const portfolio = await prisma.portfolio.create({
       data: {
         title,
@@ -19,7 +30,7 @@ exports.createPortfolio = async (req, res) => {
         imageUrl,
         liveUrl,
         githubUrl,
-        freelancerId: req.user.id, // from JWT middleware
+        freelancerId: freelancerProfile.id,
       },
     });
 
@@ -29,8 +40,7 @@ exports.createPortfolio = async (req, res) => {
       portfolio,
     });
   } catch (error) {
-    console.log("CREATE PORTFOLIO ERROR:", error);
-
+    console.error("CREATE PORTFOLIO ERROR:", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -41,13 +51,19 @@ exports.createPortfolio = async (req, res) => {
 // GET MY PORTFOLIO
 exports.getMyPortfolio = async (req, res) => {
   try {
+    const freelancerProfile = await prisma.freelancerProfile.findUnique({
+      where: { userId: req.user.id },
+    });
+
+    if (!freelancerProfile) {
+      return res.status(404).json({
+        success: false,
+        message: "Freelancer profile not found",
+      });
+    }
+
     const portfolios = await prisma.portfolio.findMany({
-      where: {
-        freelancerId: req.user.id,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+      where: { freelancerId: freelancerProfile.id },
     });
 
     res.status(200).json({
@@ -55,8 +71,7 @@ exports.getMyPortfolio = async (req, res) => {
       portfolios,
     });
   } catch (error) {
-    console.log("GET PORTFOLIO ERROR:", error);
-
+    console.error("GET PORTFOLIO ERROR:", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -64,94 +79,42 @@ exports.getMyPortfolio = async (req, res) => {
   }
 };
 
-// UPDATE PORTFOLIO
+// UPDATE
 exports.updatePortfolio = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, imageUrl, liveUrl, githubUrl } = req.body;
-
-    const portfolio = await prisma.portfolio.findUnique({
-      where: { id },
-    });
-
-    if (!portfolio) {
-      return res.status(404).json({
-        success: false,
-        message: "Portfolio not found",
-      });
-    }
-
-    // security check
-    if (portfolio.freelancerId !== req.user.id) {
-      return res.status(403).json({
-        success: false,
-        message: "Not authorized",
-      });
-    }
 
     const updated = await prisma.portfolio.update({
       where: { id },
-      data: {
-        title,
-        description,
-        imageUrl,
-        liveUrl,
-        githubUrl,
-      },
+      data: req.body,
     });
 
-    res.status(200).json({
+    res.json({
       success: true,
-      message: "Portfolio updated successfully",
+      message: "Updated successfully",
       portfolio: updated,
     });
   } catch (error) {
-    console.log("UPDATE PORTFOLIO ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
 
-// DELETE PORTFOLIO
+// DELETE
 exports.deletePortfolio = async (req, res) => {
   try {
     const { id } = req.params;
-
-    const portfolio = await prisma.portfolio.findUnique({
-      where: { id },
-    });
-
-    if (!portfolio) {
-      return res.status(404).json({
-        success: false,
-        message: "Portfolio not found",
-      });
-    }
-
-    if (portfolio.freelancerId !== req.user.id) {
-      return res.status(403).json({
-        success: false,
-        message: "Not authorized",
-      });
-    }
 
     await prisma.portfolio.delete({
       where: { id },
     });
 
-    res.status(200).json({
+    res.json({
       success: true,
-      message: "Portfolio deleted successfully",
+      message: "Deleted successfully",
     });
   } catch (error) {
-    console.log("DELETE PORTFOLIO ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
