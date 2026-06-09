@@ -2,15 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 const protect = require("../middleware/authMiddleware");
-const {
-  createGig,
-  getAllGigs,
-} = require("../controllers/gigController");
+const gigController = require("../controllers/gigController");
 
-// CREATE GIG
-router.post("/", protect, createGig);
+// DEBUG CHECK (important)
+console.log("gigController:", gigController);
 
-// GET ALL GIGS
-router.get("/", getAllGigs);
+// ROUTES
+router.post("/", protect, gigController.createGig);
+router.get("/", gigController.getAllGigs);
 
 module.exports = router;
