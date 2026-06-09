@@ -8,58 +8,93 @@ datasource db {
 }
 
 model User {
-  id                String             @id @default(uuid())
-  name              String
-  email             String             @unique
-  password          String
-  role              String             @default("user")
-  createdAt         DateTime           @default(now())
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+
   clientProfile     ClientProfile?
   freelancerProfile FreelancerProfile?
-  gigs              Gig[]
-  projects          Project[]
+
+  gigs     Gig[]
+  projects Project[]
 }
 
 model FreelancerProfile {
-  id         String   @id @default(uuid())
-  title      String
-  bio        String
-  skills     String
+  id String @id @default(uuid())
+
+  title  String
+  bio    String
+  skills String
+
   hourlyRate Int
   country    String
-  userId     String   @unique
-  createdAt  DateTime @default(now())
-  user       User     @relation(fields: [userId], references: [id])
+
+  userId    String   @unique
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  portfolios Portfolio[]
+}
+
+model Portfolio {
+  id String @id @default(uuid())
+
+  title       String
+  description String
+
+  imageUrl String?
+
+  liveUrl   String?
+  githubUrl String?
+
+  freelancerId String
+
+  freelancer FreelancerProfile @relation(fields: [freelancerId], references: [id])
+
+  createdAt DateTime @default(now())
 }
 
 model ClientProfile {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   companyName String?
   description String?
-  userId      String   @unique
-  createdAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
+
+  userId    String   @unique
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Gig {
-  id           String   @id @default(uuid())
-  title        String
-  description  String
-  price        Int
-  category     String
+  id          String @id @default(uuid())
+  title       String
+  description String
+  price       Int
+  category    String
+
   freelancerId String
-  createdAt    DateTime @default(now())
-  freelancer   User     @relation(fields: [freelancerId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  freelancer User @relation(fields: [freelancerId], references: [id])
 }
 
 model Project {
-  id          String   @id @default(uuid())
+  id          String @id @default(uuid())
   title       String
   description String
   budget      Int
-  status      String   @default("open")
-  clientId    String
-  createdAt   DateTime @default(now())
-  category    String
-  client      User     @relation(fields: [clientId], references: [id])
+
+  status   String @default("open")
+  category String
+
+  clientId String
+
+  createdAt DateTime @default(now())
+
+  client User @relation(fields: [clientId], references: [id])
 }

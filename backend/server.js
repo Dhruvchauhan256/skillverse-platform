@@ -11,7 +11,9 @@ const userRoutes = require("./routes/userRoutes");
 dotenv.config();
 
 const app = express();
+const portfolioRoutes = require("./routes/portfolioRoutes");
 
+app.use("/api/portfolio", portfolioRoutes);
 // Middleware
 app.use(cors());
 app.use(express.json());
