@@ -1,6 +1,6 @@
 const prisma = require("../prisma/client");
 
-// CREATE FREELANCER PROFILE
+// CREATE PROFILE
 exports.createFreelancerProfile = async (req, res) => {
   try {
     const { title, bio, skills, hourlyRate, country } = req.body;
@@ -8,21 +8,7 @@ exports.createFreelancerProfile = async (req, res) => {
     if (!title || !bio || !skills) {
       return res.status(400).json({
         success: false,
-        message: "Title, bio, and skills are required",
-      });
-    }
-
-    // check if profile already exists
-    const existingProfile = await prisma.freelancerProfile.findUnique({
-      where: {
-        userId: req.user.id,
-      },
-    });
-
-    if (existingProfile) {
-      return res.status(400).json({
-        success: false,
-        message: "Profile already exists",
+        message: "Title, bio, skills required",
       });
     }
 
@@ -31,49 +17,47 @@ exports.createFreelancerProfile = async (req, res) => {
         title,
         bio,
         skills,
-        hourlyRate: Number(hourlyRate),
+        hourlyRate: Number(hourlyRate) || 0,
         country,
         userId: req.user.id,
       },
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      message: "Profile created successfully",
       profile,
     });
-  } catch (error) {
-    console.log("CREATE PROFILE ERROR:", error);
 
-    res.status(500).json({
+  } catch (error) {
+    console.log("PROFILE CREATE ERROR:", error);
+
+    return res.status(500).json({
       success: false,
-      message: "Server Error",
+      message: error.message, // IMPORTANT for debugging
     });
   }
 };
 
-// GET MY PROFILE
+// GET PROFILE
 exports.getMyProfile = async (req, res) => {
   try {
-    const user = await prisma.user.findUnique({
+    const profile = await prisma.freelancerProfile.findUnique({
       where: {
-        id: req.user.id,
-      },
-      include: {
-        freelancerProfile: true,
+        userId: req.user.id,
       },
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      user,
+      profile,
     });
+
   } catch (error) {
     console.log("GET PROFILE ERROR:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: "Server Error",
+      message: error.message,
     });
   }
 };
