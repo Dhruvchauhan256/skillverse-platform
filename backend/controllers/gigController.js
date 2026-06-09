@@ -7,7 +7,7 @@ exports.createGig = async (req, res) => {
     if (!title || !description || !price || !category) {
       return res.status(400).json({
         success: false,
-        message: "All fields required",
+        message: "All fields are required",
       });
     }
 
@@ -15,7 +15,7 @@ exports.createGig = async (req, res) => {
       data: {
         title,
         description,
-        price: Number(price),
+        price,
         category,
         freelancerId: req.user.id,
       },
@@ -25,13 +25,27 @@ exports.createGig = async (req, res) => {
       success: true,
       gig,
     });
-
   } catch (error) {
     console.log("GIG ERROR:", error);
-
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Server Error",
+    });
+  }
+};
+
+exports.getAllGigs = async (req, res) => {
+  try {
+    const gigs = await prisma.gig.findMany();
+
+    res.status(200).json({
+      success: true,
+      gigs,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
     });
   }
 };
