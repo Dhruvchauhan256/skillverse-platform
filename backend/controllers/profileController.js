@@ -7,7 +7,13 @@ exports.createProfile = async (req, res) => {
 
     const userId = req.user.id;
 
-    // check user exists
+    if (!title || !bio || !skills || !hourlyRate || !country) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
@@ -19,7 +25,6 @@ exports.createProfile = async (req, res) => {
       });
     }
 
-    // check existing profile
     const existing = await prisma.freelancerProfile.findUnique({
       where: { userId },
     });
@@ -42,7 +47,7 @@ exports.createProfile = async (req, res) => {
       },
     });
 
-    res.json({
+    res.status(201).json({
       success: true,
       profile,
     });
@@ -55,6 +60,7 @@ exports.createProfile = async (req, res) => {
     });
   }
 };
+
 
 // GET PROFILE
 exports.getMyProfile = async (req, res) => {
@@ -70,6 +76,9 @@ exports.getMyProfile = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false });
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
   }
 };
