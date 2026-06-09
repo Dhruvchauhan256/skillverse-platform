@@ -4,10 +4,13 @@ const router = express.Router();
 const protect = require("../middleware/authMiddleware");
 const {
   createFreelancerProfile,
-  getFreelancerProfile,
+  getMyProfile,
 } = require("../controllers/profileController");
 
+// CREATE PROFILE
 router.post("/freelancer", protect, createFreelancerProfile);
-router.get("/freelancer", protect, getFreelancerProfile);
+
+// GET PROFILE
+router.get("/freelancer", protect, getMyProfile);
 
 module.exports = router;
