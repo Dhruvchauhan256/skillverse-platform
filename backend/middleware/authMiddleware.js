@@ -4,6 +4,8 @@ const protect = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
+    console.log("AUTH HEADER:", authHeader);
+
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
@@ -13,15 +15,26 @@ const protect = (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "Token missing",
+      });
+    }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.user = decoded; // { id, role, iat, exp }
+    console.log("DECODED USER:", decoded);
+
+    req.user = decoded; // IMPORTANT
 
     next();
   } catch (error) {
+    console.error("JWT ERROR:", error.message);
+
     return res.status(401).json({
       success: false,
-      message: "Invalid token",
+      message: "Invalid or expired token",
     });
   }
 };
