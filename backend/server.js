@@ -15,6 +15,7 @@ app.use(express.json());
 // ROUTES IMPORT
 const authRoutes = require("./routes/authRoutes");
 const gigRoutes = require("./routes/gigRoutes");
+const proposalRoutes = require("./routes/proposalRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -27,6 +28,7 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/portfolio", portfolioRoutes);
+app.use("/api/proposals", proposalRoutes);
 
 // TEST ROUTES
 app.get("/", (req, res) => {
