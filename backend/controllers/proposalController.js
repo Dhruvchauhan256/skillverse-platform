@@ -10,13 +10,57 @@ exports.createProposal = async (req, res) => {
       deliveryDays,
     } = req.body;
 
+    // Validation
+    if (
+      !projectId ||
+      !coverLetter ||
+      !bidAmount ||
+      !deliveryDays
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    // Check project exists
+    const project = await prisma.project.findUnique({
+      where: {
+        id: projectId,
+      },
+    });
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
+
+    // Prevent duplicate proposals
+    const existingProposal =
+      await prisma.proposal.findFirst({
+        where: {
+          projectId,
+          freelancerId: req.user.id,
+        },
+      });
+
+    if (existingProposal) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "You have already submitted a proposal",
+      });
+    }
+
     const proposal = await prisma.proposal.create({
       data: {
         projectId,
+        freelancerId: req.user.id,
         coverLetter,
         bidAmount: Number(bidAmount),
         deliveryDays: Number(deliveryDays),
-        freelancerId: req.user.id,
       },
     });
 
@@ -25,7 +69,7 @@ exports.createProposal = async (req, res) => {
       proposal,
     });
   } catch (error) {
-    console.log(error);
+    console.log("CREATE PROPOSAL ERROR:", error);
 
     res.status(500).json({
       success: false,
@@ -49,12 +93,12 @@ exports.getMyProposals = async (req, res) => {
       },
     });
 
-    res.json({
+    res.status(200).json({
       success: true,
       proposals,
     });
   } catch (error) {
-    console.log(error);
+    console.log("GET PROPOSALS ERROR:", error);
 
     res.status(500).json({
       success: false,
