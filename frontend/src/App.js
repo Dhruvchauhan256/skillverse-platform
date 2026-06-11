@@ -19,7 +19,7 @@ import CategorySearch from "./pages/search/CategorySearch";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import JobsPage from "./pages/JobsPage";
-import SubmitProposal from "./pages/projects/SubmitProposal";
+
 // Protected Route
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -87,19 +87,19 @@ function App() {
         />
 
         <Route
-          path="/proposal"
+          path="/projects"
           element={
             <ProtectedRoute>
-              <SubmitProposal />
+              <ProjectList />
             </ProtectedRoute>
           }
         />
 
         <Route
-          path="/projects"
+          path="/proposal"
           element={
             <ProtectedRoute>
-              <ProjectList />
+              <SubmitProposal />
             </ProtectedRoute>
           }
         />
