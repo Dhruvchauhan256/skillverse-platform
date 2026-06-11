@@ -23,64 +23,55 @@ setForm({
 };
 
 const handleSubmit = async (e) => {
-e.preventDefault();
+  e.preventDefault();
 
-if (
-  !form.projectId ||
-  !form.coverLetter ||
-  !form.bidAmount ||
-  !form.deliveryDays
-) {
-  alert("Please fill all fields");
-  return;
-}
+  if (
+    !form.projectId ||
+    !form.coverLetter ||
+    !form.bidAmount ||
+    !form.deliveryDays
+  ) {
+    alert("Please fill all fields");
+    return;
+  }
 
-try {
-  setLoading(true);
+  try {
+    setLoading(true);
 
-  const token = localStorage.getItem("token");
+    console.log("PROJECT ID:", form.projectId);
 
-  const res = await axios.post(
-    "http://localhost:5000/api/proposals",
-    {
-      projectId: form.projectId,
-      coverLetter: form.coverLetter,
-      bidAmount: Number(form.bidAmount),
-      deliveryDays: Number(form.deliveryDays),
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const token = localStorage.getItem("token");
+
+    const res = await axios.post(
+      "http://localhost:5000/api/proposals",
+      {
+        projectId: form.projectId,
+        coverLetter: form.coverLetter,
+        bidAmount: Number(form.bidAmount),
+        deliveryDays: Number(form.deliveryDays),
       },
-    }
-  );
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-  console.log("PROPOSAL RESPONSE:", res.data);
+    console.log("PROPOSAL RESPONSE:", res.data);
 
-  alert("Proposal Submitted Successfully ✅");
+    alert("Proposal Submitted Successfully ✅");
 
-  setForm({
-    projectId: location.state?.projectId || "",
-    coverLetter: "",
-    bidAmount: "",
-    deliveryDays: "",
-  });
+  } catch (error) {
+    console.log(error);
 
-  navigate("/find-work");
-
-} catch (error) {
-  console.log(error);
-
-  alert(
-    error.response?.data?.message ||
-    "Proposal Submission Failed"
-  );
-} finally {
-  setLoading(false);
-}
-
-};
-
+    alert(
+      error.response?.data?.message ||
+      "Proposal Submission Failed"
+    );
+  } finally {
+    setLoading(false);
+  }
+}; 
 return ( <div className="container mt-5">
 <div
 className="card shadow p-4"
