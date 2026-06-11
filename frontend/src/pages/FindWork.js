@@ -79,13 +79,10 @@ const navigate = useNavigate();
                 </p>
 <button
   className="apply-btn"
-  onClick={() =>
-    navigate("/proposal")
-  }
+  onClick={() => navigate("/proposal")}
 >
   Apply Now
-</button>
-              </div>
+</button>              </div>
             ))}
 
           </div>

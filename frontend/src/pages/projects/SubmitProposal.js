@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 
 function SubmitProposal() {
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     projectId: "",
     coverLetter: "",
     bidAmount: "",
@@ -10,8 +10,8 @@ function SubmitProposal() {
   });
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
+    setForm({
+      ...form,
       [e.target.name]: e.target.value,
     });
   };
@@ -24,7 +24,7 @@ function SubmitProposal() {
 
       const res = await axios.post(
         "http://localhost:5000/api/proposals",
-        formData,
+        form,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -32,11 +32,11 @@ function SubmitProposal() {
         }
       );
 
-      alert("Proposal Submitted Successfully!");
+      alert("Proposal Submitted Successfully ✅");
 
       console.log(res.data);
 
-      setFormData({
+      setForm({
         projectId: "",
         coverLetter: "",
         bidAmount: "",
@@ -44,9 +44,12 @@ function SubmitProposal() {
       });
 
     } catch (error) {
-      console.error(error);
+      console.log(error);
 
-      alert("Failed to submit proposal");
+      alert(
+        error.response?.data?.message ||
+        "Submission Failed"
+      );
     }
   };
 
@@ -55,66 +58,44 @@ function SubmitProposal() {
       <h2>Submit Proposal</h2>
 
       <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="projectId"
+          placeholder="Project ID"
+          className="form-control mb-3"
+          value={form.projectId}
+          onChange={handleChange}
+        />
 
-        <div className="mb-3">
-          <label>Project ID</label>
+        <textarea
+          name="coverLetter"
+          placeholder="Cover Letter"
+          className="form-control mb-3"
+          value={form.coverLetter}
+          onChange={handleChange}
+        />
 
-          <input
-            type="text"
-            name="projectId"
-            className="form-control"
-            value={formData.projectId}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <input
+          type="number"
+          name="bidAmount"
+          placeholder="Bid Amount"
+          className="form-control mb-3"
+          value={form.bidAmount}
+          onChange={handleChange}
+        />
 
-        <div className="mb-3">
-          <label>Cover Letter</label>
+        <input
+          type="number"
+          name="deliveryDays"
+          placeholder="Delivery Days"
+          className="form-control mb-3"
+          value={form.deliveryDays}
+          onChange={handleChange}
+        />
 
-          <textarea
-            name="coverLetter"
-            className="form-control"
-            rows="5"
-            value={formData.coverLetter}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="mb-3">
-          <label>Bid Amount</label>
-
-          <input
-            type="number"
-            name="bidAmount"
-            className="form-control"
-            value={formData.bidAmount}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="mb-3">
-          <label>Delivery Days</label>
-
-          <input
-            type="number"
-            name="deliveryDays"
-            className="form-control"
-            value={formData.deliveryDays}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="btn btn-primary"
-        >
+        <button className="btn btn-primary">
           Submit Proposal
         </button>
-
       </form>
     </div>
   );
