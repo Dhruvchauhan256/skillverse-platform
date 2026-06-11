@@ -1,52 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./FindWork.css";
 
 function FindWork() {
-  const projects = [
-    {
-      title: "Build Modern MERN SaaS Platform",
-      budget: "₹50,000 - ₹1,00,000",
-      duration: "2 Months",
-      skills: ["React", "Node.js", "MongoDB"],
-      verified: true,
-    },
-    {
-      title: "E-commerce Website Development",
-      budget: "₹25,000 - ₹75,000",
-      duration: "1 Month",
-      skills: ["React", "Express", "Payment Gateway"],
-      verified: true,
-    },
-    {
-      title: "UI/UX Design for Mobile App",
-      budget: "₹15,000 - ₹40,000",
-      duration: "3 Weeks",
-      skills: ["Figma", "UI Design", "UX Research"],
-      verified: false,
-    },
-    {
-      title: "SEO & Digital Marketing Campaign",
-      budget: "₹10,000 - ₹30,000",
-      duration: "1 Month",
-      skills: ["SEO", "Google Ads", "Content Marketing"],
-      verified: true,
-    },
-  ];
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/projects"
+      );
+
+      setProjects(res.data.projects);
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="findwork-page">
 
       <section className="findwork-hero">
         <h1>Find Work Opportunities</h1>
+
         <p>
-          Discover projects from startups, businesses, and clients
-          across India.
+          Discover projects from startups, businesses and
+          clients across India.
         </p>
 
         <div className="findwork-search">
           <input
             type="text"
-            placeholder="Search projects, skills..."
+            placeholder="Search projects..."
           />
           <button>Search</button>
         </div>
@@ -55,39 +47,42 @@ function FindWork() {
       <section className="projects-section">
         <h2>Latest Projects</h2>
 
-        <div className="projects-grid">
-          {projects.map((project, index) => (
-            <div className="project-card" key={index}>
+        {loading ? (
+          <h3>Loading Projects...</h3>
+        ) : (
+          <div className="projects-grid">
 
-              <h3>{project.title}</h3>
+            {projects.map((project) => (
+              <div
+                className="project-card"
+                key={project.id}
+              >
+                <h3>{project.title}</h3>
 
-              <p className="budget">
-                💰 {project.budget}
-              </p>
+                <p>
+                  {project.description}
+                </p>
 
-              <p className="duration">
-                ⏳ {project.duration}
-              </p>
+                <p className="budget">
+                  💰 ₹{project.budget}
+                </p>
 
-              {project.verified && (
-                <span className="verified-badge">
-                  ✔ Verified Client
-                </span>
-              )}
+                <p>
+                  📂 {project.category}
+                </p>
 
-              <div className="skills">
-                {project.skills.map((skill, i) => (
-                  <span key={i}>{skill}</span>
-                ))}
+                <p>
+                  📌 {project.status}
+                </p>
+
+                <button className="apply-btn">
+                  Apply Now
+                </button>
               </div>
+            ))}
 
-              <button className="apply-btn">
-                Apply Now
-              </button>
-
-            </div>
-          ))}
-        </div>
+          </div>
+        )}
       </section>
 
     </div>
