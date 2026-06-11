@@ -53,6 +53,14 @@ app.use((req, res) => {
 // START SERVER
 const PORT = process.env.PORT || 5000;
 
+const prisma = require("./prisma/client");
+
+app.get("/test-users", async (req, res) => {
+  const users = await prisma.user.findMany();
+
+  res.json(users);
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
