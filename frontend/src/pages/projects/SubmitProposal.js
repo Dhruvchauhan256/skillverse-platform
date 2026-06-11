@@ -17,8 +17,9 @@ function SubmitProposal() {
 
   const handleChange = (e) => {
     console.log(
-      "FIELD CHANGED:",
+      "FIELD:",
       e.target.name,
+      "VALUE:",
       e.target.value
     );
 
@@ -31,7 +32,7 @@ function SubmitProposal() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("FORM STATE:", form);
+    console.log("FULL FORM:", form);
 
     if (
       form.projectId.trim() === "" ||
@@ -46,24 +47,20 @@ function SubmitProposal() {
     try {
       setLoading(true);
 
-      console.log("PROJECT ID:", form.projectId);
-
       const token = localStorage.getItem("token");
 
-      if (!token) {
-        alert("Please login first");
-        navigate("/login");
-        return;
-      }
+      const payload = {
+        projectId: form.projectId,
+        coverLetter: form.coverLetter,
+        bidAmount: Number(form.bidAmount),
+        deliveryDays: Number(form.deliveryDays),
+      };
+
+      console.log("SENDING:", payload);
 
       const res = await axios.post(
         "http://localhost:5000/api/proposals",
-        {
-          projectId: form.projectId,
-          coverLetter: form.coverLetter,
-          bidAmount: Number(form.bidAmount),
-          deliveryDays: Number(form.deliveryDays),
-        },
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -71,27 +68,13 @@ function SubmitProposal() {
         }
       );
 
-      console.log(
-        "PROPOSAL RESPONSE:",
-        res.data
-      );
+      console.log("PROPOSAL RESPONSE:", res.data);
 
       alert("Proposal Submitted Successfully ✅");
 
-      setForm({
-        projectId:
-          location.state?.projectId || "",
-        coverLetter: "",
-        bidAmount: "",
-        deliveryDays: "",
-      });
-
       navigate("/find-work");
     } catch (error) {
-      console.log(
-        "PROPOSAL ERROR:",
-        error.response?.data || error
-      );
+      console.log("ERROR:", error);
 
       alert(
         error.response?.data?.message ||
