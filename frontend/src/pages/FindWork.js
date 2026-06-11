@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./FindWork.css";
@@ -9,6 +10,8 @@ function FindWork() {
   useEffect(() => {
     fetchProjects();
   }, []);
+
+const navigate = useNavigate();
 
   const fetchProjects = async () => {
     try {
@@ -74,10 +77,14 @@ function FindWork() {
                 <p>
                   📌 {project.status}
                 </p>
-
-                <button className="apply-btn">
-                  Apply Now
-                </button>
+<button
+  className="apply-btn"
+  onClick={() =>
+    navigate("/proposal")
+  }
+>
+  Apply Now
+</button>
               </div>
             ))}
 
