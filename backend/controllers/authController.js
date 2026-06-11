@@ -81,10 +81,13 @@ exports.loginUser = async (req, res) => {
         message: "Email and Password are required",
       });
     }
+const user = await prisma.user.findUnique({
+  where: { email },
+});
 
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
+console.log("USER FOUND:", user);
+console.log("EMAIL RECEIVED:", email);
+console.log("PASSWORD RECEIVED:", password);
 
     if (!user) {
       return res.status(400).json({
@@ -93,7 +96,12 @@ exports.loginUser = async (req, res) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+const isMatch = await bcrypt.compare(
+  password,
+  user.password
+);
+
+console.log("PASSWORD MATCH:", isMatch);
 
     if (!isMatch) {
       return res.status(400).json({
