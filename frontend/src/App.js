@@ -12,6 +12,7 @@ import ClientDashboard from "./pages/dashboard/ClientDashboard";
 import ClientProfile from "./pages/client/ClientProfile";
 import PostProject from "./pages/projects/PostProject";
 import ProjectList from "./pages/projects/ProjectList";
+import ProposalManagement from "./pages/dashboard/ProposalManagement";
 import SubmitProposal from "./pages/projects/SubmitProposal";
 import Messages from "./pages/messages/Messages";
 import FreelancerProfile from "./pages/freelancer/FreelancerProfile";
@@ -135,6 +136,16 @@ function App() {
     </ProtectedRoute>
   }
 />
+
+<Route
+  path="/proposal-management"
+  element={
+    <ProtectedRoute>
+      <ProposalManagement />
+    </ProtectedRoute>
+  }
+/>
+
     </>
   );
 }
