@@ -3,7 +3,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 
 // Pages
-import MyProposals from "./pages/projects/MyProposals";
 import Home from "./pages/Home";
 import FindTalent from "./pages/FindTalent";
 import FindWork from "./pages/FindWork";
@@ -12,8 +11,9 @@ import ClientDashboard from "./pages/dashboard/ClientDashboard";
 import ClientProfile from "./pages/client/ClientProfile";
 import PostProject from "./pages/projects/PostProject";
 import ProjectList from "./pages/projects/ProjectList";
-import ProposalManagement from "./pages/dashboard/ProposalManagement";
 import SubmitProposal from "./pages/projects/SubmitProposal";
+import MyProposals from "./pages/projects/MyProposals";
+import ProposalManagement from "./pages/dashboard/ProposalManagement";
 import Messages from "./pages/messages/Messages";
 import FreelancerProfile from "./pages/freelancer/FreelancerProfile";
 import FreelancerSearch from "./pages/freelancer/FreelancerSearch";
@@ -34,6 +34,7 @@ function App() {
       <Navbar />
 
       <Routes>
+
         {/* HOME */}
         <Route path="/" element={<Home />} />
 
@@ -78,7 +79,7 @@ function App() {
           }
         />
 
-        {/* PROJECTS */}
+        {/* POST PROJECT */}
         <Route
           path="/post-project"
           element={
@@ -88,6 +89,7 @@ function App() {
           }
         />
 
+        {/* PROJECT LIST */}
         <Route
           path="/projects"
           element={
@@ -97,11 +99,32 @@ function App() {
           }
         />
 
+        {/* SUBMIT PROPOSAL */}
         <Route
           path="/proposal"
           element={
             <ProtectedRoute>
               <SubmitProposal />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* MY PROPOSALS */}
+        <Route
+          path="/my-proposals"
+          element={
+            <ProtectedRoute>
+              <MyProposals />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* PROPOSAL MANAGEMENT */}
+        <Route
+          path="/proposal-management"
+          element={
+            <ProtectedRoute>
+              <ProposalManagement />
             </ProtectedRoute>
           }
         />
@@ -126,26 +149,8 @@ function App() {
           path="/freelancer-profile"
           element={<FreelancerProfile />}
         />
+
       </Routes>
-	
-<Route
-  path="/my-proposals"
-  element={
-    <ProtectedRoute>
-      <MyProposals />
-    </ProtectedRoute>
-  }
-/>
-
-<Route
-  path="/proposal-management"
-  element={
-    <ProtectedRoute>
-      <ProposalManagement />
-    </ProtectedRoute>
-  }
-/>
-
     </>
   );
 }

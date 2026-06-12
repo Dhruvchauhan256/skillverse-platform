@@ -20,6 +20,7 @@ const projectRoutes = require("./routes/projectRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const userRoutes = require("./routes/userRoutes");
 const portfolioRoutes = require("./routes/portfolioRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 
 // ROUTES USE
 app.use("/api/auth", authRoutes);
@@ -29,6 +30,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/proposals", proposalRoutes);
+app.use("/api/messages", messageRoutes);
 
 // TEST ROUTES
 app.get("/", (req, res) => {
@@ -42,6 +44,14 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+const prisma = require("./prisma/client");
+
+app.get("/test-users", async (req, res) => {
+  const users = await prisma.user.findMany();
+
+  res.json(users);
+});
+
 // 404 HANDLER
 app.use((req, res) => {
   res.status(404).json({
@@ -52,14 +62,6 @@ app.use((req, res) => {
 
 // START SERVER
 const PORT = process.env.PORT || 5000;
-
-const prisma = require("./prisma/client");
-
-app.get("/test-users", async (req, res) => {
-  const users = await prisma.user.findMany();
-
-  res.json(users);
-});
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
