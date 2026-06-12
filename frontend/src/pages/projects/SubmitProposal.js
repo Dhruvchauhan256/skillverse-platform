@@ -135,11 +135,17 @@ function SubmitProposal() {
 
             <input
               type="number"
-              name="bidAmount"
               className="form-control"
               placeholder="25000"
               value={form.bidAmount}
-              onChange={handleChange}
+              onChange={(e) => {
+                console.log("BID:", e.target.value);
+
+                setForm((prev) => ({
+                  ...prev,
+                  bidAmount: e.target.value,
+                }));
+              }}
             />
           </div>
 
@@ -150,12 +156,33 @@ function SubmitProposal() {
 
             <input
               type="number"
-              name="deliveryDays"
               className="form-control"
               placeholder="15"
               value={form.deliveryDays}
-              onChange={handleChange}
+              onChange={(e) => {
+                console.log("DAYS:", e.target.value);
+
+                setForm((prev) => ({
+                  ...prev,
+                  deliveryDays: e.target.value,
+                }));
+              }}
             />
+          </div>
+
+          <div
+            style={{
+              background: "#f5f5f5",
+              padding: "10px",
+              borderRadius: "8px",
+              marginBottom: "15px",
+            }}
+          >
+            <strong>Live Form State:</strong>
+
+            <pre>
+              {JSON.stringify(form, null, 2)}
+            </pre>
           </div>
 
           <button
