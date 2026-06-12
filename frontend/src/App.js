@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 
 // Pages
+import MyProposals from "./pages/projects/MyProposals";
 import Home from "./pages/Home";
 import FindTalent from "./pages/FindTalent";
 import FindWork from "./pages/FindWork";
@@ -125,6 +126,15 @@ function App() {
           element={<FreelancerProfile />}
         />
       </Routes>
+	
+<Route
+  path="/my-proposals"
+  element={
+    <ProtectedRoute>
+      <MyProposals />
+    </ProtectedRoute>
+  }
+/>
     </>
   );
 }
