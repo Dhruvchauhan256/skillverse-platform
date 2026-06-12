@@ -106,3 +106,92 @@ exports.getMyProposals = async (req, res) => {
     });
   }
 };
+
+// Get Proposals For Client Projects
+exports.getProjectProposals = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    const proposals = await prisma.proposal.findMany({
+      where: {
+        projectId,
+      },
+      include: {
+        freelancer: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      proposals,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+// Accept Proposal
+exports.acceptProposal = async (req, res) => {
+  try {
+    const proposal = await prisma.proposal.update({
+      where: {
+        id: req.params.id,
+      },
+      data: {
+        status: "accepted",
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      proposal,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+// Reject Proposal
+exports.rejectProposal = async (req, res) => {
+  try {
+    const proposal = await prisma.proposal.update({
+      where: {
+        id: req.params.id,
+      },
+      data: {
+        status: "rejected",
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      proposal,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+}; 
