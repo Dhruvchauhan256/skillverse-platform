@@ -10,7 +10,6 @@ exports.createProposal = async (req, res) => {
       deliveryDays,
     } = req.body;
 
-    // Validation
     if (
       !projectId ||
       !coverLetter ||
@@ -23,7 +22,6 @@ exports.createProposal = async (req, res) => {
       });
     }
 
-    // Check project exists
     const project = await prisma.project.findUnique({
       where: {
         id: projectId,
@@ -37,7 +35,6 @@ exports.createProposal = async (req, res) => {
       });
     }
 
-    // Prevent duplicate proposals
     const existingProposal =
       await prisma.proposal.findFirst({
         where: {
@@ -107,10 +104,30 @@ exports.getMyProposals = async (req, res) => {
   }
 };
 
-// Get Proposals For Client Projects
+// Get Proposals For Specific Project
 exports.getProjectProposals = async (req, res) => {
   try {
     const { projectId } = req.params;
+
+    const project = await prisma.project.findUnique({
+      where: {
+        id: projectId,
+      },
+    });
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
+
+    if (project.clientId !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized",
+      });
+    }
 
     const proposals = await prisma.proposal.findMany({
       where: {
@@ -135,7 +152,7 @@ exports.getProjectProposals = async (req, res) => {
       proposals,
     });
   } catch (error) {
-    console.log(error);
+    console.log("GET PROJECT PROPOSALS ERROR:", error);
 
     res.status(500).json({
       success: false,
@@ -147,21 +164,45 @@ exports.getProjectProposals = async (req, res) => {
 // Accept Proposal
 exports.acceptProposal = async (req, res) => {
   try {
-    const proposal = await prisma.proposal.update({
+    const proposal = await prisma.proposal.findUnique({
       where: {
         id: req.params.id,
       },
-      data: {
-        status: "accepted",
+      include: {
+        project: true,
       },
     });
 
+    if (!proposal) {
+      return res.status(404).json({
+        success: false,
+        message: "Proposal not found",
+      });
+    }
+
+    if (proposal.project.clientId !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized",
+      });
+    }
+
+    const updatedProposal =
+      await prisma.proposal.update({
+        where: {
+          id: req.params.id,
+        },
+        data: {
+          status: "accepted",
+        },
+      });
+
     res.status(200).json({
       success: true,
-      proposal,
+      proposal: updatedProposal,
     });
   } catch (error) {
-    console.log(error);
+    console.log("ACCEPT PROPOSAL ERROR:", error);
 
     res.status(500).json({
       success: false,
@@ -173,25 +214,49 @@ exports.acceptProposal = async (req, res) => {
 // Reject Proposal
 exports.rejectProposal = async (req, res) => {
   try {
-    const proposal = await prisma.proposal.update({
+    const proposal = await prisma.proposal.findUnique({
       where: {
         id: req.params.id,
       },
-      data: {
-        status: "rejected",
+      include: {
+        project: true,
       },
     });
 
+    if (!proposal) {
+      return res.status(404).json({
+        success: false,
+        message: "Proposal not found",
+      });
+    }
+
+    if (proposal.project.clientId !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized",
+      });
+    }
+
+    const updatedProposal =
+      await prisma.proposal.update({
+        where: {
+          id: req.params.id,
+        },
+        data: {
+          status: "rejected",
+        },
+      });
+
     res.status(200).json({
       success: true,
-      proposal,
+      proposal: updatedProposal,
     });
   } catch (error) {
-    console.log(error);
+    console.log("REJECT PROPOSAL ERROR:", error);
 
     res.status(500).json({
       success: false,
       message: "Server Error",
     });
   }
-}; 
+};

@@ -5,6 +5,26 @@ exports.sendMessage = async (req, res) => {
   try {
     const { receiverId, content } = req.body;
 
+    if (!receiverId || !content) {
+      return res.status(400).json({
+        success: false,
+        message: "receiverId and content are required",
+      });
+    }
+
+    const receiver = await prisma.user.findUnique({
+      where: {
+        id: receiverId,
+      },
+    });
+
+    if (!receiver) {
+      return res.status(404).json({
+        success: false,
+        message: "Receiver not found",
+      });
+    }
+
     const message = await prisma.message.create({
       data: {
         senderId: req.user.id,
@@ -18,7 +38,7 @@ exports.sendMessage = async (req, res) => {
       message,
     });
   } catch (error) {
-    console.log(error);
+    console.log("SEND MESSAGE ERROR:", error);
 
     res.status(500).json({
       success: false,
@@ -50,12 +70,12 @@ exports.getMessages = async (req, res) => {
       },
     });
 
-    res.json({
+    res.status(200).json({
       success: true,
       messages,
     });
   } catch (error) {
-    console.log(error);
+    console.log("GET MESSAGES ERROR:", error);
 
     res.status(500).json({
       success: false,
@@ -70,25 +90,41 @@ exports.getConversations = async (req, res) => {
     const messages = await prisma.message.findMany({
       where: {
         OR: [
-          { senderId: req.user.id },
-          { receiverId: req.user.id },
+          {
+            senderId: req.user.id,
+          },
+          {
+            receiverId: req.user.id,
+          },
         ],
       },
       include: {
-        sender: true,
-        receiver: true,
+        sender: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        receiver: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
       },
     });
 
-    res.json({
+    res.status(200).json({
       success: true,
       conversations: messages,
     });
   } catch (error) {
-    console.log(error);
+    console.log("GET CONVERSATIONS ERROR:", error);
 
     res.status(500).json({
       success: false,

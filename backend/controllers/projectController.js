@@ -56,3 +56,35 @@ exports.getAllProjects = async (req, res) => {
     });
   }
 };
+
+// Get My Projects
+exports.getMyProjects = async (req, res) => {
+try {
+const projects = await prisma.project.findMany({
+where: {
+clientId: req.user.id,
+},
+orderBy: {
+createdAt: "desc",
+},
+});
+
+
+res.status(200).json({
+  success: true,
+  projects,
+});
+
+
+} catch (error) {
+console.log("GET MY PROJECTS ERROR:", error);
+
+
+res.status(500).json({
+  success: false,
+  message: "Server Error",
+});
+
+
+}
+};
