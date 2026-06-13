@@ -209,3 +209,48 @@ exports.deleteProject = async (req, res) => {
     });
   }
 };
+
+// Close Project
+exports.closeProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const project = await prisma.project.findUnique({
+      where: { id },
+    });
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
+
+    if (project.clientId !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    const updatedProject = await prisma.project.update({
+      where: { id },
+      data: {
+        status: "closed",
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      project: updatedProject,
+    });
+
+  } catch (error) {
+    console.log("CLOSE PROJECT ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
