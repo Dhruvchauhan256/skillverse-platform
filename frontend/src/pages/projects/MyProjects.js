@@ -3,6 +3,9 @@ import axios from "axios";
 
 function MyProjects() {
   const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     fetchProjects();
@@ -10,8 +13,6 @@ function MyProjects() {
 
   const fetchProjects = async () => {
     try {
-      const token = localStorage.getItem("token");
-
       const res = await axios.get(
         "http://localhost:5000/api/projects/my",
         {
@@ -24,35 +25,64 @@ function MyProjects() {
       setProjects(res.data.projects);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="container mt-5">
-      <h2>My Projects</h2>
+      <h2 className="mb-4">My Projects</h2>
 
-      {projects.length === 0 ? (
-        <p>No projects found.</p>
+      {loading ? (
+        <h4>Loading...</h4>
+      ) : projects.length === 0 ? (
+        <p>No Projects Found</p>
       ) : (
         projects.map((project) => (
           <div
             key={project.id}
-            className="card p-3 mb-3"
+            className="card p-3 mb-3 shadow-sm"
           >
             <h4>{project.title}</h4>
 
             <p>{project.description}</p>
 
-            <p>Budget: ₹{project.budget}</p>
+            <p>
+              <strong>Budget:</strong> ₹
+              {project.budget}
+            </p>
 
-            <p>Status: {project.status}</p>
+            <p>
+              <strong>Category:</strong>{" "}
+              {project.category}
+            </p>
 
-            <a
-              href={`/proposal-management?projectId=${project.id}`}
-              className="btn btn-success"
-            >
-              View Proposals
-            </a>
+            <p>
+              <strong>Status:</strong>{" "}
+              {project.status}
+            </p>
+
+            <div className="mt-3">
+              <a
+                href="/proposal-management"
+                className="btn btn-success me-2"
+              >
+                View Proposals
+              </a>
+
+              <button className="btn btn-warning me-2">
+                Edit
+              </button>
+
+              <button className="btn btn-danger me-2">
+                Delete
+              </button>
+
+              <button className="btn btn-secondary">
+                Close Project
+              </button>
+            </div>
           </div>
         ))
       )}
