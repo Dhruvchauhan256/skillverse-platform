@@ -26,7 +26,6 @@ res.status(201).json({
   project,
 });
 
-
 } catch (error) {
 console.log("CREATE PROJECT ERROR:", error);
 
@@ -48,7 +47,6 @@ orderBy: {
 createdAt: "desc",
 },
 });
-
 
 res.status(200).json({
   success: true,
@@ -72,23 +70,15 @@ res.status(500).json({
 // Get My Projects
 exports.getMyProjects = async (req, res) => {
 try {
-
-
-console.log("=================================");
-console.log("LOGGED USER:", req.user);
-console.log("USER ID:", req.user.id);
-console.log("=================================");
-
 const projects = await prisma.project.findMany({
-  where: {
-    clientId: req.user.id,
-  },
-  orderBy: {
-    createdAt: "desc",
-  },
+where: {
+clientId: req.user.id,
+},
+orderBy: {
+createdAt: "desc",
+},
 });
 
-console.log("PROJECTS FOUND:", projects);
 
 res.status(200).json({
   success: true,
@@ -97,18 +87,172 @@ res.status(200).json({
 
 
 } catch (error) {
+console.log("GET MY PROJECTS ERROR:", error);
 
-
-console.log(
-  "GET MY PROJECTS ERROR:",
-  error
-);
 
 res.status(500).json({
   success: false,
   message: "Server Error",
 });
 
+
+}
+};
+
+// Edit Project
+exports.updateProject = async (req, res) => {
+try {
+const { id } = req.params;
+
+
+const {
+  title,
+  description,
+  budget,
+  category,
+} = req.body;
+
+const project = await prisma.project.findUnique({
+  where: { id },
+});
+
+if (!project) {
+  return res.status(404).json({
+    success: false,
+    message: "Project not found",
+  });
+}
+
+if (project.clientId !== req.user.id) {
+  return res.status(403).json({
+    success: false,
+    message: "Unauthorized",
+  });
+}
+
+const updatedProject =
+  await prisma.project.update({
+    where: { id },
+    data: {
+      title,
+      description,
+      budget,
+      category,
+    },
+  });
+
+res.status(200).json({
+  success: true,
+  project: updatedProject,
+});
+
+
+} catch (error) {
+console.log(error);
+
+
+res.status(500).json({
+  success: false,
+  message: "Server Error",
+});
+
+
+}
+};
+
+// Delete Project
+exports.deleteProject = async (req, res) => {
+try {
+const { id } = req.params;
+
+
+const project = await prisma.project.findUnique({
+  where: { id },
+});
+
+if (!project) {
+  return res.status(404).json({
+    success: false,
+    message: "Project not found",
+  });
+}
+
+if (project.clientId !== req.user.id) {
+  return res.status(403).json({
+    success: false,
+    message: "Unauthorized",
+  });
+}
+
+await prisma.project.delete({
+  where: { id },
+});
+
+res.status(200).json({
+  success: true,
+  message: "Project deleted",
+});
+
+
+} catch (error) {
+console.log(error);
+
+
+res.status(500).json({
+  success: false,
+  message: "Server Error",
+});
+
+
+}
+};
+
+// Close Project
+exports.closeProject = async (req, res) => {
+try {
+const { id } = req.params;
+
+
+const project = await prisma.project.findUnique({
+  where: { id },
+});
+
+if (!project) {
+  return res.status(404).json({
+    success: false,
+    message: "Project not found",
+  });
+}
+
+if (project.clientId !== req.user.id) {
+  return res.status(403).json({
+    success: false,
+    message: "Unauthorized",
+  });
+}
+
+const updatedProject =
+  await prisma.project.update({
+    where: { id },
+    data: {
+      status: "closed",
+    },
+  });
+
+res.status(200).json({
+  success: true,
+  project: updatedProject,
+});
+
+
+} catch (error) {
+console.log(error);
+
+
+res.status(500).json({
+  success: false,
+  message: "Server Error",
+});
 
 }
 };
