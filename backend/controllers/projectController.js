@@ -165,9 +165,6 @@ exports.deleteProject = async (req, res) => {
   try {
     const { id } = req.params;
 
-    console.log("DELETE PROJECT ID:", id);
-    console.log("USER:", req.user);
-
     const project = await prisma.project.findUnique({
       where: { id },
     });
@@ -186,67 +183,29 @@ exports.deleteProject = async (req, res) => {
       });
     }
 
+    // Delete all proposals first
+    await prisma.proposal.deleteMany({
+      where: {
+        projectId: id,
+      },
+    });
+
+    // Delete project
     await prisma.project.delete({
       where: { id },
     });
 
     res.status(200).json({
       success: true,
-      message: "Project deleted",
+      message: "Project deleted successfully",
     });
 
   } catch (error) {
-    console.log("DELETE ERROR:");
-    console.log(error);
+    console.log("DELETE ERROR:", error);
 
     res.status(500).json({
       success: false,
       message: error.message,
-    });
-  }
-};
-
-// Close Project
-exports.closeProject = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const project = await prisma.project.findUnique({
-      where: { id },
-    });
-
-    if (!project) {
-      return res.status(404).json({
-        success: false,
-        message: "Project not found",
-      });
-    }
-
-    if (project.clientId !== req.user.id) {
-      return res.status(403).json({
-        success: false,
-        message: "Unauthorized",
-      });
-    }
-
-    const updatedProject = await prisma.project.update({
-      where: { id },
-      data: {
-        status: "closed",
-      },
-    });
-
-    res.status(200).json({
-      success: true,
-      project: updatedProject,
-    });
-
-  } catch (error) {
-    console.log("CLOSE PROJECT ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
     });
   }
 };
