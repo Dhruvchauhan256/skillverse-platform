@@ -162,97 +162,46 @@ res.status(500).json({
 
 // Delete Project
 exports.deleteProject = async (req, res) => {
-try {
-const { id } = req.params;
+  try {
+    const { id } = req.params;
 
+    console.log("DELETE PROJECT ID:", id);
+    console.log("USER:", req.user);
 
-const project = await prisma.project.findUnique({
-  where: { id },
-});
+    const project = await prisma.project.findUnique({
+      where: { id },
+    });
 
-if (!project) {
-  return res.status(404).json({
-    success: false,
-    message: "Project not found",
-  });
-}
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
 
-if (project.clientId !== req.user.id) {
-  return res.status(403).json({
-    success: false,
-    message: "Unauthorized",
-  });
-}
+    if (project.clientId !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
 
-await prisma.project.delete({
-  where: { id },
-});
+    await prisma.project.delete({
+      where: { id },
+    });
 
-res.status(200).json({
-  success: true,
-  message: "Project deleted",
-});
+    res.status(200).json({
+      success: true,
+      message: "Project deleted",
+    });
 
+  } catch (error) {
+    console.log("DELETE ERROR:");
+    console.log(error);
 
-} catch (error) {
-console.log(error);
-
-
-res.status(500).json({
-  success: false,
-  message: "Server Error",
-});
-
-
-}
-};
-
-// Close Project
-exports.closeProject = async (req, res) => {
-try {
-const { id } = req.params;
-
-
-const project = await prisma.project.findUnique({
-  where: { id },
-});
-
-if (!project) {
-  return res.status(404).json({
-    success: false,
-    message: "Project not found",
-  });
-}
-
-if (project.clientId !== req.user.id) {
-  return res.status(403).json({
-    success: false,
-    message: "Unauthorized",
-  });
-}
-
-const updatedProject =
-  await prisma.project.update({
-    where: { id },
-    data: {
-      status: "closed",
-    },
-  });
-
-res.status(200).json({
-  success: true,
-  project: updatedProject,
-});
-
-
-} catch (error) {
-console.log(error);
-
-
-res.status(500).json({
-  success: false,
-  message: "Server Error",
-});
-
-}
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
