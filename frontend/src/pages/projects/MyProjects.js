@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function MyProjects() {
   const [projects, setProjects] = useState([]);
@@ -13,8 +14,6 @@ function MyProjects() {
 
   const fetchProjects = async () => {
     try {
-      console.log("TOKEN:", token);
-
       const res = await axios.get(
         "http://localhost:5000/api/projects/my",
         {
@@ -24,34 +23,64 @@ function MyProjects() {
         }
       );
 
-      console.log(
-        "PROJECT RESPONSE:",
-        res.data
-      );
-
       setProjects(res.data.projects || []);
     } catch (error) {
-      console.log(
-        "PROJECT FETCH ERROR:",
-        error
-      );
-
-      if (error.response) {
-        console.log(
-          "SERVER RESPONSE:",
-          error.response.data
-        );
-      }
+      console.log(error);
     } finally {
       setLoading(false);
     }
   };
 
+  const deleteProject = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this project?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/projects/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert("Project Deleted Successfully");
+
+      fetchProjects();
+    } catch (error) {
+      console.log(error);
+      alert("Delete Failed");
+    }
+  };
+
+  const closeProject = async (id) => {
+    try {
+      await axios.put(
+        `http://localhost:5000/api/projects/close/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert("Project Closed");
+
+      fetchProjects();
+    } catch (error) {
+      console.log(error);
+      alert("Close Failed");
+    }
+  };
+
   return (
     <div className="container mt-5">
-      <h2 className="mb-4">
-        My Projects
-      </h2>
+      <h2 className="mb-4">My Projects</h2>
 
       {loading ? (
         <h4>Loading...</h4>
@@ -84,30 +113,34 @@ function MyProjects() {
               {project.status}
             </p>
 
-            <p>
-              <strong>Project ID:</strong>{" "}
-              {project.id}
-            </p>
-
             <div className="mt-3">
-              <a
-                href="/proposal-management"
-                className="btn btn-success me-2"
+
+              <Link
+                to={`/edit-project/${project.id}`}
+                className="btn btn-warning me-2"
               >
-                View Proposals
-              </a>
-
-              <button className="btn btn-warning me-2">
                 Edit
-              </button>
+              </Link>
 
-              <button className="btn btn-danger me-2">
+              <button
+                className="btn btn-danger me-2"
+                onClick={() =>
+                  deleteProject(project.id)
+                }
+              >
                 Delete
               </button>
 
-              <button className="btn btn-secondary">
-                Close Project
-              </button>
+              {project.status !== "closed" && (
+                <button
+                  className="btn btn-secondary"
+                  onClick={() =>
+                    closeProject(project.id)
+                  }
+                >
+                  Close Project
+                </button>
+              )}
             </div>
           </div>
         ))
