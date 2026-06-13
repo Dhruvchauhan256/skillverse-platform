@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import FindTalent from "./pages/FindTalent";
 import FindWork from "./pages/FindWork";
 import FreelancerDashboard from "./pages/dashboard/FreelancerDashboard";
+import EditProject from "./pages/projects/EditProject";
 import ClientDashboard from "./pages/dashboard/ClientDashboard";
 import ClientProfile from "./pages/client/ClientProfile";
 import PostProject from "./pages/projects/PostProject";
@@ -157,7 +158,15 @@ function App() {
     </ProtectedRoute>
   }
 />
-            
+
+  <Route
+  path="/edit-project/:id"
+  element={
+    <ProtectedRoute>
+      <EditProject />
+    </ProtectedRoute>
+  }
+/>
     </Routes>
     </>
   );
