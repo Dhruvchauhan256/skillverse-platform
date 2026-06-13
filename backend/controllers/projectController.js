@@ -2,68 +2,48 @@ const prisma = require("../prisma/client");
 
 // Create Project
 exports.createProject = async (req, res) => {
-  try {
-    const {
-      title,
-      description,
-      budget,
-      category,
-    } = req.body;
+try {
+const {
+title,
+description,
+budget,
+category,
+} = req.body;
 
-    const project = await prisma.project.create({
-      data: {
-        title,
-        description,
-        budget,
-        category,
-        clientId: req.user.id,
-      },
-    });
 
-    res.status(201).json({
-      success: true,
-      project,
-    });
-  } catch (error) {
-    console.log(error);
+const project = await prisma.project.create({
+  data: {
+    title,
+    description,
+    budget,
+    category,
+    clientId: req.user.id,
+  },
+});
 
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
+res.status(201).json({
+  success: true,
+  project,
+});
+
+
+} catch (error) {
+console.log("CREATE PROJECT ERROR:", error);
+
+
+res.status(500).json({
+  success: false,
+  message: "Server Error",
+});
+
+
+}
 };
 
 // Get All Projects
 exports.getAllProjects = async (req, res) => {
-  try {
-    const projects = await prisma.project.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    res.status(200).json({
-      success: true,
-      projects,
-    });
-  } catch (error) {
-    console.log(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
-};
-
-// Get My Projects
-exports.getMyProjects = async (req, res) => {
 try {
 const projects = await prisma.project.findMany({
-where: {
-clientId: req.user.id,
-},
 orderBy: {
 createdAt: "desc",
 },
@@ -77,8 +57,52 @@ res.status(200).json({
 
 
 } catch (error) {
-console.log("GET MY PROJECTS ERROR:", error);
+console.log("GET ALL PROJECTS ERROR:", error);
 
+
+res.status(500).json({
+  success: false,
+  message: "Server Error",
+});
+
+
+}
+};
+
+// Get My Projects
+exports.getMyProjects = async (req, res) => {
+try {
+
+
+console.log("=================================");
+console.log("LOGGED USER:", req.user);
+console.log("USER ID:", req.user.id);
+console.log("=================================");
+
+const projects = await prisma.project.findMany({
+  where: {
+    clientId: req.user.id,
+  },
+  orderBy: {
+    createdAt: "desc",
+  },
+});
+
+console.log("PROJECTS FOUND:", projects);
+
+res.status(200).json({
+  success: true,
+  projects,
+});
+
+
+} catch (error) {
+
+
+console.log(
+  "GET MY PROJECTS ERROR:",
+  error
+);
 
 res.status(500).json({
   success: false,
