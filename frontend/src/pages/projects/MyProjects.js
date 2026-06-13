@@ -13,6 +13,8 @@ function MyProjects() {
 
   const fetchProjects = async () => {
     try {
+      console.log("TOKEN:", token);
+
       const res = await axios.get(
         "http://localhost:5000/api/projects/my",
         {
@@ -22,9 +24,24 @@ function MyProjects() {
         }
       );
 
-      setProjects(res.data.projects);
+      console.log(
+        "PROJECT RESPONSE:",
+        res.data
+      );
+
+      setProjects(res.data.projects || []);
     } catch (error) {
-      console.log(error);
+      console.log(
+        "PROJECT FETCH ERROR:",
+        error
+      );
+
+      if (error.response) {
+        console.log(
+          "SERVER RESPONSE:",
+          error.response.data
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -32,12 +49,16 @@ function MyProjects() {
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4">My Projects</h2>
+      <h2 className="mb-4">
+        My Projects
+      </h2>
 
       {loading ? (
         <h4>Loading...</h4>
       ) : projects.length === 0 ? (
-        <p>No Projects Found</p>
+        <div className="alert alert-warning">
+          No Projects Found
+        </div>
       ) : (
         projects.map((project) => (
           <div
@@ -61,6 +82,11 @@ function MyProjects() {
             <p>
               <strong>Status:</strong>{" "}
               {project.status}
+            </p>
+
+            <p>
+              <strong>Project ID:</strong>{" "}
+              {project.id}
             </p>
 
             <div className="mt-3">
