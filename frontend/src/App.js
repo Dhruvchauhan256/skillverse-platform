@@ -1,7 +1,7 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
-
+import MyProjects from "./pages/projects/MyProjects";
 // Pages
 import Home from "./pages/Home";
 import FindTalent from "./pages/FindTalent";
@@ -149,8 +149,16 @@ function App() {
           path="/freelancer-profile"
           element={<FreelancerProfile />}
         />
-
-      </Routes>
+      <Route
+  path="/my-projects"
+  element={
+    <ProtectedRoute>
+      <MyProjects />
+    </ProtectedRoute>
+  }
+/>
+            
+    </Routes>
     </>
   );
 }
