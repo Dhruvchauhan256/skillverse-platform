@@ -3,7 +3,6 @@ import { supabase } from "../../supabaseClient";
 
 import EditProfileModal from "./components/EditProfileModal";
 import { calculateRanking } from "../../utils/calculateRanking";
-import { supabase } from "../../supabaseClient";
 
 function FreelancerProfile() {
   const [profile, setProfile] = useState(null);
@@ -16,6 +15,9 @@ function FreelancerProfile() {
     fetchProfile();
   }, []);
 
+  // ---------------------------
+  // FETCH PROFILE FROM SUPABASE
+  // ---------------------------
   const fetchProfile = async () => {
     setLoading(true);
 
@@ -25,24 +27,54 @@ function FreelancerProfile() {
       .eq("user_id", user.id)
       .single();
 
-    if (!error) setProfile(data);
+    if (error) {
+      console.log(error);
+      setLoading(false);
+      return;
+    }
+
+    setProfile(data);
+
+    // AFTER FETCH → UPDATE RANKING
+    updateRanking(data);
 
     setLoading(false);
   };
 
+  // ---------------------------
+  // RANKING UPDATE (UPWORK STYLE)
+  // ---------------------------
+  const updateRanking = async (profileData) => {
+    const score = calculateRanking(profileData);
+
+    await supabase
+      .from("profiles")
+      .update({ ranking_score: score })
+      .eq("id", profileData.id);
+
+    setProfile((prev) => ({
+      ...prev,
+      ranking_score: score,
+    }));
+  };
+
+  // ---------------------------
+  // PROFILE COMPLETION %
+  // ---------------------------
   const profileCompletion = () => {
     if (!profile) return 0;
 
-    let fields = [
+    const fields = [
       profile.name,
       profile.title,
       profile.bio,
       profile.avatar_url,
       profile.hourly_rate,
       profile.skills?.length,
+      profile.portfolio?.length,
     ];
 
-    let filled = fields.filter(Boolean).length;
+    const filled = fields.filter(Boolean).length;
 
     return Math.round((filled / fields.length) * 100);
   };
@@ -53,25 +85,41 @@ function FreelancerProfile() {
     <div className="container mt-4">
 
       {/* HEADER */}
-      <div className="card p-4 mb-3 d-flex flex-row justify-content-between">
+      <div className="card p-4 mb-3 d-flex flex-row justify-content-between align-items-center">
 
-        <div className="d-flex gap-3">
+        <div className="d-flex gap-3 align-items-center">
+
           <img
-            src={profile.avatar_url || "https://via.placeholder.com/80"}
+            src={
+              profile.avatar_url ||
+              "https://via.placeholder.com/80"
+            }
             className="rounded-circle"
             width="80"
+            height="80"
+            alt="avatar"
           />
 
           <div>
-            <h4>{profile.name}</h4>
-            <p className="text-muted">{profile.title}</p>
+            <h4 className="mb-1">{profile.name}</h4>
+            <p className="text-muted mb-1">{profile.title}</p>
 
-            <span className={`badge ${profile.is_online ? "bg-success" : "bg-secondary"}`}>
+            <span
+              className={`badge ${
+                profile.is_online ? "bg-success" : "bg-secondary"
+              }`}
+            >
               {profile.is_online ? "Online" : "Offline"}
             </span>
 
             <div className="mt-2">
               💰 ₹{profile.hourly_rate}/hr
+            </div>
+
+            {/* 🏆 RANKING */}
+            <div className="mt-2">
+              🏆 Ranking Score:{" "}
+              <b>{profile.ranking_score || 0}/100</b>
             </div>
           </div>
         </div>
@@ -100,11 +148,32 @@ function FreelancerProfile() {
       </div>
 
       {/* STATS */}
-      <div className="row mb-3">
-        <div className="col-md-3 card p-3">⭐ {profile.rating}</div>
-        <div className="col-md-3 card p-3">💰 ₹{profile.earnings}</div>
-        <div className="col-md-3 card p-3">✅ {profile.jobs_completed}</div>
-        <div className="col-md-3 card p-3">📩 {profile.response_rate}%</div>
+      <div className="row mb-3 g-2">
+
+        <div className="col-md-3">
+          <div className="card p-3 text-center">
+            ⭐ {profile.rating || 0}
+          </div>
+        </div>
+
+        <div className="col-md-3">
+          <div className="card p-3 text-center">
+            💰 ₹{profile.earnings || 0}
+          </div>
+        </div>
+
+        <div className="col-md-3">
+          <div className="card p-3 text-center">
+            ✅ {profile.jobs_completed || 0}
+          </div>
+        </div>
+
+        <div className="col-md-3">
+          <div className="card p-3 text-center">
+            📩 {profile.response_rate || 0}%
+          </div>
+        </div>
+
       </div>
 
       {/* SKILLS */}
@@ -112,20 +181,40 @@ function FreelancerProfile() {
         <h5>Skills</h5>
 
         <div className="d-flex flex-wrap gap-2">
-          {profile.skills?.map((skill, i) => (
-            <span key={i} className="badge bg-primary">
-              {skill}
-            </span>
-          ))}
+          {profile.skills?.length > 0 ? (
+            profile.skills.map((skill, i) => (
+              <span key={i} className="badge bg-primary">
+                {skill}
+              </span>
+            ))
+          ) : (
+            <p className="text-muted">No skills added</p>
+          )}
         </div>
       </div>
 
-      {/* MODAL */}
+      {/* PORTFOLIO PREVIEW */}
+      <div className="card p-3 mb-3">
+        <h5>Portfolio</h5>
+
+        {profile.portfolio?.length > 0 ? (
+          <ul>
+            {profile.portfolio.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-muted">No portfolio added</p>
+        )}
+      </div>
+
+      {/* EDIT MODAL */}
       {editOpen && (
         <EditProfileModal
           profile={profile}
           setProfile={setProfile}
           onClose={() => setEditOpen(false)}
+          refreshProfile={fetchProfile}
         />
       )}
 
