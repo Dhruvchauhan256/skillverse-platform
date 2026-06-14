@@ -4,9 +4,6 @@ import React, {
 } from "react";
 import axios from "axios";
 
-import ConversationList from "../../components/chat/ConversationList";
-import ChatWindow from "../../components/chat/ChatWindow";
-
 function Messages() {
   const [conversations, setConversations] =
     useState([]);
