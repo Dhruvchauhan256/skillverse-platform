@@ -21,6 +21,7 @@ import Register from "./pages/auth/Register";
 import FreelancerDashboard from "./pages/dashboard/FreelancerDashboard";
 import ClientDashboard from "./pages/dashboard/ClientDashboard";
 
+import ProposalManagement from "./pages/dashboard/ProposalManagement";
 import ClientProfile from "./pages/client/ClientProfile";
 
 import PostProject from "./pages/projects/PostProject";
