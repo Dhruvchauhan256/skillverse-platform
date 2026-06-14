@@ -1,94 +1,161 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
-  const token = localStorage.getItem("token");
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
 
   const logout = () => {
-    localStorage.clear();
-    navigate("/");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
   };
 
   return (
-    <nav style={{
-      display: "flex",
-      justifyContent: "space-between",
-      padding: "15px 30px",
-      background: "#0a0f1c",
-      color: "white",
-      alignItems: "center",
-      borderBottom: "1px solid #222"
-    }}>
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top px-3">
 
-      {/* LOGO */}
-      <div style={{ fontSize: "20px", fontWeight: "bold" }}>
-        SkillVerse 🚀
-      </div>
+      {/* BRAND */}
+      <Link className="navbar-brand fw-bold" to="/">
+        🚀 SkillVerse
+      </Link>
 
-      {/* CENTER LINKS */}
-      <div style={{ display: "flex", gap: "20px" }}>
-        <Link to="/find-work" style={{ color: "white" }}>Find Work</Link>
-        <Link to="/find-talent" style={{ color: "white" }}>Find Talent</Link>
-        <Link to="/jobs" style={{ color: "white" }}>Jobs</Link>
-        <Link to="/messages" style={{ color: "white" }}>Messages</Link>
-      </div>
+      {/* MOBILE TOGGLE */}
+      <button
+        className="navbar-toggler"
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        <span className="navbar-toggler-icon"></span>
+      </button>
 
-      {/* RIGHT SIDE */}
-      <div style={{ display: "flex", gap: "10px" }}>
+      {/* NAV LINKS */}
+      <div className={`collapse navbar-collapse ${menuOpen ? "show" : ""}`}>
 
-        {!token ? (
-          <>
-            <Link to="/login">
-              <button style={btn1}>Login</button>
+        {/* LEFT MENU */}
+        <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+
+          <li className="nav-item">
+            <Link className="nav-link" to="/find-work">
+              Find Work
             </Link>
-            <Link to="/signup">
-              <button style={btn2}>Join</button>
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link to="/freelancer-profile">
-              <button style={btn1}>Profile</button>
-            </Link>
+          </li>
 
-            <Link to="/dashboard">
-              <button style={btn2}>Dashboard</button>
+          <li className="nav-item">
+            <Link className="nav-link" to="/find-talent">
+              Find Talent
             </Link>
+          </li>
 
-            <button onClick={logout} style={btn3}>
-              Logout
-            </button>
-          </>
-        )}
+          <li className="nav-item">
+            <Link className="nav-link" to="/projects">
+              Projects
+            </Link>
+          </li>
 
+          <li className="nav-item">
+            <Link className="nav-link" to="/messages">
+              Messages
+            </Link>
+          </li>
+
+        </ul>
+
+        {/* SEARCH BAR (FIVERR STYLE) */}
+        <form className="d-flex me-3">
+          <input
+            className="form-control"
+            type="search"
+            placeholder="Search freelancers, jobs..."
+          />
+        </form>
+
+        {/* RIGHT SIDE */}
+        <ul className="navbar-nav align-items-center gap-2">
+
+          {/* NOTIFICATIONS */}
+          <li className="nav-item">
+            <span className="nav-link">🔔</span>
+          </li>
+
+          {/* CREATE BUTTON */}
+          <li className="nav-item">
+            <Link className="btn btn-success btn-sm" to="/post-project">
+              Post Job
+            </Link>
+          </li>
+
+          {/* USER DROPDOWN */}
+          {user ? (
+            <li className="nav-item dropdown">
+
+              <span
+                className="nav-link dropdown-toggle d-flex align-items-center gap-2"
+                onClick={() => setMenuOpen(!menuOpen)}
+                style={{ cursor: "pointer" }}
+              >
+                <img
+                  src="https://via.placeholder.com/30"
+                  className="rounded-circle"
+                  width="30"
+                  height="30"
+                  alt="avatar"
+                />
+                {user.name || "User"}
+              </span>
+
+              <ul className={`dropdown-menu ${menuOpen ? "show" : ""}`}>
+
+                <li>
+                  <Link className="dropdown-item" to="/freelancer-profile">
+                    My Profile
+                  </Link>
+                </li>
+
+                <li>
+                  <Link className="dropdown-item" to="/dashboard">
+                    Dashboard
+                  </Link>
+                </li>
+
+                <li>
+                  <Link className="dropdown-item" to="/my-projects">
+                    My Projects
+                  </Link>
+                </li>
+
+                <li>
+                  <hr className="dropdown-divider" />
+                </li>
+
+                <li>
+                  <button className="dropdown-item text-danger" onClick={logout}>
+                    Logout
+                  </button>
+                </li>
+
+              </ul>
+            </li>
+          ) : (
+            <>
+              <li className="nav-item">
+                <Link className="nav-link" to="/login">
+                  Login
+                </Link>
+              </li>
+
+              <li className="nav-item">
+                <Link className="btn btn-primary btn-sm" to="/signup">
+                  Join
+                </Link>
+              </li>
+            </>
+          )}
+
+        </ul>
       </div>
     </nav>
   );
 }
-
-const btn1 = {
-  background: "transparent",
-  color: "white",
-  border: "1px solid white",
-  padding: "6px 12px",
-  cursor: "pointer"
-};
-
-const btn2 = {
-  background: "#1dbf73",
-  color: "white",
-  border: "none",
-  padding: "6px 12px",
-  cursor: "pointer"
-};
-
-const btn3 = {
-  background: "#ff4d4d",
-  color: "white",
-  border: "none",
-  padding: "6px 12px",
-  cursor: "pointer"
-};
 
 export default Navbar;
