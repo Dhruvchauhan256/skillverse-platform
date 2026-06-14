@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 
 import EditProfileModal from "./components/EditProfileModal";
+import { calculateRanking } from "../../utils/calculateRanking";
+import { supabase } from "../../supabaseClient";
 
 function FreelancerProfile() {
   const [profile, setProfile] = useState(null);
