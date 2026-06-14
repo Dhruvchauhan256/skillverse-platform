@@ -1,55 +1,108 @@
 import React from "react";
-import { useParams } from "react-router-dom";
-import "./FreelancerProfile.css";
 
 function FreelancerProfile() {
-  const { name } = useParams();
-
   return (
-    <div className="profile-container">
+    <div className="container-fluid mt-4">
+      <div className="row">
 
-      {/* HEADER */}
-      <div className="profile-header">
-        <div className="avatar"></div>
+        {/* LEFT CONTENT */}
+        <div className="col-md-9">
 
-        <div>
-          <h1>{name}</h1>
-          <p>Full Stack Developer | React | Node.js</p>
-          <span>⭐ 4.8 (120 reviews)</span>
-        </div>
+          {/* Profile Header */}
+          <div className="card p-4 mb-3">
+            <div className="d-flex align-items-center gap-3">
+              <img
+                src="https://via.placeholder.com/80"
+                className="rounded-circle"
+              />
 
-        <button>Hire Now</button>
-      </div>
-
-      {/* BODY */}
-      <div className="profile-body">
-
-        <div className="left">
-          <h2>About</h2>
-          <p>
-            Experienced freelancer specializing in web applications,
-            UI design and scalable backend systems.
-          </p>
-
-          <h2>Skills</h2>
-          <div className="skills">
-            <span>React</span>
-            <span>Node.js</span>
-            <span>MongoDB</span>
-            <span>UI/UX</span>
+              <div>
+                <h4>Dhruv Chauhan</h4>
+                <p className="text-muted">
+                  Full Stack Developer | MERN Expert
+                </p>
+                <span className="badge bg-success">
+                  Online
+                </span>
+              </div>
+            </div>
           </div>
+
+          {/* Stats */}
+          <div className="row mb-3">
+
+            <div className="col-md-3">
+              <div className="card p-3">
+                ⭐ 4.8 Rating
+              </div>
+            </div>
+
+            <div className="col-md-3">
+              <div className="card p-3">
+                💰 ₹1.2L Earned
+              </div>
+            </div>
+
+            <div className="col-md-3">
+              <div className="card p-3">
+                ✅ 24 Jobs
+              </div>
+            </div>
+
+            <div className="col-md-3">
+              <div className="card p-3">
+                📩 98% Response
+              </div>
+            </div>
+
+          </div>
+
+          {/* Skills */}
+          <div className="card p-3 mb-3">
+            <h5>Skills</h5>
+            <div className="d-flex gap-2 flex-wrap">
+              <span className="badge bg-primary">React</span>
+              <span className="badge bg-primary">Node.js</span>
+              <span className="badge bg-primary">MongoDB</span>
+              <span className="badge bg-primary">Express</span>
+            </div>
+          </div>
+
+          {/* Portfolio */}
+          <div className="card p-3 mb-3">
+            <h5>Portfolio</h5>
+            <p>Showcase your best work here...</p>
+          </div>
+
+          {/* Work History */}
+          <div className="card p-3">
+            <h5>Work History</h5>
+            <p>No jobs yet</p>
+          </div>
+
         </div>
 
-        <div className="right">
-          <h2>Hourly Rate</h2>
-          <h3>$25/hr</h3>
+        {/* RIGHT SIDEBAR */}
+        <div className="col-md-3">
 
-          <h2>Completed Projects</h2>
-          <h3>48+</h3>
+          <div className="card p-3">
+            <h6>Profile Menu</h6>
+
+            <ul className="list-unstyled">
+              <li>Profile</li>
+              <li>Stats</li>
+              <li>Earnings</li>
+              <li>Proposals</li>
+              <li>Messages</li>
+              <li>Settings</li>
+              <li>Logout</li>
+            </ul>
+
+          </div>
+
         </div>
 
       </div>
-
     </div>
   );
 }
