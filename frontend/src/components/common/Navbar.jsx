@@ -2,18 +2,29 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
+<<<<<<< HEAD
   const [menuOpen, setMenuOpen] = useState(false);
 
+=======
+  const token = localStorage.getItem("token");
+>>>>>>> f4fccfa (Message)
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
 
+  const [dropdown, setDropdown] = useState(false);
+
   const logout = () => {
+<<<<<<< HEAD
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+=======
+    localStorage.clear();
+>>>>>>> f4fccfa (Message)
     navigate("/login");
   };
 
   return (
+<<<<<<< HEAD
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top px-3">
 
       {/* BRAND */}
@@ -153,9 +164,78 @@ function Navbar() {
           )}
 
         </ul>
+=======
+    <nav className="sv-navbar">
+
+      {/* LEFT - LOGO */}
+      <div className="sv-logo">
+        🚀 SkillVerse
+      </div>
+
+      {/* CENTER - LINKS */}
+      <div className="sv-links">
+        <Link to="/find-work">Find Work</Link>
+        <Link to="/find-talent">Find Talent</Link>
+        <Link to="/jobs">Jobs</Link>
+        <Link to="/messages">Messages</Link>
+      </div>
+
+      {/* SEARCH BAR (FIVERR STYLE) */}
+      <div className="sv-search">
+        <input placeholder="Search jobs, freelancers..." />
+      </div>
+
+      {/* RIGHT SIDE */}
+      <div className="sv-right">
+
+        {!token ? (
+          <>
+            <Link to="/login">
+              <button className="btn-outline">Login</button>
+            </Link>
+            <Link to="/signup">
+              <button className="btn-green">Join</button>
+            </Link>
+          </>
+        ) : (
+          <>
+            {/* PROFILE DROPDOWN */}
+            <div
+              className="sv-user"
+              onClick={() => setDropdown(!dropdown)}
+            >
+              <img
+                src={user?.avatar || "https://via.placeholder.com/30"}
+                className="sv-avatar"
+              />
+
+              <span>{user?.name || "User"}</span>
+            </div>
+
+            {dropdown && (
+              <div className="sv-dropdown">
+
+                <Link to="/freelancer-profile">My Profile</Link>
+                <Link to="/dashboard">Dashboard</Link>
+                <Link to="/my-projects">My Projects</Link>
+
+                <hr />
+
+                <button onClick={logout} className="logout-btn">
+                  Logout
+                </button>
+              </div>
+            )}
+          </>
+        )}
+>>>>>>> f4fccfa (Message)
       </div>
     </nav>
   );
 }
 
+<<<<<<< HEAD
 export default Navbar;
+=======
+export default Navbar;
+>>>>>>> f4fccfa (Message)

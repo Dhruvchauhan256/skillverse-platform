@@ -8,7 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 // Home
 import Home from "./pages/Home";
-
+import MobileNav from "./components/common/MobileNav";
 // Marketplace
 import FindTalent from "./pages/FindTalent";
 import FindWork from "./pages/FindWork";
@@ -186,6 +186,7 @@ function App() {
           }
         />
 
+	<MobileNav />
       </Routes>
     </>
   );

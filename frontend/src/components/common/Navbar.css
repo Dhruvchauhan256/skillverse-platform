@@ -62,3 +62,107 @@
   color: #000 !important;
   font-weight: bold;
 }
+
+.sv-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 25px;
+  background: #0f172a;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* LOGO */
+.sv-logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* LINKS */
+.sv-links {
+  display: flex;
+  gap: 20px;
+}
+
+.sv-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* SEARCH */
+.sv-search input {
+  padding: 7px 12px;
+  border-radius: 6px;
+  border: none;
+  width: 250px;
+}
+
+/* RIGHT */
+.sv-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* BUTTONS */
+.btn-outline {
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.btn-green {
+  background: #1dbf73;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+/* USER */
+.sv-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.sv-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+/* DROPDOWN */
+.sv-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background: white;
+  color: black;
+  width: 180px;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sv-dropdown a {
+  text-decoration: none;
+  color: black;
+}
+
+.logout-btn {
+  background: red;
+  color: white;
+  border: none;
+  padding: 6px;
+}
+
