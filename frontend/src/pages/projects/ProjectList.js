@@ -1,88 +1,198 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { supabase } from "../../supabaseClient";
 
-function PostProject() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [budget, setBudget] = useState("");
+function ProjectList() {
+  const [projects, setProjects] = useState([]);
+  const [filteredProjects, setFilteredProjects] = useState([]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const [loading, setLoading] = useState(true);
 
-    alert("Project Created Successfully 🚀");
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
 
-    console.log({
-      title,
-      description,
-      budget,
-    });
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    filterProjects();
+  }, [search, categoryFilter, projects]);
+
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+
+      const { data, error } = await supabase
+        .from("Project")
+        .select("*")
+        .order("createdAt", { ascending: false });
+
+      if (error) {
+        console.log(error);
+        return;
+      }
+
+      setProjects(data || []);
+      setFilteredProjects(data || []);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const filterProjects = () => {
+    let temp = [...projects];
+
+    if (search) {
+      temp = temp.filter(
+        (project) =>
+          project.title
+            ?.toLowerCase()
+            .includes(search.toLowerCase()) ||
+          project.description
+            ?.toLowerCase()
+            .includes(search.toLowerCase())
+      );
+    }
+
+    if (categoryFilter) {
+      temp = temp.filter(
+        (project) => project.category === categoryFilter
+      );
+    }
+
+    setFilteredProjects(temp);
+  };
+
+  if (loading) {
+    return (
+      <div className="container mt-5">
+        <h3>Loading Projects...</h3>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mt-5">
-      <div className="card p-4 shadow">
+    <div className="container py-4">
 
-        <h2 className="mb-4">
-          Post New Project
-        </h2>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2>🚀 Browse Projects</h2>
 
-        <form onSubmit={handleSubmit}>
+        <span className="badge bg-success fs-6">
+          {filteredProjects.length} Projects
+        </span>
+      </div>
 
-          <div className="mb-3">
-            <label className="form-label">
-              Project Title
-            </label>
+      <div className="card shadow-sm p-3 mb-4">
+        <div className="row">
 
+          <div className="col-md-8 mb-2">
             <input
               type="text"
               className="form-control"
-              placeholder="Enter project title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
+              placeholder="Search projects..."
+              value={search}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
             />
           </div>
 
-          <div className="mb-3">
-            <label className="form-label">
-              Description
-            </label>
+          <div className="col-md-4">
+            <select
+              className="form-select"
+              value={categoryFilter}
+              onChange={(e) =>
+                setCategoryFilter(e.target.value)
+              }
+            >
+              <option value="">
+                All Categories
+              </option>
 
-            <textarea
-              className="form-control"
-              rows="5"
-              placeholder="Describe your project"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
+              <option value="Web Development">
+                Web Development
+              </option>
+
+              <option value="Mobile App">
+                Mobile App
+              </option>
+
+              <option value="UI/UX Design">
+                UI/UX Design
+              </option>
+
+              <option value="SEO">
+                SEO
+              </option>
+
+              <option value="Digital Marketing">
+                Digital Marketing
+              </option>
+            </select>
           </div>
 
-          <div className="mb-3">
-            <label className="form-label">
-              Budget (₹)
-            </label>
-
-            <input
-              type="number"
-              className="form-control"
-              placeholder="5000"
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="btn btn-success"
-          >
-            Post Project
-          </button>
-
-        </form>
-
+        </div>
       </div>
+
+      {filteredProjects.length === 0 ? (
+        <div className="alert alert-warning">
+          No projects found.
+        </div>
+      ) : (
+        filteredProjects.map((project) => (
+          <div
+            key={project.id}
+            className="card shadow-sm border-0 mb-3"
+          >
+            <div className="card-body">
+
+              <div className="d-flex justify-content-between">
+
+                <h4>
+                  {project.title}
+                </h4>
+
+                <span className="badge bg-primary">
+                  ₹{project.budget}
+                </span>
+
+              </div>
+
+              <p className="text-muted">
+                {project.category}
+              </p>
+
+              <p>
+                {project.description}
+              </p>
+
+              <div className="d-flex justify-content-between align-items-center">
+
+                <div>
+                  <span className="badge bg-success me-2">
+                    {project.status}
+                  </span>
+
+                  <small className="text-muted">
+                    Client: {project.clientId}
+                  </small>
+                </div>
+
+                <button className="btn btn-primary">
+                  Submit Proposal
+                </button>
+
+              </div>
+
+            </div>
+          </div>
+        ))
+      )}
+
     </div>
   );
 }
 
-export default PostProject;
+export default ProjectList;
