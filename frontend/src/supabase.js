@@ -1,9 +1,11 @@
+
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = "postgresql://postgres:SkillVerse@2026@db.waljvgvdbxqzfzlmqwtk.supabase.co:5432/postgres";
-const supabaseKey = "sb_publishable_BRjF2nzuv71somtADpNGXg_nCSwDYpB";
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(
-  supabaseUrl,
-  supabaseKey
-);
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error("Missing Supabase environment variables");
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
