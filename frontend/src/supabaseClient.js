@@ -1,8 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = "postgresql://postgres:SkillVerse@2026@db.waljvgvdbxqzfzlmqwtk.supabase.co:5432/postgres?sslmode=require";
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
-const supabaseKey = "sb_publishable_BRjF2nzuv71somtADpNGXg_nCSwDYpB";
-
-export const supabase = createClient(supabaseUrl, supabaseKey);
-
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
