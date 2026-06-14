@@ -12,50 +12,67 @@ function FreelancerProfile() {
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
-    fetchProfile();
+    if (user?.id) {
+      fetchProfile();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   // ---------------------------
   // FETCH PROFILE FROM SUPABASE
   // ---------------------------
   const fetchProfile = async () => {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", user.id)
-      .single();
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
 
-    if (error) {
-      console.log(error);
+      if (error) {
+        console.log("Profile fetch error:", error);
+        setProfile(null);
+        setLoading(false);
+        return;
+      }
+
+      setProfile(data);
+
+      // update ranking safely
+      if (data) {
+        updateRanking(data);
+      }
+
       setLoading(false);
-      return;
+    } catch (err) {
+      console.log("Unexpected error:", err);
+      setLoading(false);
     }
-
-    setProfile(data);
-
-    // AFTER FETCH → UPDATE RANKING
-    updateRanking(data);
-
-    setLoading(false);
   };
 
   // ---------------------------
   // RANKING UPDATE (UPWORK STYLE)
   // ---------------------------
   const updateRanking = async (profileData) => {
-    const score = calculateRanking(profileData);
+    try {
+      const score = calculateRanking(profileData);
 
-    await supabase
-      .from("profiles")
-      .update({ ranking_score: score })
-      .eq("id", profileData.id);
+      await supabase
+        .from("profiles")
+        .update({ ranking_score: score })
+        .eq("id", profileData.id);
 
-    setProfile((prev) => ({
-      ...prev,
-      ranking_score: score,
-    }));
+      setProfile((prev) =>
+        prev
+          ? { ...prev, ranking_score: score }
+          : prev
+      );
+    } catch (err) {
+      console.log("Ranking update error:", err);
+    }
   };
 
   // ---------------------------
@@ -79,7 +96,22 @@ function FreelancerProfile() {
     return Math.round((filled / fields.length) * 100);
   };
 
+  // ---------------------------
+  // LOADING STATE
+  // ---------------------------
   if (loading) return <h3 className="p-4">Loading...</h3>;
+
+  // ---------------------------
+  // NO PROFILE STATE
+  // ---------------------------
+  if (!profile) {
+    return (
+      <div className="container mt-4">
+        <h4>No profile found</h4>
+        <p>Create your freelancer profile to get started.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-4">
@@ -91,7 +123,7 @@ function FreelancerProfile() {
 
           <img
             src={
-              profile.avatar_url ||
+              profile?.avatar_url ||
               "https://via.placeholder.com/80"
             }
             className="rounded-circle"
@@ -101,25 +133,31 @@ function FreelancerProfile() {
           />
 
           <div>
-            <h4 className="mb-1">{profile.name}</h4>
-            <p className="text-muted mb-1">{profile.title}</p>
+            <h4 className="mb-1">
+              {profile?.name || "Unknown User"}
+            </h4>
+
+            <p className="text-muted mb-1">
+              {profile?.title || "No title set"}
+            </p>
 
             <span
               className={`badge ${
-                profile.is_online ? "bg-success" : "bg-secondary"
+                profile?.is_online
+                  ? "bg-success"
+                  : "bg-secondary"
               }`}
             >
-              {profile.is_online ? "Online" : "Offline"}
+              {profile?.is_online ? "Online" : "Offline"}
             </span>
 
             <div className="mt-2">
-              💰 ₹{profile.hourly_rate}/hr
+              💰 ₹{profile?.hourly_rate || 0}/hr
             </div>
 
-            {/* 🏆 RANKING */}
             <div className="mt-2">
               🏆 Ranking Score:{" "}
-              <b>{profile.ranking_score || 0}/100</b>
+              <b>{profile?.ranking_score || 0}/100</b>
             </div>
           </div>
         </div>
@@ -152,25 +190,25 @@ function FreelancerProfile() {
 
         <div className="col-md-3">
           <div className="card p-3 text-center">
-            ⭐ {profile.rating || 0}
+            ⭐ {profile?.rating || 0}
           </div>
         </div>
 
         <div className="col-md-3">
           <div className="card p-3 text-center">
-            💰 ₹{profile.earnings || 0}
+            💰 ₹{profile?.earnings || 0}
           </div>
         </div>
 
         <div className="col-md-3">
           <div className="card p-3 text-center">
-            ✅ {profile.jobs_completed || 0}
+            ✅ {profile?.jobs_completed || 0}
           </div>
         </div>
 
         <div className="col-md-3">
           <div className="card p-3 text-center">
-            📩 {profile.response_rate || 0}%
+            📩 {profile?.response_rate || 0}%
           </div>
         </div>
 
@@ -181,7 +219,7 @@ function FreelancerProfile() {
         <h5>Skills</h5>
 
         <div className="d-flex flex-wrap gap-2">
-          {profile.skills?.length > 0 ? (
+          {profile?.skills?.length > 0 ? (
             profile.skills.map((skill, i) => (
               <span key={i} className="badge bg-primary">
                 {skill}
@@ -193,11 +231,11 @@ function FreelancerProfile() {
         </div>
       </div>
 
-      {/* PORTFOLIO PREVIEW */}
+      {/* PORTFOLIO */}
       <div className="card p-3 mb-3">
         <h5>Portfolio</h5>
 
-        {profile.portfolio?.length > 0 ? (
+        {profile?.portfolio?.length > 0 ? (
           <ul>
             {profile.portfolio.map((item, i) => (
               <li key={i}>{item}</li>
