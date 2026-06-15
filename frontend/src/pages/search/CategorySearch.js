@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import FreelancerCard from "../../components/freelancer/FreelancerCard";
 import "./CategorySearch.css";
-import { useLocation } from "react-router-dom";
 
 function CategorySearch() {
   const location = useLocation();
-  const initialSearch = location.state?.query || "";
+  const initialSearch = location.state?.query || 
+    new URLSearchParams(location.search).get("q") || "";
 
   const [search, setSearch] = useState(initialSearch);
   const [sortBy, setSortBy] = useState("rating");
@@ -46,90 +47,66 @@ function CategorySearch() {
     },
   ];
 
-  // ⭐ RECOMMENDED SECTION
   const recommended = [...freelancers]
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 2);
 
-  // LOAD RECENT SEARCHES
   useEffect(() => {
     const saved =
       JSON.parse(localStorage.getItem("recentSearches")) || [];
     setRecentSearches(saved);
   }, []);
 
-  // SAVE SEARCH
   const handleSearch = (value) => {
     setSearch(value);
-
     if (value.trim() !== "") {
       const updated = [
         value,
         ...recentSearches.filter((item) => item !== value),
       ].slice(0, 5);
-
       setRecentSearches(updated);
-      localStorage.setItem(
-        "recentSearches",
-        JSON.stringify(updated)
-      );
+      localStorage.setItem("recentSearches", JSON.stringify(updated));
     }
   };
 
-  // ⭐ SMART SCORE SYSTEM (UPWORK STYLE)
   const getScore = (f) => {
     let score = 0;
-
     score += f.rating * 10;
     score += (f.reviews || 0) * 0.02;
-
-    if (
-      selectedSkill !== "all" &&
-      f.skills.includes(selectedSkill)
-    ) {
+    if (selectedSkill !== "all" && f.skills.includes(selectedSkill)) {
       score += 20;
     }
-
     if (
       f.name.toLowerCase().includes(search.toLowerCase()) ||
       f.title.toLowerCase().includes(search.toLowerCase())
     ) {
       score += 15;
     }
-
     if (f.hourlyRate >= 15 && f.hourlyRate <= 30) {
       score += 5;
     }
-
     return score;
   };
 
-  // FILTER + SORT + SEARCH
-  let filtered = freelancers
+  const filtered = freelancers
     .filter((f) => {
       const matchSkill =
-        selectedSkill === "all" ||
-        f.skills.includes(selectedSkill);
-
+        selectedSkill === "all" || f.skills.includes(selectedSkill);
       const matchSearch =
         f.name.toLowerCase().includes(search.toLowerCase()) ||
         f.title.toLowerCase().includes(search.toLowerCase());
-
       return matchSkill && matchSearch;
     })
     .sort((a, b) => {
-      if (sortBy === "rating") {
-        return getScore(b) - getScore(a);
-      } else if (sortBy === "price_low") {
-        return a.hourlyRate - b.hourlyRate;
-      } else if (sortBy === "price_high") {
-        return b.hourlyRate - a.hourlyRate;
-      }
+      if (sortBy === "rating") return getScore(b) - getScore(a);
+      if (sortBy === "price_low") return a.hourlyRate - b.hourlyRate;
+      if (sortBy === "price_high") return b.hourlyRate - a.hourlyRate;
       return 0;
     });
 
   return (
-    <div>
+    <div className="category-search-page">
+
       {/* SEARCH BAR */}
       <div className="search-topbar">
         <input
@@ -142,8 +119,13 @@ function CategorySearch() {
 
       {/* TRENDING */}
       <div className="trending">
+        <span className="trending-label">Trending:</span>
         {trending.map((item, i) => (
-          <span key={i} onClick={() => handleSearch(item)}>
+          <span
+            key={i}
+            className="trending-tag"
+            onClick={() => handleSearch(item)}
+          >
             {item}
           </span>
         ))}
@@ -152,8 +134,13 @@ function CategorySearch() {
       {/* RECENT SEARCHES */}
       {recentSearches.length > 0 && (
         <div className="recent">
+          <span className="recent-label">Recent:</span>
           {recentSearches.map((item, i) => (
-            <span key={i} onClick={() => setSearch(item)}>
+            <span
+              key={i}
+              className="recent-tag"
+              onClick={() => setSearch(item)}
+            >
               {item}
             </span>
           ))}
@@ -173,12 +160,16 @@ function CategorySearch() {
       )}
 
       <div className="search-layout">
-        {/* SIDEBAR */}
+
+        {/* SIDEBAR FILTERS */}
         <div className="search-sidebar">
           <h3>Filters</h3>
 
           <label>Sort By</label>
-          <select onChange={(e) => setSortBy(e.target.value)}>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
             <option value="rating">Top Rated</option>
             <option value="price_low">Price: Low to High</option>
             <option value="price_high">Price: High to Low</option>
@@ -186,21 +177,32 @@ function CategorySearch() {
 
           <label>Skill</label>
           <select
+            value={selectedSkill}
             onChange={(e) => setSelectedSkill(e.target.value)}
           >
             <option value="all">All</option>
             <option value="React">React</option>
             <option value="Node.js">Node.js</option>
             <option value="UI/UX">UI/UX</option>
+            <option value="Figma">Figma</option>
+            <option value="MongoDB">MongoDB</option>
           </select>
         </div>
 
         {/* RESULTS */}
         <div className="search-results">
-          {filtered.map((user, index) => (
-            <FreelancerCard key={index} user={user} />
-          ))}
+          {filtered.length === 0 ? (
+            <div className="no-results">
+              <h4>No freelancers found</h4>
+              <p>Try a different search or filter.</p>
+            </div>
+          ) : (
+            filtered.map((user, index) => (
+              <FreelancerCard key={index} user={user} />
+            ))
+          )}
         </div>
+
       </div>
     </div>
   );
