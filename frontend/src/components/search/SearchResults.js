@@ -1,5 +1,5 @@
 import React from "react";
-import FreelancerCard from "./FreelancerCard";
+import FreelancerCard from "../freelancer/FreelancerCard";
 
 function SearchResults({ data, query }) {
   if (!query) return null;
