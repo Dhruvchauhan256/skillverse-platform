@@ -1,17 +1,16 @@
 import React from "react";
-import FreelancerCard from "./FreelancerCard";
+import FreelancerCard from "../freelancer/FreelancerCard";
 
 function TopFreelancers() {
   const top = [
-    { name: "Rahul Patel", role: "React Developer", rating: 4.9, skills: ["React"] },
-    { name: "Priya Shah", role: "UI Designer", rating: 4.8, skills: ["Figma"] },
-    { name: "Aman Verma", role: "Full Stack Developer", rating: 4.7, skills: ["MERN"] },
+    { name: "Rahul Patel", title: "React Developer", rating: 4.9, skills: ["React"] },
+    { name: "Priya Shah", title: "UI Designer", rating: 4.8, skills: ["Figma"] },
+    { name: "Aman Verma", title: "Full Stack Developer", rating: 4.7, skills: ["MERN"] },
   ];
 
   return (
     <div className="container mt-5">
-      <h3>🔥 Top Freelancers</h3>
-
+      <h3>Top Freelancers</h3>
       <div className="row">
         {top.map((user, i) => (
           <div className="col-md-4" key={i}>
