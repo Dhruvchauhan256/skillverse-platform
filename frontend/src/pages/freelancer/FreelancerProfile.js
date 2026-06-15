@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 
 import ProfileHeader from "./components/ProfileHeader";
@@ -8,35 +9,67 @@ import EditProfileModal from "./components/EditProfileModal";
 import { calculateRanking } from "../../utils/calculateRanking";
 
 function FreelancerProfile() {
+  const { name } = useParams();
+
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editOpen, setEditOpen] = useState(false);
 
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const loggedInUser = JSON.parse(localStorage.getItem("user") || "null");
+
+  // If :name param exists = public profile view
+  // If no :name param = logged in user's own profile
+  const isPublicView = !!name;
 
   useEffect(() => {
-    if (user?.id) fetchProfile();
-    else setLoading(false);
-  }, [user?.id]);
+    if (isPublicView) {
+      fetchPublicProfile(name);
+    } else if (loggedInUser?.id) {
+      fetchMyProfile(loggedInUser.id);
+    } else {
+      setLoading(false);
+    }
+  }, [name, loggedInUser?.id]);
 
-  // ---------------- FETCH PROFILE ----------------
-  const fetchProfile = async () => {
+  // ---- FETCH PUBLIC PROFILE BY NAME ----
+  const fetchPublicProfile = async (profileName) => {
     try {
       setLoading(true);
 
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("user_id", user.id)
+        .ilike("name", profileName)
         .single();
 
       if (error || !data) {
         setProfile(null);
-        setLoading(false);
+      } else {
+        setProfile(data);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ---- FETCH MY OWN PROFILE ----
+  const fetchMyProfile = async (userId) => {
+    try {
+      setLoading(true);
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", userId)
+        .single();
+
+      if (error || !data) {
+        setProfile(null);
         return;
       }
 
-      // calculate ranking ONLY if needed
       const score = calculateRanking(data);
 
       if (data.ranking_score !== score) {
@@ -49,15 +82,13 @@ function FreelancerProfile() {
       }
 
       setProfile(data);
-      setLoading(false);
-
     } catch (err) {
       console.log(err);
+    } finally {
       setLoading(false);
     }
   };
 
-  // ---------------- PROFILE COMPLETION ----------------
   const profileCompletion = () => {
     if (!profile) return 0;
 
@@ -75,15 +106,17 @@ function FreelancerProfile() {
     return Math.round((filled / fields.length) * 100);
   };
 
-  // ---------------- LOADING ----------------
   if (loading) return <h3 className="p-4">Loading...</h3>;
 
-  // ---------------- EMPTY PROFILE ----------------
   if (!profile) {
     return (
       <div className="container mt-4">
         <h4>No profile found</h4>
-        <p>Create your freelancer profile to start earning 🚀</p>
+        <p>
+          {isPublicView
+            ? "This freelancer profile does not exist."
+            : "Create your freelancer profile to start earning 🚀"}
+        </p>
       </div>
     );
   }
@@ -91,10 +124,10 @@ function FreelancerProfile() {
   return (
     <div className="container mt-4">
 
-      {/* HEADER (Upwork Style) */}
+      {/* HEADER */}
       <ProfileHeader
         profile={profile}
-        onEdit={() => setEditOpen(true)}
+        onEdit={!isPublicView ? () => setEditOpen(true) : null}
       />
 
       {/* RANK BADGE */}
@@ -105,24 +138,23 @@ function FreelancerProfile() {
       {/* STATS */}
       <StatsCard profile={profile} />
 
-      {/* PROFILE COMPLETION */}
-      <div className="card p-3 mb-3">
-        <h6>Profile Completion</h6>
-
-        <div className="progress">
-          <div
-            className="progress-bar"
-            style={{ width: `${profileCompletion()}%` }}
-          />
+      {/* PROFILE COMPLETION — only show on own profile */}
+      {!isPublicView && (
+        <div className="card p-3 mb-3">
+          <h6>Profile Completion</h6>
+          <div className="progress">
+            <div
+              className="progress-bar"
+              style={{ width: `${profileCompletion()}%` }}
+            />
+          </div>
+          <small>{profileCompletion()}% complete</small>
         </div>
-
-        <small>{profileCompletion()}% complete</small>
-      </div>
+      )}
 
       {/* SKILLS */}
       <div className="card p-3 mb-3">
         <h5>Skills</h5>
-
         <div className="d-flex flex-wrap gap-2">
           {profile?.skills?.length ? (
             profile.skills.map((skill, i) => (
@@ -139,11 +171,18 @@ function FreelancerProfile() {
       {/* PORTFOLIO */}
       <div className="card p-3 mb-3">
         <h5>Portfolio</h5>
-
         {profile?.portfolio?.length ? (
           <ul>
             {profile.portfolio.map((item, i) => (
-              <li key={i}>{item}</li>
+              <li key={i}>
+                {typeof item === "object" ? (
+                  <a href={item.link} target="_blank" rel="noreferrer">
+                    {item.title}
+                  </a>
+                ) : (
+                  item
+                )}
+              </li>
             ))}
           </ul>
         ) : (
@@ -151,13 +190,13 @@ function FreelancerProfile() {
         )}
       </div>
 
-      {/* EDIT MODAL */}
-      {editOpen && (
+      {/* EDIT MODAL — only on own profile */}
+      {!isPublicView && editOpen && (
         <EditProfileModal
           profile={profile}
           setProfile={setProfile}
           onClose={() => setEditOpen(false)}
-          refreshProfile={fetchProfile}
+          refreshProfile={() => fetchMyProfile(loggedInUser.id)}
         />
       )}
 
