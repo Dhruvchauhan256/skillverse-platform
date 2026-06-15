@@ -3,6 +3,8 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
 
+const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 function Login() {
   const navigate = useNavigate();
 
@@ -11,48 +13,37 @@ function Login() {
     password: "",
   });
 
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setError("");
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        {
-          email: form.email,
-          password: form.password,
-        }
-      );
+      const res = await axios.post(`${API}/api/auth/login`, {
+        email: form.email,
+        password: form.password,
+      });
 
-      // Save JWT token
       localStorage.setItem("token", res.data.token);
 
-if (res.data.user) {
-  localStorage.setItem(
-    "user",
-    JSON.stringify(res.data.user)
-  );
-}
-      alert("Login Successful ✅");
+      if (res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+      }
 
-      console.log("LOGIN RESPONSE:", res.data);
-
-      // Redirect to dashboard
       navigate("/dashboard");
 
-    } catch (error) {
-      console.log(error);
-
-      alert(
-        error.response?.data?.message ||
-          "Login Failed"
-      );
+    } catch (err) {
+      setError(err.response?.data?.message || "Login Failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,6 +53,22 @@ if (res.data.user) {
         <h2>Welcome back</h2>
         <p>Login to continue to SkillVerse</p>
 
+        {/* ERROR MESSAGE */}
+        {error && (
+          <div
+            style={{
+              background: "#fee2e2",
+              color: "#dc2626",
+              padding: "10px",
+              borderRadius: "8px",
+              marginBottom: "12px",
+              fontSize: "14px",
+            }}
+          >
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -69,18 +76,22 @@ if (res.data.user) {
             placeholder="Email address"
             value={form.email}
             onChange={handleChange}
+            required
           />
-
           <input
             type="password"
             name="password"
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
+            required
           />
-
-          <button className="primary-btn" type="submit">
-            Login
+          <button
+            className="primary-btn"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
