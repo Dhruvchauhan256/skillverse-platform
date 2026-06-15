@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
+const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 function SubmitProposal() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -14,15 +16,11 @@ function SubmitProposal() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
-    console.log(
-      "FIELD:",
-      e.target.name,
-      "VALUE:",
-      e.target.value
-    );
-
+    setError("");
     setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -31,16 +29,16 @@ function SubmitProposal() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log("FULL FORM:", form);
+    setError("");
+    setSuccess("");
 
     if (
-      form.projectId.trim() === "" ||
-      form.coverLetter.trim() === "" ||
-      form.bidAmount === "" ||
-      form.deliveryDays === ""
+      !form.projectId.trim() ||
+      !form.coverLetter.trim() ||
+      !form.bidAmount ||
+      !form.deliveryDays
     ) {
-      alert("Please fill all fields");
+      setError("Please fill all fields");
       return;
     }
 
@@ -56,10 +54,8 @@ function SubmitProposal() {
         deliveryDays: Number(form.deliveryDays),
       };
 
-      console.log("SENDING:", payload);
-
-      const res = await axios.post(
-        "http://localhost:5000/api/proposals",
+      await axios.post(
+        `${API}/api/proposals`,
         payload,
         {
           headers: {
@@ -68,17 +64,15 @@ function SubmitProposal() {
         }
       );
 
-      console.log("PROPOSAL RESPONSE:", res.data);
+      setSuccess("Proposal Submitted Successfully!");
 
-      alert("Proposal Submitted Successfully ✅");
+      setTimeout(() => {
+        navigate("/find-work");
+      }, 1500);
 
-      navigate("/find-work");
-    } catch (error) {
-      console.log("ERROR:", error);
-
-      alert(
-        error.response?.data?.message ||
-          "Proposal Submission Failed"
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Proposal Submission Failed"
       );
     } finally {
       setLoading(false);
@@ -89,21 +83,24 @@ function SubmitProposal() {
     <div className="container mt-5">
       <div
         className="card shadow p-4"
-        style={{
-          maxWidth: "700px",
-          margin: "0 auto",
-        }}
+        style={{ maxWidth: "700px", margin: "0 auto" }}
       >
-        <h2 className="mb-4 text-center">
-          Submit Proposal
-        </h2>
+        <h2 className="mb-4 text-center">Submit Proposal</h2>
+
+        {/* ERROR MESSAGE */}
+        {error && (
+          <div className="alert alert-danger">{error}</div>
+        )}
+
+        {/* SUCCESS MESSAGE */}
+        {success && (
+          <div className="alert alert-success">{success}</div>
+        )}
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label className="form-label">
-              Project ID
-            </label>
 
+          <div className="mb-3">
+            <label className="form-label">Project ID</label>
             <input
               type="text"
               name="projectId"
@@ -114,10 +111,7 @@ function SubmitProposal() {
           </div>
 
           <div className="mb-3">
-            <label className="form-label">
-              Cover Letter
-            </label>
-
+            <label className="form-label">Cover Letter</label>
             <textarea
               name="coverLetter"
               rows="5"
@@ -129,60 +123,27 @@ function SubmitProposal() {
           </div>
 
           <div className="mb-3">
-            <label className="form-label">
-              Bid Amount (₹)
-            </label>
-
+            <label className="form-label">Bid Amount (₹)</label>
             <input
               type="number"
+              name="bidAmount"
               className="form-control"
               placeholder="25000"
               value={form.bidAmount}
-              onChange={(e) => {
-                console.log("BID:", e.target.value);
-
-                setForm((prev) => ({
-                  ...prev,
-                  bidAmount: e.target.value,
-                }));
-              }}
+              onChange={handleChange}
             />
           </div>
 
           <div className="mb-4">
-            <label className="form-label">
-              Delivery Days
-            </label>
-
+            <label className="form-label">Delivery Days</label>
             <input
               type="number"
+              name="deliveryDays"
               className="form-control"
               placeholder="15"
               value={form.deliveryDays}
-              onChange={(e) => {
-                console.log("DAYS:", e.target.value);
-
-                setForm((prev) => ({
-                  ...prev,
-                  deliveryDays: e.target.value,
-                }));
-              }}
+              onChange={handleChange}
             />
-          </div>
-
-          <div
-            style={{
-              background: "#f5f5f5",
-              padding: "10px",
-              borderRadius: "8px",
-              marginBottom: "15px",
-            }}
-          >
-            <strong>Live Form State:</strong>
-
-            <pre>
-              {JSON.stringify(form, null, 2)}
-            </pre>
           </div>
 
           <button
@@ -190,10 +151,9 @@ function SubmitProposal() {
             className="btn btn-primary w-100"
             disabled={loading}
           >
-            {loading
-              ? "Submitting..."
-              : "Submit Proposal"}
+            {loading ? "Submitting..." : "Submit Proposal"}
           </button>
+
         </form>
       </div>
     </div>
