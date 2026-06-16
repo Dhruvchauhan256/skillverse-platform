@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-
 const protect = require("../middleware/authMiddleware");
 
 const {
   getCurrentUser,
   updateFreelancerProfile,
+  updateClientProfile,
 } = require("../controllers/userController");
 
 // Test Route
@@ -16,20 +16,13 @@ router.get("/test", (req, res) => {
   });
 });
 
-// Add this import at top
-const { updateClientProfile } = require("../controllers/userController");
-
-// Add this route
-router.put("/client/profile", protect, updateClientProfile);
-
 // Current User
 router.get("/me", protect, getCurrentUser);
 
-// Freelancer Profile
-router.put(
-  "/freelancer/profile",
-  protect,
-  updateFreelancerProfile
-);
+// Freelancer Profile Update
+router.put("/freelancer/profile", protect, updateFreelancerProfile);
+
+// Client Profile Update ✅ NEW
+router.put("/client/profile", protect, updateClientProfile);
 
 module.exports = router;
