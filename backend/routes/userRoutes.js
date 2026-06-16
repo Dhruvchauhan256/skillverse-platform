@@ -16,6 +16,12 @@ router.get("/test", (req, res) => {
   });
 });
 
+// Add this import at top
+const { updateClientProfile } = require("../controllers/userController");
+
+// Add this route
+router.put("/client/profile", protect, updateClientProfile);
+
 // Current User
 router.get("/me", protect, getCurrentUser);
 
