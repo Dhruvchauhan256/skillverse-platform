@@ -3,74 +3,309 @@
   background: #f8fafc;
 }
 
+/* ===================== HERO ===================== */
 .talent-hero {
   text-align: center;
-  padding: 100px 20px;
-  background: linear-gradient(
-    135deg,
-    #0f172a,
-    #1dbf73
-  );
+  padding: 80px 20px 60px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
   color: white;
+}
+
+.talent-hero-badge {
+  display: inline-block;
+  background: rgba(29,191,115,0.15);
+  border: 1px solid rgba(29,191,115,0.4);
+  color: #1dbf73;
+  padding: 6px 16px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 20px;
 }
 
 .talent-hero h1 {
-  font-size: 3rem;
+  font-size: 42px;
+  font-weight: 800;
   margin-bottom: 15px;
 }
 
+.talent-hero p {
+  font-size: 17px;
+  color: #94a3b8;
+  max-width: 600px;
+  margin: 0 auto 30px;
+  line-height: 1.7;
+}
+
+/* ===================== SEARCH ===================== */
 .talent-search {
-  margin-top: 30px;
   display: flex;
   justify-content: center;
+  max-width: 600px;
+  margin: 0 auto 25px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
 }
 
 .talent-search input {
-  width: 400px;
-  padding: 14px;
+  flex: 1;
+  padding: 16px 20px;
   border: none;
+  font-size: 15px;
+  outline: none;
+  color: #111;
 }
 
 .talent-search button {
-  padding: 14px 25px;
-  border: none;
-  background: #111;
+  padding: 16px 28px;
+  background: #1dbf73;
   color: white;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+  white-space: nowrap;
 }
 
-.talent-benefits {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
-  gap: 20px;
-  padding: 60px 20px;
+.talent-search button:hover {
+  background: #17a864;
 }
 
-.benefit-card {
-  background: white;
-  padding: 25px;
-  border-radius: 14px;
-  text-align: center;
-  box-shadow: 0 5px 15px rgba(0,0,0,.08);
-}
+/* ===================== FILTERS ===================== */
 .talent-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 12px;
   justify-content: center;
-  margin-top: 25px;
+  margin-top: 20px;
 }
 
 .talent-filters select {
-  padding: 12px 15px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  min-width: 180px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  color: white;
   font-size: 14px;
-  background: white;
   cursor: pointer;
+  outline: none;
+  transition: 0.3s;
+  min-width: 160px;
+}
+
+.talent-filters select option {
+  background: #1e293b;
+  color: white;
 }
 
 .talent-filters select:focus {
-  outline: none;
   border-color: #1dbf73;
+  background: rgba(29,191,115,0.1);
+}
+
+.talent-reset-btn {
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid rgba(255,100,100,0.5);
+  color: #ff6b6b;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.talent-reset-btn:hover {
+  background: rgba(255,100,100,0.1);
+}
+
+.talent-results-count {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* ===================== RESULTS ===================== */
+.talent-results-section {
+  padding: 50px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.talent-loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: #64748b;
+}
+
+.talent-loading p {
+  margin-top: 15px;
+  font-size: 15px;
+}
+
+.talent-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #64748b;
+}
+
+.talent-empty h4 {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: #0f172a;
+}
+
+.talent-empty p {
+  margin-bottom: 20px;
+}
+
+.talent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.talent-load-more {
+  text-align: center;
+  margin-top: 40px;
+}
+
+/* ===================== BENEFITS ===================== */
+.talent-benefits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 60px 20px;
+  background: white;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.benefit-card {
+  background: #f8fafc;
+  padding: 28px 24px;
+  border-radius: 16px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+  transition: 0.3s;
+}
+
+.benefit-card:hover {
+  transform: translateY(-5px);
+  border-color: #1dbf73;
+  box-shadow: 0 8px 25px rgba(29,191,115,0.1);
+}
+
+.benefit-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.benefit-card h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.benefit-card p {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ===================== CTA ===================== */
+.talent-cta {
+  background: linear-gradient(135deg, #0f172a, #1dbf73);
+  color: white;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.talent-cta h2 {
+  font-size: 34px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+.talent-cta p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.8);
+  max-width: 500px;
+  margin: 0 auto 35px;
+  line-height: 1.7;
+}
+
+.talent-cta-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.cta-btn-primary {
+  padding: 14px 32px;
+  background: white;
+  color: #0f172a;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.cta-btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.cta-btn-secondary {
+  padding: 14px 32px;
+  background: transparent;
+  color: white;
+  border: 2px solid rgba(255,255,255,0.5);
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.cta-btn-secondary:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-3px);
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 768px) {
+  .talent-hero h1 {
+    font-size: 28px;
+  }
+
+  .talent-search {
+    flex-direction: column;
+  }
+
+  .talent-search input,
+  .talent-search button {
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  .talent-filters {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .talent-filters select {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .talent-cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
 }
