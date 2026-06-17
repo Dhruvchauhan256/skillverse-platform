@@ -1,8 +1,6 @@
 const prisma = require("../prisma/client");
+const { logError } = require("../utils/logger");
 
-// ======================
-// CREATE PORTFOLIO
-// ======================
 exports.createPortfolio = async (req, res) => {
   try {
     const { title, description, imageUrl, liveUrl, githubUrl } = req.body;
@@ -49,7 +47,7 @@ exports.createPortfolio = async (req, res) => {
       portfolio,
     });
   } catch (error) {
-    console.error("CREATE PORTFOLIO ERROR:", error);
+    logError("CREATE PORTFOLIO", error);
     return res.status(500).json({
       success: false,
       message: "Server Error",
@@ -57,9 +55,6 @@ exports.createPortfolio = async (req, res) => {
   }
 };
 
-// ======================
-// GET MY PORTFOLIO
-// ======================
 exports.getMyPortfolio = async (req, res) => {
   try {
     if (!req.user?.id) {
@@ -90,7 +85,7 @@ exports.getMyPortfolio = async (req, res) => {
       portfolios,
     });
   } catch (error) {
-    console.error("GET PORTFOLIO ERROR:", error);
+    logError("GET PORTFOLIO", error);
     return res.status(500).json({
       success: false,
       message: "Server Error",
@@ -98,9 +93,6 @@ exports.getMyPortfolio = async (req, res) => {
   }
 };
 
-// ======================
-// UPDATE PORTFOLIO
-// ======================
 exports.updatePortfolio = async (req, res) => {
   try {
     const { id } = req.params;
@@ -127,7 +119,7 @@ exports.updatePortfolio = async (req, res) => {
       portfolio: updated,
     });
   } catch (error) {
-    console.error("UPDATE ERROR:", error);
+    logError("UPDATE PORTFOLIO", error);
     return res.status(500).json({
       success: false,
       message: "Server Error",
@@ -135,9 +127,6 @@ exports.updatePortfolio = async (req, res) => {
   }
 };
 
-// ======================
-// DELETE PORTFOLIO
-// ======================
 exports.deletePortfolio = async (req, res) => {
   try {
     const { id } = req.params;
@@ -162,7 +151,7 @@ exports.deletePortfolio = async (req, res) => {
       message: "Deleted successfully",
     });
   } catch (error) {
-    console.error("DELETE ERROR:", error);
+    logError("DELETE PORTFOLIO", error);
     return res.status(500).json({
       success: false,
       message: "Server Error",
