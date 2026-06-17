@@ -39,7 +39,6 @@ exports.sendMessage = async (req, res) => {
     });
   } catch (error) {
     console.log("SEND MESSAGE ERROR:", error);
-
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -47,7 +46,7 @@ exports.sendMessage = async (req, res) => {
   }
 };
 
-// Get Messages Between Users
+// Get Messages Between Users (also marks them as read)
 exports.getMessages = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -70,13 +69,24 @@ exports.getMessages = async (req, res) => {
       },
     });
 
+    // Mark all messages FROM this user TO me as read
+    await prisma.message.updateMany({
+      where: {
+        senderId: userId,
+        receiverId: req.user.id,
+        read: false,
+      },
+      data: {
+        read: true,
+      },
+    });
+
     res.status(200).json({
       success: true,
       messages,
     });
   } catch (error) {
     console.log("GET MESSAGES ERROR:", error);
-
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -125,7 +135,29 @@ exports.getConversations = async (req, res) => {
     });
   } catch (error) {
     console.log("GET CONVERSATIONS ERROR:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
 
+// Get Unread Message Count (NEW)
+exports.getUnreadCount = async (req, res) => {
+  try {
+    const count = await prisma.message.count({
+      where: {
+        receiverId: req.user.id,
+        read: false,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      count,
+    });
+  } catch (error) {
+    console.log("GET UNREAD COUNT ERROR:", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
