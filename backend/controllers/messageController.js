@@ -1,6 +1,6 @@
 const prisma = require("../prisma/client");
+const { logError } = require("../utils/logger");
 
-// Send Message
 exports.sendMessage = async (req, res) => {
   try {
     const { receiverId, content } = req.body;
@@ -13,9 +13,7 @@ exports.sendMessage = async (req, res) => {
     }
 
     const receiver = await prisma.user.findUnique({
-      where: {
-        id: receiverId,
-      },
+      where: { id: receiverId },
     });
 
     if (!receiver) {
@@ -38,7 +36,7 @@ exports.sendMessage = async (req, res) => {
       message,
     });
   } catch (error) {
-    console.log("SEND MESSAGE ERROR:", error);
+    logError("SEND MESSAGE", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -46,7 +44,6 @@ exports.sendMessage = async (req, res) => {
   }
 };
 
-// Get Messages Between Users (also marks them as read)
 exports.getMessages = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -54,31 +51,20 @@ exports.getMessages = async (req, res) => {
     const messages = await prisma.message.findMany({
       where: {
         OR: [
-          {
-            senderId: req.user.id,
-            receiverId: userId,
-          },
-          {
-            senderId: userId,
-            receiverId: req.user.id,
-          },
+          { senderId: req.user.id, receiverId: userId },
+          { senderId: userId, receiverId: req.user.id },
         ],
       },
-      orderBy: {
-        createdAt: "asc",
-      },
+      orderBy: { createdAt: "asc" },
     });
 
-    // Mark all messages FROM this user TO me as read
     await prisma.message.updateMany({
       where: {
         senderId: userId,
         receiverId: req.user.id,
         read: false,
       },
-      data: {
-        read: true,
-      },
+      data: { read: true },
     });
 
     res.status(200).json({
@@ -86,7 +72,7 @@ exports.getMessages = async (req, res) => {
       messages,
     });
   } catch (error) {
-    console.log("GET MESSAGES ERROR:", error);
+    logError("GET MESSAGES", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -94,39 +80,17 @@ exports.getMessages = async (req, res) => {
   }
 };
 
-// Get Conversations
 exports.getConversations = async (req, res) => {
   try {
     const messages = await prisma.message.findMany({
       where: {
-        OR: [
-          {
-            senderId: req.user.id,
-          },
-          {
-            receiverId: req.user.id,
-          },
-        ],
+        OR: [{ senderId: req.user.id }, { receiverId: req.user.id }],
       },
       include: {
-        sender: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        receiver: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
+        sender: { select: { id: true, name: true, email: true } },
+        receiver: { select: { id: true, name: true, email: true } },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
     });
 
     res.status(200).json({
@@ -134,7 +98,7 @@ exports.getConversations = async (req, res) => {
       conversations: messages,
     });
   } catch (error) {
-    console.log("GET CONVERSATIONS ERROR:", error);
+    logError("GET CONVERSATIONS", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -142,7 +106,6 @@ exports.getConversations = async (req, res) => {
   }
 };
 
-// Get Unread Message Count (NEW)
 exports.getUnreadCount = async (req, res) => {
   try {
     const count = await prisma.message.count({
@@ -157,7 +120,7 @@ exports.getUnreadCount = async (req, res) => {
       count,
     });
   } catch (error) {
-    console.log("GET UNREAD COUNT ERROR:", error);
+    logError("GET UNREAD COUNT", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
