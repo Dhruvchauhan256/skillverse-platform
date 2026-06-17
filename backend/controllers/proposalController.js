@@ -1,21 +1,11 @@
 const prisma = require("../prisma/client");
+const { logError } = require("../utils/logger");
 
-// Create Proposal
 exports.createProposal = async (req, res) => {
   try {
-    const {
-      projectId,
-      coverLetter,
-      bidAmount,
-      deliveryDays,
-    } = req.body;
+    const { projectId, coverLetter, bidAmount, deliveryDays } = req.body;
 
-    if (
-      !projectId ||
-      !coverLetter ||
-      !bidAmount ||
-      !deliveryDays
-    ) {
+    if (!projectId || !coverLetter || !bidAmount || !deliveryDays) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -23,9 +13,7 @@ exports.createProposal = async (req, res) => {
     }
 
     const project = await prisma.project.findUnique({
-      where: {
-        id: projectId,
-      },
+      where: { id: projectId },
     });
 
     if (!project) {
@@ -35,19 +23,14 @@ exports.createProposal = async (req, res) => {
       });
     }
 
-    const existingProposal =
-      await prisma.proposal.findFirst({
-        where: {
-          projectId,
-          freelancerId: req.user.id,
-        },
-      });
+    const existingProposal = await prisma.proposal.findFirst({
+      where: { projectId, freelancerId: req.user.id },
+    });
 
     if (existingProposal) {
       return res.status(400).json({
         success: false,
-        message:
-          "You have already submitted a proposal",
+        message: "You have already submitted a proposal",
       });
     }
 
@@ -66,8 +49,7 @@ exports.createProposal = async (req, res) => {
       proposal,
     });
   } catch (error) {
-    console.log("CREATE PROPOSAL ERROR:", error);
-
+    logError("CREATE PROPOSAL", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -75,19 +57,12 @@ exports.createProposal = async (req, res) => {
   }
 };
 
-// Get My Proposals
 exports.getMyProposals = async (req, res) => {
   try {
     const proposals = await prisma.proposal.findMany({
-      where: {
-        freelancerId: req.user.id,
-      },
-      include: {
-        project: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+      where: { freelancerId: req.user.id },
+      include: { project: true },
+      orderBy: { createdAt: "desc" },
     });
 
     res.status(200).json({
@@ -95,8 +70,7 @@ exports.getMyProposals = async (req, res) => {
       proposals,
     });
   } catch (error) {
-    console.log("GET PROPOSALS ERROR:", error);
-
+    logError("GET MY PROPOSALS", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -104,15 +78,12 @@ exports.getMyProposals = async (req, res) => {
   }
 };
 
-// Get Proposals For Specific Project
 exports.getProjectProposals = async (req, res) => {
   try {
     const { projectId } = req.params;
 
     const project = await prisma.project.findUnique({
-      where: {
-        id: projectId,
-      },
+      where: { id: projectId },
     });
 
     if (!project) {
@@ -130,21 +101,13 @@ exports.getProjectProposals = async (req, res) => {
     }
 
     const proposals = await prisma.proposal.findMany({
-      where: {
-        projectId,
-      },
+      where: { projectId },
       include: {
         freelancer: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
+          select: { id: true, name: true, email: true },
         },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
     });
 
     res.status(200).json({
@@ -152,8 +115,7 @@ exports.getProjectProposals = async (req, res) => {
       proposals,
     });
   } catch (error) {
-    console.log("GET PROJECT PROPOSALS ERROR:", error);
-
+    logError("GET PROJECT PROPOSALS", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -161,16 +123,11 @@ exports.getProjectProposals = async (req, res) => {
   }
 };
 
-// Accept Proposal
 exports.acceptProposal = async (req, res) => {
   try {
     const proposal = await prisma.proposal.findUnique({
-      where: {
-        id: req.params.id,
-      },
-      include: {
-        project: true,
-      },
+      where: { id: req.params.id },
+      include: { project: true },
     });
 
     if (!proposal) {
@@ -187,23 +144,17 @@ exports.acceptProposal = async (req, res) => {
       });
     }
 
-    const updatedProposal =
-      await prisma.proposal.update({
-        where: {
-          id: req.params.id,
-        },
-        data: {
-          status: "accepted",
-        },
-      });
+    const updatedProposal = await prisma.proposal.update({
+      where: { id: req.params.id },
+      data: { status: "accepted" },
+    });
 
     res.status(200).json({
       success: true,
       proposal: updatedProposal,
     });
   } catch (error) {
-    console.log("ACCEPT PROPOSAL ERROR:", error);
-
+    logError("ACCEPT PROPOSAL", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -211,16 +162,11 @@ exports.acceptProposal = async (req, res) => {
   }
 };
 
-// Reject Proposal
 exports.rejectProposal = async (req, res) => {
   try {
     const proposal = await prisma.proposal.findUnique({
-      where: {
-        id: req.params.id,
-      },
-      include: {
-        project: true,
-      },
+      where: { id: req.params.id },
+      include: { project: true },
     });
 
     if (!proposal) {
@@ -237,23 +183,17 @@ exports.rejectProposal = async (req, res) => {
       });
     }
 
-    const updatedProposal =
-      await prisma.proposal.update({
-        where: {
-          id: req.params.id,
-        },
-        data: {
-          status: "rejected",
-        },
-      });
+    const updatedProposal = await prisma.proposal.update({
+      where: { id: req.params.id },
+      data: { status: "rejected" },
+    });
 
     res.status(200).json({
       success: true,
       proposal: updatedProposal,
     });
   } catch (error) {
-    console.log("REJECT PROPOSAL ERROR:", error);
-
+    logError("REJECT PROPOSAL", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
