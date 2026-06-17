@@ -1,77 +1,158 @@
 const prisma = require("../prisma/client");
 const { logError } = require("../utils/logger");
 
-exports.createProfile = async (req, res) => {
+exports.createPortfolio = async (req, res) => {
   try {
-    const { title, bio, skills, hourlyRate, country } = req.body;
-    const userId = req.user.id;
+    const { title, description, imageUrl, liveUrl, githubUrl } = req.body;
 
-    if (!title || !bio || !skills || !hourlyRate || !country) {
+    if (!title || !description) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "Title and description are required",
       });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized user",
+      });
+    }
+
+    const freelancerProfile = await prisma.freelancerProfile.findUnique({
+      where: { userId: req.user.id },
     });
 
-    if (!user) {
+    if (!freelancerProfile) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "Freelancer profile not found. Create profile first.",
       });
     }
 
-    const existing = await prisma.freelancerProfile.findUnique({
-      where: { userId },
-    });
-
-    if (existing) {
-      return res.status(400).json({
-        success: false,
-        message: "Profile already exists",
-      });
-    }
-
-    const profile = await prisma.freelancerProfile.create({
+    const portfolio = await prisma.portfolio.create({
       data: {
         title,
-        bio,
-        skills,
-        hourlyRate: Number(hourlyRate),
-        country,
-        userId,
+        description,
+        imageUrl,
+        liveUrl,
+        githubUrl,
+        freelancerId: freelancerProfile.id,
       },
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      profile,
+      message: "Portfolio created successfully",
+      portfolio,
     });
   } catch (error) {
-    logError("CREATE PROFILE", error);
-    res.status(500).json({
+    logError("CREATE PORTFOLIO", error);
+    return res.status(500).json({
       success: false,
       message: "Server Error",
     });
   }
 };
 
-exports.getMyProfile = async (req, res) => {
+exports.getMyPortfolio = async (req, res) => {
   try {
-    const profile = await prisma.freelancerProfile.findUnique({
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    const freelancerProfile = await prisma.freelancerProfile.findUnique({
       where: { userId: req.user.id },
     });
 
-    res.json({
+    if (!freelancerProfile) {
+      return res.status(404).json({
+        success: false,
+        message: "Freelancer profile not found",
+      });
+    }
+
+    const portfolios = await prisma.portfolio.findMany({
+      where: { freelancerId: freelancerProfile.id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return res.status(200).json({
       success: true,
-      profile,
+      portfolios,
     });
   } catch (error) {
-    logError("GET MY PROFILE", error);
-    res.status(500).json({
+    logError("GET PORTFOLIO", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+exports.updatePortfolio = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const portfolio = await prisma.portfolio.findUnique({
+      where: { id },
+    });
+
+    if (!portfolio) {
+      return res.status(404).json({
+        success: false,
+        message: "Portfolio not found",
+      });
+    }
+
+    const updated = await prisma.portfolio.update({
+      where: { id },
+      data: req.body,
+    });
+
+    return res.json({
+      success: true,
+      message: "Updated successfully",
+      portfolio: updated,
+    });
+  } catch (error) {
+    logError("UPDATE PORTFOLIO", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+exports.deletePortfolio = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const portfolio = await prisma.portfolio.findUnique({
+      where: { id },
+    });
+
+    if (!portfolio) {
+      return res.status(404).json({
+        success: false,
+        message: "Portfolio not found",
+      });
+    }
+
+    await prisma.portfolio.delete({
+      where: { id },
+    });
+
+    return res.json({
+      success: true,
+      message: "Deleted successfully",
+    });
+  } catch (error) {
+    logError("DELETE PORTFOLIO", error);
+    return res.status(500).json({
       success: false,
       message: "Server Error",
     });
