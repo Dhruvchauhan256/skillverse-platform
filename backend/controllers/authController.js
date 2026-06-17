@@ -1,13 +1,13 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const prisma = require("../prisma/client");
+const { logError } = require("../utils/logger");
 
 // REGISTER
 exports.registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    // ✅ VALIDATION (IMPORTANT FIX)
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
@@ -37,7 +37,6 @@ exports.registerUser = async (req, res) => {
       },
     });
 
-    // ✅ AUTO CREATE FREELANCER PROFILE (IMPORTANT FIX)
     if (user.role === "freelancer") {
       await prisma.freelancerProfile.create({
         data: {
@@ -58,10 +57,8 @@ exports.registerUser = async (req, res) => {
       message: "User registered successfully",
       user: userWithoutPassword,
     });
-
   } catch (error) {
-    console.log("REGISTER ERROR:", error);
-
+    logError("REGISTER", error);
     return res.status(500).json({
       success: false,
       message: "Server Error",
@@ -74,20 +71,16 @@ exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // ✅ FIX: validation
     if (!email || !password) {
       return res.status(400).json({
         success: false,
         message: "Email and Password are required",
       });
     }
-const user = await prisma.user.findUnique({
-  where: { email },
-});
 
-console.log("USER FOUND:", user);
-console.log("EMAIL RECEIVED:", email);
-console.log("PASSWORD RECEIVED:", password);
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
 
     if (!user) {
       return res.status(400).json({
@@ -96,12 +89,7 @@ console.log("PASSWORD RECEIVED:", password);
       });
     }
 
-const isMatch = await bcrypt.compare(
-  password,
-  user.password
-);
-
-console.log("PASSWORD MATCH:", isMatch);
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(400).json({
@@ -128,10 +116,8 @@ console.log("PASSWORD MATCH:", isMatch);
       token,
       user: userWithoutPassword,
     });
-
   } catch (error) {
-    console.log("LOGIN ERROR:", error);
-
+    logError("LOGIN", error);
     return res.status(500).json({
       success: false,
       message: "Server Error",
