@@ -1,14 +1,10 @@
 const prisma = require("../prisma/client");
+const { logError } = require("../utils/logger");
 
-// ================================
-// GET CURRENT USER
-// ================================
 exports.getCurrentUser = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
-      where: {
-        id: req.user.id,
-      },
+      where: { id: req.user.id },
       include: {
         freelancerProfile: true,
         clientProfile: true,
@@ -29,7 +25,7 @@ exports.getCurrentUser = async (req, res) => {
       user: userData,
     });
   } catch (error) {
-    console.error("GET CURRENT USER ERROR:", error);
+    logError("GET CURRENT USER", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -37,20 +33,10 @@ exports.getCurrentUser = async (req, res) => {
   }
 };
 
-// ================================
-// UPDATE FREELANCER PROFILE
-// ================================
 exports.updateFreelancerProfile = async (req, res) => {
   try {
-    const {
-      title,
-      bio,
-      skills,
-      hourlyRate,
-      country,
-    } = req.body;
+    const { title, bio, skills, hourlyRate, country } = req.body;
 
-    // Validation
     if (!title || !bio || !skills || !hourlyRate || !country) {
       return res.status(400).json({
         success: false,
@@ -59,18 +45,14 @@ exports.updateFreelancerProfile = async (req, res) => {
     }
 
     const existingProfile = await prisma.freelancerProfile.findUnique({
-      where: {
-        userId: req.user.id,
-      },
+      where: { userId: req.user.id },
     });
 
     let profile;
 
     if (existingProfile) {
       profile = await prisma.freelancerProfile.update({
-        where: {
-          userId: req.user.id,
-        },
+        where: { userId: req.user.id },
         data: {
           title,
           bio,
@@ -98,7 +80,7 @@ exports.updateFreelancerProfile = async (req, res) => {
       profile,
     });
   } catch (error) {
-    console.error("UPDATE PROFILE ERROR:", error);
+    logError("UPDATE FREELANCER PROFILE", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -106,14 +88,10 @@ exports.updateFreelancerProfile = async (req, res) => {
   }
 };
 
-// ================================
-// UPDATE CLIENT PROFILE
-// ================================
 exports.updateClientProfile = async (req, res) => {
   try {
     const { name, companyName, description } = req.body;
 
-    // Validation
     if (!name) {
       return res.status(400).json({
         success: false,
@@ -121,13 +99,11 @@ exports.updateClientProfile = async (req, res) => {
       });
     }
 
-    // Update user name
     await prisma.user.update({
       where: { id: req.user.id },
       data: { name },
     });
 
-    // Update or create client profile
     const existing = await prisma.clientProfile.findUnique({
       where: { userId: req.user.id },
     });
@@ -150,7 +126,6 @@ exports.updateClientProfile = async (req, res) => {
       });
     }
 
-    // Return updated user
     const updatedUser = await prisma.user.findUnique({
       where: { id: req.user.id },
       include: {
@@ -167,7 +142,7 @@ exports.updateClientProfile = async (req, res) => {
       user: userData,
     });
   } catch (error) {
-    console.error("UPDATE CLIENT PROFILE ERROR:", error);
+    logError("UPDATE CLIENT PROFILE", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
