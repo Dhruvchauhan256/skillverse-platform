@@ -1,10 +1,9 @@
 const jwt = require("jsonwebtoken");
+const { logError } = require("../utils/logger");
 
 const protect = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-
-    console.log("AUTH HEADER:", authHeader);
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
@@ -23,15 +22,10 @@ const protect = (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    console.log("DECODED USER:", decoded);
-
-    req.user = decoded; // IMPORTANT
-
+    req.user = decoded;
     next();
   } catch (error) {
-    console.error("JWT ERROR:", error.message);
-
+    logError("JWT VERIFY", error);
     return res.status(401).json({
       success: false,
       message: "Invalid or expired token",
