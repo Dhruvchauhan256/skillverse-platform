@@ -6,6 +6,7 @@ import ProfileHeader from "./components/ProfileHeader";
 import StatsCard from "./components/StatsCard";
 import RankingBadge from "./components/RankingBadge";
 import EditProfileModal from "./components/EditProfileModal";
+import SkillsSection from "./components/SkillsSection";
 import { calculateRanking } from "../../utils/calculateRanking";
 
 function FreelancerProfile() {
@@ -152,21 +153,8 @@ function FreelancerProfile() {
         </div>
       )}
 
-      {/* SKILLS */}
-      <div className="card p-3 mb-3">
-        <h5>Skills</h5>
-        <div className="d-flex flex-wrap gap-2">
-          {profile?.skills?.length ? (
-            profile.skills.map((skill, i) => (
-              <span key={i} className="badge bg-primary">
-                {skill}
-              </span>
-            ))
-          ) : (
-            <p className="text-muted">No skills added</p>
-          )}
-        </div>
-      </div>
+      {/* SKILLS — now using SkillsSection component */}
+      <SkillsSection profile={profile} />
 
       {/* PORTFOLIO */}
       <div className="card p-3 mb-3">
