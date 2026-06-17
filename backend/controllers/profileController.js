@@ -1,10 +1,9 @@
 const prisma = require("../prisma/client");
+const { logError } = require("../utils/logger");
 
-// CREATE PROFILE
 exports.createProfile = async (req, res) => {
   try {
     const { title, bio, skills, hourlyRate, country } = req.body;
-
     const userId = req.user.id;
 
     if (!title || !bio || !skills || !hourlyRate || !country) {
@@ -51,18 +50,15 @@ exports.createProfile = async (req, res) => {
       success: true,
       profile,
     });
-
   } catch (error) {
-    console.log("PROFILE ERROR:", error);
+    logError("CREATE PROFILE", error);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Server Error",
     });
   }
 };
 
-
-// GET PROFILE
 exports.getMyProfile = async (req, res) => {
   try {
     const profile = await prisma.freelancerProfile.findUnique({
@@ -73,9 +69,8 @@ exports.getMyProfile = async (req, res) => {
       success: true,
       profile,
     });
-
   } catch (error) {
-    console.log(error);
+    logError("GET MY PROFILE", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
