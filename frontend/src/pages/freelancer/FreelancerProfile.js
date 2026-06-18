@@ -7,6 +7,8 @@ import StatsCard from "./components/StatsCard";
 import RankingBadge from "./components/RankingBadge";
 import EditProfileModal from "./components/EditProfileModal";
 import SkillsSection from "./components/SkillsSection";
+import ReviewDisplay from "../../components/common/ReviewDisplay";
+import ReviewModal from "../../components/common/ReviewModal";
 import { calculateRanking } from "../../utils/calculateRanking";
 
 function FreelancerProfile() {
@@ -15,6 +17,8 @@ function FreelancerProfile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editOpen, setEditOpen] = useState(false);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [completedProject, setCompletedProject] = useState(null);
 
   const loggedInUser = JSON.parse(localStorage.getItem("user") || "null");
 
@@ -28,8 +32,9 @@ function FreelancerProfile() {
     } else {
       setLoading(false);
     }
-  }, [name, loggedInUser?.id]);
+  }, [name, loggedInUser?.id, isPublicView]);
 
+  // ---- FETCH PUBLIC PROFILE BY NAME ----
   const fetchPublicProfile = async (profileName) => {
     try {
       setLoading(true);
@@ -40,7 +45,11 @@ function FreelancerProfile() {
         .ilike("name", profileName)
         .single();
 
-      setProfile(error || !data ? null : data);
+      if (error || !data) {
+        setProfile(null);
+      } else {
+        setProfile(data);
+      }
     } catch (err) {
       console.log(err);
     } finally {
@@ -48,6 +57,7 @@ function FreelancerProfile() {
     }
   };
 
+  // ---- FETCH MY OWN PROFILE ----
   const fetchMyProfile = async (userId) => {
     try {
       setLoading(true);
@@ -99,6 +109,18 @@ function FreelancerProfile() {
     return Math.round((filled / fields.length) * 100);
   };
 
+  // ---- OPEN REVIEW MODAL ----
+  const handleLeaveReview = (projectId) => {
+    setCompletedProject(projectId);
+    setReviewModalOpen(true);
+  };
+
+  // ---- CLOSE REVIEW MODAL ----
+  const handleReviewClose = () => {
+    setReviewModalOpen(false);
+    setCompletedProject(null);
+  };
+
   if (loading) return <h3 className="p-4">Loading...</h3>;
 
   // PUBLIC VIEW + NO PROFILE = genuinely doesn't exist
@@ -117,7 +139,10 @@ function FreelancerProfile() {
       <div className="container mt-4">
         <div className="alert alert-info">
           <h4>Set up your freelancer profile</h4>
-          <p>You haven't created your public profile yet. Create it now to start getting discovered by clients 🚀</p>
+          <p>
+            You haven't created your public profile yet. Create it now to start
+            getting discovered by clients 🚀
+          </p>
         </div>
 
         {!editOpen ? (
@@ -139,19 +164,23 @@ function FreelancerProfile() {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 mb-5">
 
+      {/* HEADER */}
       <ProfileHeader
         profile={profile}
         onEdit={!isPublicView ? () => setEditOpen(true) : null}
       />
 
+      {/* RANK BADGE */}
       <div className="mt-3">
         <RankingBadge score={profile?.ranking_score || 0} />
       </div>
 
+      {/* STATS */}
       <StatsCard profile={profile} />
 
+      {/* PROFILE COMPLETION — only show on own profile */}
       {!isPublicView && (
         <div className="card p-3 mb-3">
           <h6>Profile Completion</h6>
@@ -165,8 +194,13 @@ function FreelancerProfile() {
         </div>
       )}
 
+      {/* SKILLS */}
       <SkillsSection profile={profile} />
 
+      {/* REVIEWS SECTION — SHOW ON ALL PROFILES */}
+      <ReviewDisplay userId={profile?.user_id || loggedInUser?.id} />
+
+      {/* PORTFOLIO */}
       <div className="card p-3 mb-3">
         <h5>Portfolio</h5>
         {profile?.portfolio?.length ? (
@@ -188,6 +222,19 @@ function FreelancerProfile() {
         )}
       </div>
 
+      {/* LEAVE REVIEW BUTTON — only for clients viewing freelancer profile */}
+      {isPublicView && loggedInUser?.role === "client" && (
+        <div className="card p-3 mb-3">
+          <button
+            className="btn btn-success w-100"
+            onClick={() => handleLeaveReview(profile?.id)}
+          >
+            Leave a Review for This Freelancer ⭐
+          </button>
+        </div>
+      )}
+
+      {/* EDIT MODAL — only on own profile */}
       {!isPublicView && editOpen && (
         <EditProfileModal
           profile={profile}
@@ -196,6 +243,19 @@ function FreelancerProfile() {
         />
       )}
 
+      {/* REVIEW MODAL */}
+      {reviewModalOpen && completedProject && (
+        <ReviewModal
+          projectId={completedProject}
+          toUserId={profile?.user_id}
+          onClose={handleReviewClose}
+          onSuccess={() => {
+            // Refresh reviews after submission
+            setReviewModalOpen(false);
+            setCompletedProject(null);
+          }}
+        />
+      )}
     </div>
   );
 }
