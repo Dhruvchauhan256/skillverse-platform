@@ -1,11 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-
 dotenv.config();
-
 console.log("🚀 Loading SkillVerse Backend...");
-
 const app = express();
 
 // MIDDLEWARE
@@ -21,6 +18,7 @@ const profileRoutes = require("./routes/profileRoutes");
 const userRoutes = require("./routes/userRoutes");
 const portfolioRoutes = require("./routes/portfolioRoutes");
 const messageRoutes = require("./routes/messageRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
 
 // ROUTES USE
 app.use("/api/auth", authRoutes);
@@ -31,6 +29,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/proposals", proposalRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 // TEST ROUTES
 app.get("/", (req, res) => {
@@ -48,7 +47,6 @@ const prisma = require("./prisma/client");
 
 app.get("/test-users", async (req, res) => {
   const users = await prisma.user.findMany();
-
   res.json(users);
 });
 
@@ -62,7 +60,6 @@ app.use((req, res) => {
 
 // START SERVER
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });

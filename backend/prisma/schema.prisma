@@ -21,6 +21,8 @@ model User {
   sentMessages      Message[]          @relation("SentMessages")
   projects          Project[]
   proposals         Proposal[]
+  reviewsGiven      Review[]           @relation("ReviewsGiven")
+  reviewsReceived   Review[]           @relation("ReviewsReceived")
 }
 
 model FreelancerProfile {
@@ -79,6 +81,25 @@ model Project {
   category    String
   client      User       @relation(fields: [clientId], references: [id])
   proposals   Proposal[]
+  reviews     Review[]
+}
+
+model Review {
+  id            String   @id @default(uuid())
+  projectId     String
+  fromUserId    String
+  toUserId      String
+  rating        Int      // 1-5 stars
+  title         String?
+  description   String?
+  isAnonymous   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fromUser      User     @relation("ReviewsGiven", fields: [fromUserId], references: [id])
+  toUser        User     @relation("ReviewsReceived", fields: [toUserId], references: [id])
+
+  @@unique([projectId, fromUserId])
 }
 
 model Proposal {
