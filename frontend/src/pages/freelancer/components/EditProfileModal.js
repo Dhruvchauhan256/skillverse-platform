@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import { supabase } from "../../../supabaseClient";
 
 function EditProfileModal({ profile, setProfile, onClose }) {
+  const loggedInUser = JSON.parse(localStorage.getItem("user") || "null");
+
   const [form, setForm] = useState({
-    name: profile.name || "",
-    title: profile.title || "",
-    bio: profile.bio || "",
-    hourly_rate: profile.hourly_rate || 0,
+    name: profile?.name || loggedInUser?.name || "",
+    title: profile?.title || "",
+    bio: profile?.bio || "",
+    hourly_rate: profile?.hourly_rate || 0,
     avatarFile: null,
-    portfolio: profile.portfolio || [],
+    portfolio: profile?.portfolio || [],
   });
 
   const handleChange = (e) => {
@@ -18,9 +20,6 @@ function EditProfileModal({ profile, setProfile, onClose }) {
     });
   };
 
-  // ================================
-  // 📌 AVATAR UPLOAD (SUPABASE STORAGE)
-  // ================================
   const uploadAvatar = async (file) => {
     const fileName = `${Date.now()}-${file.name}`;
 
@@ -41,10 +40,16 @@ function EditProfileModal({ profile, setProfile, onClose }) {
   };
 
   // ================================
-  // 💾 SAVE PROFILE (WITH PORTFOLIO + AVATAR)
+  // 💾 SAVE PROFILE — now uses UPSERT
+  // Works whether a profile row already exists or not
   // ================================
   const saveProfile = async () => {
-    let avatarUrl = profile.avatar_url;
+    if (!loggedInUser?.id) {
+      console.log("No logged in user found");
+      return;
+    }
+
+    let avatarUrl = profile?.avatar_url;
 
     if (form.avatarFile) {
       avatarUrl = await uploadAvatar(form.avatarFile);
@@ -52,19 +57,19 @@ function EditProfileModal({ profile, setProfile, onClose }) {
 
     const { data, error } = await supabase
       .from("profiles")
-      .update({
-        name: form.name,
-        title: form.title,
-        bio: form.bio,
-        hourly_rate: Number(form.hourly_rate),
-        avatar_url: avatarUrl,
-
-        // 📌 IMPORTANT: Portfolio save
-        portfolio: form.portfolio,
-
-        updated_at: new Date(),
-      })
-      .eq("id", profile.id)
+      .upsert(
+        {
+          user_id: loggedInUser.id,
+          name: form.name,
+          title: form.title,
+          bio: form.bio,
+          hourly_rate: Number(form.hourly_rate),
+          avatar_url: avatarUrl,
+          portfolio: form.portfolio,
+          updated_at: new Date(),
+        },
+        { onConflict: "user_id" }
+      )
       .select();
 
     if (error) {
@@ -76,45 +81,31 @@ function EditProfileModal({ profile, setProfile, onClose }) {
     onClose();
   };
 
-  // ================================
-  // 📊 PROFILE COMPLETION (UPWORK STYLE)
-  // ================================
   const calculateCompletion = () => {
     const fields = [
       form.name,
       form.title,
       form.bio,
       form.hourly_rate,
-      form.avatarFile || profile.avatar_url,
+      form.avatarFile || profile?.avatar_url,
       form.portfolio?.length,
     ];
 
     const filled = fields.filter(Boolean).length;
-
     return Math.round((filled / fields.length) * 100);
   };
 
-  // ================================
-  // ➕ ADD PORTFOLIO ITEM
-  // ================================
   const addPortfolioItem = () => {
     setForm({
       ...form,
-      portfolio: [
-        ...form.portfolio,
-        { title: "", link: "" },
-      ],
+      portfolio: [...form.portfolio, { title: "", link: "" }],
     });
   };
 
   return (
     <div className="card p-4 mt-3 border-primary">
 
-      <h4>Edit Profile</h4>
-
-      {/* ==================== */}
-      {/* 📌 BASIC FIELDS */}
-      {/* ==================== */}
+      <h4>{profile ? "Edit Profile" : "Create Your Profile"}</h4>
 
       <input
         name="name"
@@ -129,7 +120,7 @@ function EditProfileModal({ profile, setProfile, onClose }) {
         value={form.title}
         onChange={handleChange}
         className="form-control mb-2"
-        placeholder="Title"
+        placeholder="Title (e.g. React Developer)"
       />
 
       <textarea
@@ -149,26 +140,15 @@ function EditProfileModal({ profile, setProfile, onClose }) {
         placeholder="Hourly Rate"
       />
 
-      {/* ==================== */}
-      {/* 📌 FILE INPUT (AVATAR) */}
-      {/* ==================== */}
-
       <label className="mt-2">Upload Avatar</label>
       <input
         type="file"
         accept="image/*"
         className="form-control mb-3"
         onChange={(e) =>
-          setForm({
-            ...form,
-            avatarFile: e.target.files[0],
-          })
+          setForm({ ...form, avatarFile: e.target.files[0] })
         }
       />
-
-      {/* ==================== */}
-      {/* 📌 PORTFOLIO UI */}
-      {/* ==================== */}
 
       <div className="card p-3 mb-3">
         <h5>Portfolio</h5>
@@ -183,7 +163,6 @@ function EditProfileModal({ profile, setProfile, onClose }) {
 
         {form.portfolio.map((item, index) => (
           <div key={index} className="mb-2">
-
             <input
               placeholder="Project Title"
               value={item.title}
@@ -194,7 +173,6 @@ function EditProfileModal({ profile, setProfile, onClose }) {
                 setForm({ ...form, portfolio: updated });
               }}
             />
-
             <input
               placeholder="Project Link"
               value={item.link}
@@ -205,45 +183,26 @@ function EditProfileModal({ profile, setProfile, onClose }) {
                 setForm({ ...form, portfolio: updated });
               }}
             />
-
           </div>
         ))}
       </div>
 
-      {/* ==================== */}
-      {/* 📊 PROFILE COMPLETION */}
-      {/* ==================== */}
-
       <div className="mb-3">
         <h6>Profile Completion</h6>
-
         <div className="progress">
           <div
             className="progress-bar"
             style={{ width: `${calculateCompletion()}%` }}
           />
         </div>
-
-        <small>
-          {calculateCompletion()}% completed
-        </small>
+        <small>{calculateCompletion()}% completed</small>
       </div>
 
-      {/* ==================== */}
-      {/* 💾 ACTION BUTTONS */}
-      {/* ==================== */}
-
-      <button
-        className="btn btn-success me-2"
-        onClick={saveProfile}
-      >
-        Save Changes
+      <button className="btn btn-success me-2" onClick={saveProfile}>
+        {profile ? "Save Changes" : "Create Profile"}
       </button>
 
-      <button
-        className="btn btn-secondary"
-        onClick={onClose}
-      >
+      <button className="btn btn-secondary" onClick={onClose}>
         Cancel
       </button>
 

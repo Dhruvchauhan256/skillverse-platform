@@ -18,8 +18,6 @@ function FreelancerProfile() {
 
   const loggedInUser = JSON.parse(localStorage.getItem("user") || "null");
 
-  // If :name param exists = public profile view
-  // If no :name param = logged in user's own profile
   const isPublicView = !!name;
 
   useEffect(() => {
@@ -32,7 +30,6 @@ function FreelancerProfile() {
     }
   }, [name, loggedInUser?.id]);
 
-  // ---- FETCH PUBLIC PROFILE BY NAME ----
   const fetchPublicProfile = async (profileName) => {
     try {
       setLoading(true);
@@ -43,11 +40,7 @@ function FreelancerProfile() {
         .ilike("name", profileName)
         .single();
 
-      if (error || !data) {
-        setProfile(null);
-      } else {
-        setProfile(data);
-      }
+      setProfile(error || !data ? null : data);
     } catch (err) {
       console.log(err);
     } finally {
@@ -55,7 +48,6 @@ function FreelancerProfile() {
     }
   };
 
-  // ---- FETCH MY OWN PROFILE ----
   const fetchMyProfile = async (userId) => {
     try {
       setLoading(true);
@@ -109,15 +101,39 @@ function FreelancerProfile() {
 
   if (loading) return <h3 className="p-4">Loading...</h3>;
 
-  if (!profile) {
+  // PUBLIC VIEW + NO PROFILE = genuinely doesn't exist
+  if (!profile && isPublicView) {
     return (
       <div className="container mt-4">
         <h4>No profile found</h4>
-        <p>
-          {isPublicView
-            ? "This freelancer profile does not exist."
-            : "Create your freelancer profile to start earning 🚀"}
-        </p>
+        <p>This freelancer profile does not exist.</p>
+      </div>
+    );
+  }
+
+  // OWN VIEW + NO PROFILE = let them create one now
+  if (!profile && !isPublicView) {
+    return (
+      <div className="container mt-4">
+        <div className="alert alert-info">
+          <h4>Set up your freelancer profile</h4>
+          <p>You haven't created your public profile yet. Create it now to start getting discovered by clients 🚀</p>
+        </div>
+
+        {!editOpen ? (
+          <button
+            className="btn btn-primary"
+            onClick={() => setEditOpen(true)}
+          >
+            Create Profile Now
+          </button>
+        ) : (
+          <EditProfileModal
+            profile={null}
+            setProfile={setProfile}
+            onClose={() => setEditOpen(false)}
+          />
+        )}
       </div>
     );
   }
@@ -125,21 +141,17 @@ function FreelancerProfile() {
   return (
     <div className="container mt-4">
 
-      {/* HEADER */}
       <ProfileHeader
         profile={profile}
         onEdit={!isPublicView ? () => setEditOpen(true) : null}
       />
 
-      {/* RANK BADGE */}
       <div className="mt-3">
         <RankingBadge score={profile?.ranking_score || 0} />
       </div>
 
-      {/* STATS */}
       <StatsCard profile={profile} />
 
-      {/* PROFILE COMPLETION — only show on own profile */}
       {!isPublicView && (
         <div className="card p-3 mb-3">
           <h6>Profile Completion</h6>
@@ -153,10 +165,8 @@ function FreelancerProfile() {
         </div>
       )}
 
-      {/* SKILLS — now using SkillsSection component */}
       <SkillsSection profile={profile} />
 
-      {/* PORTFOLIO */}
       <div className="card p-3 mb-3">
         <h5>Portfolio</h5>
         {profile?.portfolio?.length ? (
@@ -178,13 +188,11 @@ function FreelancerProfile() {
         )}
       </div>
 
-      {/* EDIT MODAL — only on own profile */}
       {!isPublicView && editOpen && (
         <EditProfileModal
           profile={profile}
           setProfile={setProfile}
           onClose={() => setEditOpen(false)}
-          refreshProfile={() => fetchMyProfile(loggedInUser.id)}
         />
       )}
 

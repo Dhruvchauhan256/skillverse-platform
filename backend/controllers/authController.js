@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const prisma = require("../prisma/client");
+// const supabaseAdmin = require("../utils/supabaseAdmin");
 const { logError } = require("../utils/logger");
 
 // REGISTER
@@ -38,6 +39,7 @@ exports.registerUser = async (req, res) => {
     });
 
     if (user.role === "freelancer") {
+      // Create Prisma freelancer profile (used by dashboard stats etc)
       await prisma.freelancerProfile.create({
         data: {
           userId: user.id,
@@ -48,6 +50,27 @@ exports.registerUser = async (req, res) => {
           country: "India",
         },
       });
+
+      // Create matching Supabase profile row (used by public profile page)
+      // TEMPORARILY DISABLED — Supabase is down, will re-enable when back online
+      /*
+      const { error: profileError } = await supabaseAdmin
+        .from("profiles")
+        .insert({
+          user_id: user.id,
+          name: user.name,
+          title: "New Freelancer",
+          bio: "Add your bio",
+          hourly_rate: 0,
+          skills: [],
+        });
+
+      if (profileError) {
+        // Don't fail the whole registration if this fails —
+        // the frontend has a fallback "create profile" flow too
+        logError("CREATE SUPABASE PROFILE", profileError);
+      }
+      */
     }
 
     const { password: _, ...userWithoutPassword } = user;
@@ -99,14 +122,9 @@ exports.loginUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      {
-        id: user.id,
-        role: user.role,
-      },
+      { id: user.id, role: user.role },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "7d",
-      }
+      { expiresIn: "7d" }
     );
 
     const { password: _, ...userWithoutPassword } = user;
