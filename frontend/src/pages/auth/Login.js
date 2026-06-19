@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./Auth.css";
 
 const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
@@ -11,6 +12,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -30,11 +32,9 @@ function Login() {
       });
 
       if (res.data.success) {
-        // Save token and user
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
 
-        // Redirect based on role
         if (res.data.user.role === "freelancer") {
           navigate("/dashboard");
         } else {
@@ -43,8 +43,7 @@ function Login() {
       }
     } catch (err) {
       setError(
-        err.response?.data?.message ||
-          "Login failed. Please check your credentials."
+        err.response?.data?.message || "Invalid email or password"
       );
     } finally {
       setLoading(false);
@@ -52,83 +51,141 @@ function Login() {
   };
 
   return (
-    <div className="container mt-5 mb-5">
-      <div className="row justify-content-center">
-        <div className="col-md-5">
-          <div className="card shadow-lg p-4">
-            {/* HEADER */}
-            <div className="text-center mb-4">
-              <h2 className="fw-bold mb-2">Welcome to SkillVerse 👋</h2>
-              <p className="text-muted">Login to your account</p>
+    <div className="auth-container">
+      {/* LEFT SIDE - HERO */}
+      <div className="auth-hero">
+        <div className="hero-content">
+          <h1 className="hero-title">
+            🚀 <span className="highlight">SkillVerse</span>
+          </h1>
+          <p className="hero-subtitle">
+            India's #1 Freelance Marketplace
+          </p>
+
+          <div className="hero-stats">
+            <div className="stat">
+              <h3>10,000+</h3>
+              <p>Verified Freelancers</p>
+            </div>
+            <div className="stat">
+              <h3>500+</h3>
+              <p>Active Projects</p>
+            </div>
+            <div className="stat">
+              <h3>₹50Cr+</h3>
+              <p>Total Value</p>
+            </div>
+          </div>
+
+          <div className="hero-testimonial">
+            <p>
+              "SkillVerse helped me earn ₹2L in just 3 months. Best platform
+              for Indian freelancers!" ⭐⭐⭐⭐⭐
+            </p>
+            <small>- Rahul Patel, React Developer</small>
+          </div>
+        </div>
+      </div>
+
+      {/* RIGHT SIDE - FORM */}
+      <div className="auth-form-container">
+        <div className="auth-form">
+          <h2 className="form-title">Welcome Back! 👋</h2>
+          <p className="form-subtitle">
+            Login to your SkillVerse account
+          </p>
+
+          {error && (
+            <div className="alert alert-error">
+              <strong>Login Failed:</strong> {error}
+            </div>
+          )}
+
+          <form onSubmit={handleLogin}>
+            {/* EMAIL */}
+            <div className="form-group">
+              <label>Email Address</label>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="form-input"
+              />
             </div>
 
-            {/* ERROR */}
-            {error && (
-              <div className="alert alert-danger alert-dismissible fade show">
-                {error}
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setError("")}
-                />
-              </div>
-            )}
-
-            <form onSubmit={handleLogin}>
-              {/* EMAIL */}
-              <div className="mb-3">
-                <label className="form-label fw-semibold">Email</label>
+            {/* PASSWORD */}
+            <div className="form-group">
+              <label>Password</label>
+              <div className="password-input-wrapper">
                 <input
-                  type="email"
-                  className="form-control form-control-lg"
-                  placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-
-              {/* PASSWORD */}
-              <div className="mb-4">
-                <label className="form-label fw-semibold">Password</label>
-                <input
-                  type="password"
-                  className="form-control form-control-lg"
-                  placeholder="Enter your password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className="form-input"
                 />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? "🙈" : "👁"}
+                </button>
               </div>
+            </div>
 
-              {/* SUBMIT */}
-              <button
-                type="submit"
-                className="btn btn-success btn-lg w-100 fw-bold"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <span
-                      className="spinner-border spinner-border-sm me-2"
-                      role="status"
-                      aria-hidden="true"
-                    />
-                    Logging in...
-                  </>
-                ) : (
-                  "Login"
-                )}
+            {/* FORGOT PASSWORD */}
+            <div className="forgot-password">
+              <a href="#" className="link">
+                Forgot password?
+              </a>
+            </div>
+
+            {/* SUBMIT */}
+            <button
+              type="submit"
+              className="btn btn-primary btn-lg"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span className="spinner"></span> Logging in...
+                </>
+              ) : (
+                "Login"
+              )}
+            </button>
+
+            {/* DIVIDER */}
+            <div className="divider">OR</div>
+
+            {/* SOCIAL LOGIN (Optional) */}
+            <div className="social-login">
+              <button type="button" className="social-btn google">
+                <span>🔍</span> Google
               </button>
+              <button type="button" className="social-btn github">
+                <span>💻</span> GitHub
+              </button>
+            </div>
+          </form>
 
-              {/* SIGNUP LINK */}
-              <div className="text-center mt-3">
-                <p className="text-muted">
-                  Don't have an account?{" "}
-                  <a href="/signup" className="text-success fw-bold">
-                    Sign up here
-                  </a>
-                </p>
-              </div>
-            </form>
+          <div className="form-footer">
+            Don't have an account?{" "}
+            <a href="/signup" className="link fw-bold">
+              Sign up free
+            </a>
+          </div>
+
+          {/* BENEFITS */}
+          <div className="login-benefits">
+            <h6>Why SkillVerse?</h6>
+            <ul>
+              <li>✓ 8% commission (lowest in India)</li>
+              <li>✓ Instant UPI withdrawals</li>
+              <li>✓ Secure escrow protection</li>
+            </ul>
           </div>
         </div>
       </div>

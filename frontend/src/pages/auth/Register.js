@@ -1,19 +1,26 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./Auth.css";
 
 const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 function Register() {
   const navigate = useNavigate();
 
+  const [step, setStep] = useState(1); // Step 1: Role, Step 2: Details
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("freelancer");
+  const [role, setRole] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const handleRoleSelect = (selectedRole) => {
+    setRole(selectedRole);
+    setStep(2);
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -41,7 +48,7 @@ function Register() {
       });
 
       if (res.data.success) {
-        setSuccess("✅ Registration successful! Redirecting to login...");
+        setSuccess("✅ Account created! Redirecting to login...");
         setTimeout(() => {
           navigate("/login");
         }, 2000);
@@ -57,197 +64,206 @@ function Register() {
   };
 
   return (
-    <div className="container mt-5 mb-5">
-      <div className="row justify-content-center">
-        <div className="col-md-6">
-          <div className="card shadow-lg p-4">
-            {/* HEADER */}
-            <div className="text-center mb-4">
-              <h2 className="fw-bold mb-2">Join SkillVerse 🚀</h2>
-              <p className="text-muted">
-                India's #1 Freelance Marketplace - Only 8% Commission
-              </p>
+    <div className="auth-container">
+      {/* LEFT SIDE - HERO */}
+      <div className="auth-hero">
+        <div className="hero-content">
+          <h1 className="hero-title">
+            🚀 <span className="highlight">SkillVerse</span>
+          </h1>
+          <p className="hero-subtitle">
+            India's #1 Freelance Marketplace
+          </p>
+          <div className="hero-features">
+            <div className="feature">
+              <span className="feature-icon">💰</span>
+              <div>
+                <strong>Only 8% Commission</strong>
+                <p>Keep 92% of what you earn</p>
+              </div>
             </div>
-
-            {/* ERROR */}
-            {error && (
-              <div className="alert alert-danger alert-dismissible fade show">
-                {error}
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setError("")}
-                />
+            <div className="feature">
+              <span className="feature-icon">🇮🇳</span>
+              <div>
+                <strong>India First</strong>
+                <p>Built for Indian freelancers</p>
               </div>
-            )}
-
-            {/* SUCCESS */}
-            {success && (
-              <div className="alert alert-success alert-dismissible fade show">
-                {success}
+            </div>
+            <div className="feature">
+              <span className="feature-icon">📲</span>
+              <div>
+                <strong>UPI Payments</strong>
+                <p>Instant withdrawals</p>
               </div>
-            )}
-
-            <form onSubmit={handleRegister}>
-              {/* NAME */}
-              <div className="mb-3">
-                <label className="form-label fw-semibold">Full Name</label>
-                <input
-                  type="text"
-                  className="form-control form-control-lg"
-                  placeholder="Your full name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
+            </div>
+            <div className="feature">
+              <span className="feature-icon">🔒</span>
+              <div>
+                <strong>Secure Escrow</strong>
+                <p>Protection for both parties</p>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-              {/* EMAIL */}
-              <div className="mb-3">
-                <label className="form-label fw-semibold">Email</label>
-                <input
-                  type="email"
-                  className="form-control form-control-lg"
-                  placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+      {/* RIGHT SIDE - FORM */}
+      <div className="auth-form-container">
+        <div className="auth-form">
+          {/* STEP 1: ROLE SELECTION */}
+          {step === 1 ? (
+            <>
+              <h2 className="form-title">Join SkillVerse</h2>
+              <p className="form-subtitle">Choose how you want to use SkillVerse</p>
 
-              {/* PASSWORD */}
-              <div className="mb-3">
-                <label className="form-label fw-semibold">Password</label>
-                <input
-                  type="password"
-                  className="form-control form-control-lg"
-                  placeholder="At least 6 characters"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
+              {error && <div className="alert alert-error">{error}</div>}
 
-              {/* ROLE SELECTION — NEW! */}
-              <div className="mb-4">
-                <label className="form-label fw-semibold mb-3">
-                  I want to join as:
-                </label>
+              <div className="role-grid">
+                {/* FREELANCER */}
+                <div
+                  className="role-card freelancer-card"
+                  onClick={() => handleRoleSelect("freelancer")}
+                >
+                  <div className="role-icon">💼</div>
+                  <h3>I'm a Freelancer</h3>
+                  <p>Offer skills & earn money</p>
+                  <ul className="role-benefits">
+                    <li>✓ Build your profile</li>
+                    <li>✓ Get hired for projects</li>
+                    <li>✓ Earn up to ₹5L+/month</li>
+                    <li>✓ Flexible work schedule</li>
+                  </ul>
+                  <button className="role-btn">Get Started</button>
+                </div>
 
-                <div className="row g-3">
-                  {/* FREELANCER OPTION */}
-                  <div className="col-md-6">
-                    <div
-                      className={`card p-3 text-center cursor-pointer ${
-                        role === "freelancer"
-                          ? "border-success border-2 bg-success bg-opacity-10"
-                          : "border-gray"
-                      }`}
-                      onClick={() => setRole("freelancer")}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <h5 className="fw-bold mb-2">💼 Freelancer</h5>
-                      <p className="small text-muted mb-0">
-                        Offer services & earn money
-                      </p>
-                      <div className="mt-2">
-                        <small className="text-success fw-semibold">
-                          Earn up to ₹5+ Lakhs/month
-                        </small>
-                      </div>
-                      {role === "freelancer" && (
-                        <div className="mt-2">
-                          <span className="badge bg-success">✓ Selected</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* CLIENT OPTION */}
-                  <div className="col-md-6">
-                    <div
-                      className={`card p-3 text-center cursor-pointer ${
-                        role === "client"
-                          ? "border-primary border-2 bg-primary bg-opacity-10"
-                          : "border-gray"
-                      }`}
-                      onClick={() => setRole("client")}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <h5 className="fw-bold mb-2">🎯 Client/Business</h5>
-                      <p className="small text-muted mb-0">
-                        Hire talented freelancers
-                      </p>
-                      <div className="mt-2">
-                        <small className="text-primary fw-semibold">
-                          Get projects done in days
-                        </small>
-                      </div>
-                      {role === "client" && (
-                        <div className="mt-2">
-                          <span className="badge bg-primary">✓ Selected</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                {/* CLIENT */}
+                <div
+                  className="role-card client-card"
+                  onClick={() => handleRoleSelect("client")}
+                >
+                  <div className="role-icon">🎯</div>
+                  <h3>I'm a Client</h3>
+                  <p>Hire talented professionals</p>
+                  <ul className="role-benefits">
+                    <li>✓ Post your projects</li>
+                    <li>✓ Get proposals fast</li>
+                    <li>✓ Secure payments</li>
+                    <li>✓ Only pay for quality</li>
+                  </ul>
+                  <button className="role-btn">Get Started</button>
                 </div>
               </div>
 
-              {/* SUBMIT */}
-              <button
-                type="submit"
-                className="btn btn-success btn-lg w-100 fw-bold"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <span
-                      className="spinner-border spinner-border-sm me-2"
-                      role="status"
-                      aria-hidden="true"
-                    />
-                    Creating account...
-                  </>
-                ) : (
-                  "Create Account"
-                )}
-              </button>
+              <div className="form-footer">
+                Already have an account?{" "}
+                <a href="/login" className="link">
+                  Login
+                </a>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* STEP 2: DETAILS */}
+              <div className="form-header">
+                <button
+                  className="back-btn"
+                  onClick={() => setStep(1)}
+                >
+                  ← Back
+                </button>
+                <h2 className="form-title">
+                  {role === "freelancer" ? "Become a Freelancer" : "Create Your Account"}
+                </h2>
+              </div>
 
-              {/* LOGIN LINK */}
-              <div className="text-center mt-3">
-                <p className="text-muted">
-                  Already have an account?{" "}
-                  <a href="/login" className="text-success fw-bold">
-                    Login here
+              {error && <div className="alert alert-error">{error}</div>}
+              {success && <div className="alert alert-success">{success}</div>}
+
+              <form onSubmit={handleRegister}>
+                {/* NAME */}
+                <div className="form-group">
+                  <label>Full Name *</label>
+                  <input
+                    type="text"
+                    placeholder="Your full name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="form-input"
+                  />
+                </div>
+
+                {/* EMAIL */}
+                <div className="form-group">
+                  <label>Email Address *</label>
+                  <input
+                    type="email"
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="form-input"
+                  />
+                </div>
+
+                {/* PASSWORD */}
+                <div className="form-group">
+                  <label>Password *</label>
+                  <input
+                    type="password"
+                    placeholder="At least 6 characters"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="form-input"
+                  />
+                  <small className="form-hint">
+                    Use a combination of letters, numbers & symbols
+                  </small>
+                </div>
+
+                {/* ROLE BADGE */}
+                <div className="role-badge">
+                  Signing up as:{" "}
+                  <strong>
+                    {role === "freelancer" ? "💼 Freelancer" : "🎯 Client"}
+                  </strong>
+                  <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    className="change-role"
+                  >
+                    Change
+                  </button>
+                </div>
+
+                {/* SUBMIT */}
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-lg"
+                  disabled={loading}
+                >
+                  {loading ? "Creating account..." : "Create Account"}
+                </button>
+
+                {/* TERMS */}
+                <p className="terms">
+                  By signing up, you agree to our{" "}
+                  <a href="#" className="link">
+                    Terms of Service
+                  </a>{" "}
+                  and{" "}
+                  <a href="#" className="link">
+                    Privacy Policy
                   </a>
                 </p>
-              </div>
+              </form>
 
-              {/* BENEFITS */}
-              <div className="mt-4 pt-3 border-top">
-                <h6 className="fw-bold mb-3">Why join SkillVerse?</h6>
-                <div className="d-flex gap-2 mb-2">
-                  <span>✅</span>
-                  <span className="small">
-                    Only 8% commission (vs 20% on Upwork/Fiverr)
-                  </span>
-                </div>
-                <div className="d-flex gap-2 mb-2">
-                  <span>✅</span>
-                  <span className="small">UPI payments - instant withdrawals</span>
-                </div>
-                <div className="d-flex gap-2 mb-2">
-                  <span>✅</span>
-                  <span className="small">
-                    India-first platform built for Indian freelancers
-                  </span>
-                </div>
-                <div className="d-flex gap-2">
-                  <span>✅</span>
-                  <span className="small">
-                    GST-compliant invoicing + TDS auto-calculated
-                  </span>
-                </div>
+              <div className="form-footer">
+                Already have an account?{" "}
+                <a href="/login" className="link">
+                  Login
+                </a>
               </div>
-            </form>
-          </div>
+            </>
+          )}
         </div>
       </div>
     </div>
