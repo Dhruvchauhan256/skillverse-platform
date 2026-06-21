@@ -15,6 +15,12 @@ function Navbar() {
   const user = JSON.parse(localStorage.getItem("user") || "null");
   const navigate = useNavigate();
 
+  // Generate avatar URL from user initials
+  const getAvatarUrl = (userName, size = 32) => {
+    if (!userName) return `https://ui-avatars.com/api/?name=User&background=1dbf73&color=fff&size=${size}`;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=1dbf73&color=fff&size=${size}`;
+  };
+
   // Fetch unread messages count
   const fetchUnreadCount = useCallback(async () => {
     if (!token) return;
@@ -183,9 +189,12 @@ function Navbar() {
                     onClick={() => setDropdownOpen(!dropdownOpen)}
                   >
                     <img
-                      src={user?.avatar || "https://via.placeholder.com/32"}
-                      alt="User"
+                      src={user?.avatar || getAvatarUrl(user?.name, 32)}
+                      alt={user?.name || "User"}
                       className="user-avatar"
+                      onError={(e) => {
+                        e.target.src = getAvatarUrl(user?.name, 32);
+                      }}
                     />
                     <span className="user-name">{user?.name || "User"}</span>
                     <span className="dropdown-icon">▼</span>
@@ -197,9 +206,12 @@ function Navbar() {
                       <div className="dropdown-header">
                         <div className="user-info">
                           <img
-                            src={user?.avatar || "https://via.placeholder.com/40"}
-                            alt="User"
+                            src={user?.avatar || getAvatarUrl(user?.name, 40)}
+                            alt={user?.name || "User"}
                             className="user-avatar-lg"
+                            onError={(e) => {
+                              e.target.src = getAvatarUrl(user?.name, 40);
+                            }}
                           />
                           <div>
                             <p className="user-name-large">{user?.name}</p>

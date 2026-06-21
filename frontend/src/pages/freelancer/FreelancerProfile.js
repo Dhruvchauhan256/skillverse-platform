@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 
@@ -19,60 +19,70 @@ function FreelancerProfile() {
   const [editOpen, setEditOpen] = useState(false);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [completedProject, setCompletedProject] = useState(null);
+  const [error, setError] = useState("");
 
   const loggedInUser = JSON.parse(localStorage.getItem("user") || "null");
-
   const isPublicView = !!name;
 
-  useEffect(() => {
-    if (isPublicView) {
-      fetchPublicProfile(name);
-    } else if (loggedInUser?.id) {
-      fetchMyProfile(loggedInUser.id);
-    } else {
-      setLoading(false);
-    }
-  }, [name, loggedInUser?.id, isPublicView]);
-
   // ---- FETCH PUBLIC PROFILE BY NAME ----
-  const fetchPublicProfile = async (profileName) => {
+  const fetchPublicProfile = useCallback(async (profileName) => {
     try {
       setLoading(true);
+      setError("");
 
-      const { data, error } = await supabase
+      const { data, error: supabaseError } = await supabase
         .from("profiles")
         .select("*")
         .ilike("name", profileName)
         .single();
 
-      if (error || !data) {
+      if (supabaseError) {
+        console.log("Profile fetch error:", supabaseError);
         setProfile(null);
-      } else {
-        setProfile(data);
+        setError("Profile not found");
+        return;
       }
+
+      if (!data) {
+        setProfile(null);
+        setError("No profile found");
+        return;
+      }
+
+      setProfile(data);
     } catch (err) {
-      console.log(err);
+      console.error("Fetch public profile error:", err);
+      setProfile(null);
+      setError("Error loading profile");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // ---- FETCH MY OWN PROFILE ----
-  const fetchMyProfile = async (userId) => {
+  const fetchMyProfile = useCallback(async (userId) => {
     try {
       setLoading(true);
+      setError("");
 
-      const { data, error } = await supabase
+      const { data, error: supabaseError } = await supabase
         .from("profiles")
         .select("*")
         .eq("user_id", userId)
         .single();
 
-      if (error || !data) {
+      if (supabaseError) {
+        console.log("My profile fetch error:", supabaseError);
         setProfile(null);
         return;
       }
 
+      if (!data) {
+        setProfile(null);
+        return;
+      }
+
+      // Update ranking score
       const score = calculateRanking(data);
 
       if (data.ranking_score !== score) {
@@ -86,12 +96,25 @@ function FreelancerProfile() {
 
       setProfile(data);
     } catch (err) {
-      console.log(err);
+      console.error("Fetch my profile error:", err);
+      setProfile(null);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
+  // ---- USE EFFECT ----
+  useEffect(() => {
+    if (isPublicView && name) {
+      fetchPublicProfile(name);
+    } else if (!isPublicView && loggedInUser?.id) {
+      fetchMyProfile(loggedInUser.id);
+    } else {
+      setLoading(false);
+    }
+  }, [name, isPublicView, loggedInUser?.id, fetchPublicProfile, fetchMyProfile]);
+
+  // ---- CALCULATE PROFILE COMPLETION ----
   const profileCompletion = () => {
     if (!profile) return 0;
 
@@ -99,10 +122,10 @@ function FreelancerProfile() {
       profile.name,
       profile.title,
       profile.bio,
-      profile.avatar_url,
-      profile.hourly_rate,
-      profile.skills?.length,
-      profile.portfolio?.length,
+      profile.location,
+      profile.hourly_rate > 0,
+      profile.skills?.length > 0,
+      profile.portfolio?.length > 0,
     ];
 
     const filled = fields.filter(Boolean).length;
@@ -121,50 +144,88 @@ function FreelancerProfile() {
     setCompletedProject(null);
   };
 
-  if (loading) return <h3 className="p-4">Loading...</h3>;
+  // ---- LOADING STATE ----
+  if (loading) {
+    return (
+      <div className="container mt-4">
+        <div className="text-center">
+          <div className="spinner-border text-success" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-3 text-muted">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
 
-  // PUBLIC VIEW + NO PROFILE = genuinely doesn't exist
+  // ---- PUBLIC VIEW + NO PROFILE ----
   if (!profile && isPublicView) {
     return (
-      <div className="container mt-4">
-        <h4>No profile found</h4>
-        <p>This freelancer profile does not exist.</p>
+      <div className="container mt-5">
+        <div className="card p-4 text-center">
+          <h4 className="mb-3">❌ Profile Not Found</h4>
+          <p className="text-muted mb-3">
+            This freelancer profile does not exist or has been removed.
+          </p>
+          <a href="/find-talent" className="btn btn-primary">
+            ← Back to Find Talent
+          </a>
+        </div>
       </div>
     );
   }
 
-  // OWN VIEW + NO PROFILE = let them create one now
+  // ---- OWN VIEW + NO PROFILE ----
   if (!profile && !isPublicView) {
     return (
-      <div className="container mt-4">
-        <div className="alert alert-info">
-          <h4>Set up your freelancer profile</h4>
-          <p>
-            You haven't created your public profile yet. Create it now to start
-            getting discovered by clients 🚀
-          </p>
-        </div>
+      <div className="container mt-5">
+        <div className="card p-4">
+          <div className="text-center mb-4">
+            <h3 className="fw-bold mb-2">🚀 Create Your Freelancer Profile</h3>
+            <p className="text-muted">
+              Get discovered by clients and start earning on SkillVerse
+            </p>
+          </div>
 
-        {!editOpen ? (
-          <button
-            className="btn btn-primary"
-            onClick={() => setEditOpen(true)}
-          >
-            Create Profile Now
-          </button>
-        ) : (
-          <EditProfileModal
-            profile={null}
-            setProfile={setProfile}
-            onClose={() => setEditOpen(false)}
-          />
-        )}
+          <div className="alert alert-info mb-4">
+            <strong>Why create a profile?</strong>
+            <ul className="mb-0 mt-2">
+              <li>✓ Appear in search results for clients</li>
+              <li>✓ Showcase your skills and portfolio</li>
+              <li>✓ Build your reputation with reviews</li>
+              <li>✓ Increase your chances of getting hired</li>
+            </ul>
+          </div>
+
+          <div className="text-center">
+            {!editOpen ? (
+              <button
+                className="btn btn-success btn-lg"
+                onClick={() => setEditOpen(true)}
+              >
+                ✨ Create Profile Now
+              </button>
+            ) : (
+              <EditProfileModal
+                profile={null}
+                setProfile={setProfile}
+                onClose={() => setEditOpen(false)}
+              />
+            )}
+          </div>
+        </div>
       </div>
     );
   }
 
+  // ---- MAIN PROFILE VIEW ----
   return (
     <div className="container mt-4 mb-5">
+      {error && (
+        <div className="alert alert-warning mb-3">
+          {error}
+        </div>
+      )}
 
       {/* HEADER */}
       <ProfileHeader
@@ -173,7 +234,7 @@ function FreelancerProfile() {
       />
 
       {/* RANK BADGE */}
-      <div className="mt-3">
+      <div className="mt-3 mb-3">
         <RankingBadge score={profile?.ranking_score || 0} />
       </div>
 
@@ -183,42 +244,63 @@ function FreelancerProfile() {
       {/* PROFILE COMPLETION — only show on own profile */}
       {!isPublicView && (
         <div className="card p-3 mb-3">
-          <h6>Profile Completion</h6>
-          <div className="progress">
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <h6 className="fw-bold mb-0">Profile Completion</h6>
+            <span className="fw-bold text-success">{profileCompletion()}%</span>
+          </div>
+          <div className="progress" style={{ height: "8px" }}>
             <div
-              className="progress-bar"
+              className="progress-bar bg-success"
               style={{ width: `${profileCompletion()}%` }}
             />
           </div>
-          <small>{profileCompletion()}% complete</small>
+          <small className="text-muted mt-2 d-block">
+            Complete your profile to attract more clients
+          </small>
         </div>
       )}
 
-      {/* SKILLS */}
+      {/* SKILLS SECTION */}
       <SkillsSection profile={profile} />
 
-      {/* REVIEWS SECTION — SHOW ON ALL PROFILES */}
+      {/* REVIEWS SECTION */}
       <ReviewDisplay userId={profile?.user_id || loggedInUser?.id} />
 
       {/* PORTFOLIO */}
       <div className="card p-3 mb-3">
-        <h5>Portfolio</h5>
-        {profile?.portfolio?.length ? (
-          <ul>
+        <h5 className="fw-bold mb-3">📁 Portfolio</h5>
+        {profile?.portfolio && profile.portfolio.length > 0 ? (
+          <div className="row g-3">
             {profile.portfolio.map((item, i) => (
-              <li key={i}>
-                {typeof item === "object" ? (
-                  <a href={item.link} target="_blank" rel="noreferrer">
-                    {item.title}
-                  </a>
-                ) : (
-                  item
-                )}
-              </li>
+              <div key={i} className="col-md-6">
+                <div className="card h-100 p-3 border">
+                  <h6 className="fw-bold mb-2">
+                    {typeof item === "object" ? item.title : item}
+                  </h6>
+                  {typeof item === "object" && item.link && (
+                    
+                      href={item.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn btn-sm btn-outline-primary"
+                    >
+                      🔗 View Project
+                    </a>
+                  )}
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         ) : (
-          <p className="text-muted">No portfolio added</p>
+          <p className="text-muted text-center py-4">
+            📭 No portfolio items added yet
+            {!isPublicView && (
+              <>
+                <br />
+                <small>Add your best projects to showcase your work!</small>
+              </>
+            )}
+          </p>
         )}
       </div>
 
@@ -226,11 +308,14 @@ function FreelancerProfile() {
       {isPublicView && loggedInUser?.role === "client" && (
         <div className="card p-3 mb-3">
           <button
-            className="btn btn-success w-100"
+            className="btn btn-success btn-lg w-100 fw-bold"
             onClick={() => handleLeaveReview(profile?.id)}
           >
-            Leave a Review for This Freelancer ⭐
+            ⭐ Leave a Review for This Freelancer
           </button>
+          <small className="text-muted d-block mt-2 text-center">
+            Share your experience working with this freelancer
+          </small>
         </div>
       )}
 
@@ -250,7 +335,6 @@ function FreelancerProfile() {
           toUserId={profile?.user_id}
           onClose={handleReviewClose}
           onSuccess={() => {
-            // Refresh reviews after submission
             setReviewModalOpen(false);
             setCompletedProject(null);
           }}

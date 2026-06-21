@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { supabase } from "../../../supabaseClient";
-import StarRating from "../../../components/common/StarRating";
 
 function EditProfileModal({ profile, setProfile, onClose }) {
   const loggedInUser = JSON.parse(localStorage.getItem("user") || "null");
@@ -12,12 +11,12 @@ function EditProfileModal({ profile, setProfile, onClose }) {
     hourly_rate: profile?.hourly_rate || 0,
     location: profile?.location || "",
     skills: profile?.skills || [],
-    avatarFile: null,
     portfolio: profile?.portfolio || [],
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [skillInput, setSkillInput] = useState("");
 
   const handleChange = (e) => {
@@ -45,30 +44,6 @@ function EditProfileModal({ profile, setProfile, onClose }) {
     });
   };
 
-  const uploadAvatar = async (file) => {
-    try {
-      const fileName = `${Date.now()}-${file.name}`;
-
-      const { error } = await supabase.storage
-        .from("avatars")
-        .upload(fileName, file);
-
-      if (error) {
-        setError("Avatar upload failed");
-        return null;
-      }
-
-      const { data } = supabase.storage
-        .from("avatars")
-        .getPublicUrl(fileName);
-
-      return data.publicUrl;
-    } catch (err) {
-      setError("Upload error");
-      return null;
-    }
-  };
-
   const saveProfile = async () => {
     if (!loggedInUser?.id) {
       setError("User not found");
@@ -83,15 +58,9 @@ function EditProfileModal({ profile, setProfile, onClose }) {
     try {
       setLoading(true);
       setError("");
+      setSuccess("");
 
-      let avatarUrl = profile?.avatar_url;
-
-      if (form.avatarFile) {
-        avatarUrl = await uploadAvatar(form.avatarFile);
-        if (!avatarUrl) return;
-      }
-
-      const { data, error } = await supabase
+      const { data, error: supabaseError } = await supabase
         .from("profiles")
         .upsert(
           {
@@ -101,7 +70,6 @@ function EditProfileModal({ profile, setProfile, onClose }) {
             bio: form.bio,
             hourly_rate: form.hourly_rate,
             location: form.location,
-            avatar_url: avatarUrl,
             skills: form.skills,
             portfolio: form.portfolio,
             updated_at: new Date(),
@@ -110,16 +78,22 @@ function EditProfileModal({ profile, setProfile, onClose }) {
         )
         .select();
 
-      if (error) {
-        setError("Failed to save profile: " + error.message);
+      if (supabaseError) {
+        console.error("Supabase error:", supabaseError);
+        setError("Failed to save profile: " + supabaseError.message);
         return;
       }
 
-      setProfile(data[0]);
-      onClose();
+      if (data && data.length > 0) {
+        setProfile(data[0]);
+        setSuccess("✅ Profile saved successfully!");
+        setTimeout(() => {
+          onClose();
+        }, 1500);
+      }
     } catch (err) {
-      console.log(err);
-      setError("Error saving profile");
+      console.error("Save error:", err);
+      setError("Error saving profile. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -130,11 +104,10 @@ function EditProfileModal({ profile, setProfile, onClose }) {
       form.name,
       form.title,
       form.bio,
-      form.hourly_rate,
+      form.hourly_rate > 0,
       form.location,
-      form.avatarFile || profile?.avatar_url,
-      form.skills?.length,
-      form.portfolio?.length,
+      form.skills?.length > 0,
+      form.portfolio?.length > 0,
     ];
 
     const filled = fields.filter(Boolean).length;
@@ -171,11 +144,29 @@ function EditProfileModal({ profile, setProfile, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="fw-bold mb-3">
-          {profile ? "Edit Your Profile" : "Create Your Freelancer Profile"}
+          {profile ? "✏️ Edit Your Profile" : "🚀 Create Your Freelancer Profile"}
         </h3>
 
         {error && (
-          <div className="alert alert-danger mb-3">{error}</div>
+          <div className="alert alert-danger alert-dismissible fade show mb-3">
+            {error}
+            <button
+              type="button"
+              className="btn-close"
+              onClick={() => setError("")}
+            />
+          </div>
+        )}
+
+        {success && (
+          <div className="alert alert-success alert-dismissible fade show mb-3">
+            {success}
+            <button
+              type="button"
+              className="btn-close"
+              onClick={() => setSuccess("")}
+            />
+          </div>
         )}
 
         {/* NAME */}
@@ -200,7 +191,7 @@ function EditProfileModal({ profile, setProfile, onClose }) {
             value={form.title}
             onChange={handleChange}
             className="form-control"
-            placeholder="e.g., React Developer, UI Designer"
+            placeholder="e.g., React Developer, UI Designer, Content Writer"
           />
         </div>
 
@@ -212,9 +203,12 @@ function EditProfileModal({ profile, setProfile, onClose }) {
             value={form.bio}
             onChange={handleChange}
             className="form-control"
-            rows="3"
-            placeholder="Tell clients about yourself, experience, and what you offer"
+            rows="4"
+            placeholder="Tell clients about yourself, your experience, expertise, and what you offer. Be honest and detailed!"
           />
+          <small className="text-muted">
+            {form.bio.length}/500 characters
+          </small>
         </div>
 
         {/* HOURLY RATE */}
@@ -229,6 +223,9 @@ function EditProfileModal({ profile, setProfile, onClose }) {
             placeholder="500"
             min="0"
           />
+          <small className="text-muted">
+            Typical rates: ₹300-₹1000+ depending on experience
+          </small>
         </div>
 
         {/* LOCATION */}
@@ -240,35 +237,34 @@ function EditProfileModal({ profile, setProfile, onClose }) {
             value={form.location}
             onChange={handleChange}
             className="form-control"
-            placeholder="City, Country"
+            placeholder="e.g., Bangalore, India"
           />
         </div>
 
-        {/* AVATAR */}
-        <div className="mb-3">
-          <label className="form-label fw-semibold">Profile Picture</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) =>
-              setForm({ ...form, avatarFile: e.target.files[0] })
-            }
-            className="form-control"
-          />
-          {form.avatarFile && (
-            <small className="text-success">✓ Image selected</small>
-          )}
+        {/* AVATAR NOTICE */}
+        <div
+          className="mb-3 p-3 bg-info bg-opacity-10 border border-info rounded-3"
+          style={{ borderLeft: "4px solid #0dcaf0" }}
+        >
+          <small className="text-info fw-semibold">
+            💡 Profile Avatar: Your initials will be shown until avatar upload is enabled.
+          </small>
         </div>
 
         {/* SKILLS */}
         <div className="mb-3">
-          <label className="form-label fw-semibold">Skills</label>
+          <label className="form-label fw-semibold">Skills *</label>
           <div className="input-group mb-2">
             <input
               type="text"
               value={skillInput}
               onChange={(e) => setSkillInput(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && addSkill()}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addSkill();
+                }
+              }}
               className="form-control"
               placeholder="e.g., React, Node.js, MongoDB"
             />
@@ -281,37 +277,45 @@ function EditProfileModal({ profile, setProfile, onClose }) {
             </button>
           </div>
 
-          <div className="d-flex flex-wrap gap-2">
-            {form.skills.map((skill, i) => (
-              <span key={i} className="badge bg-primary">
-                {skill}
-                <button
-                  type="button"
-                  onClick={() => removeSkill(skill)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: "white",
-                    cursor: "pointer",
-                    marginLeft: "6px",
-                    padding: "0",
-                  }}
-                >
-                  ✕
-                </button>
-              </span>
-            ))}
+          <div className="d-flex flex-wrap gap-2 mb-2">
+            {form.skills.length === 0 ? (
+              <small className="text-muted">No skills added yet</small>
+            ) : (
+              form.skills.map((skill, i) => (
+                <span key={i} className="badge bg-success">
+                  {skill}
+                  <button
+                    type="button"
+                    onClick={() => removeSkill(skill)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "white",
+                      cursor: "pointer",
+                      marginLeft: "6px",
+                      padding: "0",
+                      fontSize: "16px",
+                    }}
+                  >
+                    ✕
+                  </button>
+                </span>
+              ))
+            )}
           </div>
         </div>
 
         {/* PORTFOLIO */}
         <div className="mb-3">
-          <label className="form-label fw-semibold">Portfolio (Optional)</label>
+          <label className="form-label fw-semibold">
+            Portfolio (Optional)
+          </label>
           <small className="text-muted d-block mb-2">
-            Add links to your best projects
+            Add links to your best projects/work samples
           </small>
+
           {form.portfolio.map((item, i) => (
-            <div key={i} className="mb-2">
+            <div key={i} className="mb-2 p-2 bg-light rounded">
               <input
                 type="text"
                 placeholder="Project title"
@@ -321,21 +325,34 @@ function EditProfileModal({ profile, setProfile, onClose }) {
                   updated[i].title = e.target.value;
                   setForm({ ...form, portfolio: updated });
                 }}
-                className="form-control mb-1"
+                className="form-control mb-2"
               />
-              <input
-                type="url"
-                placeholder="Project URL"
-                value={item.link || ""}
-                onChange={(e) => {
-                  const updated = [...form.portfolio];
-                  updated[i].link = e.target.value;
-                  setForm({ ...form, portfolio: updated });
-                }}
-                className="form-control"
-              />
+              <div className="input-group">
+                <input
+                  type="url"
+                  placeholder="Project URL (https://example.com)"
+                  value={item.link || ""}
+                  onChange={(e) => {
+                    const updated = [...form.portfolio];
+                    updated[i].link = e.target.value;
+                    setForm({ ...form, portfolio: updated });
+                  }}
+                  className="form-control"
+                />
+                <button
+                  type="button"
+                  className="btn btn-outline-danger btn-sm"
+                  onClick={() => {
+                    const updated = form.portfolio.filter((_, idx) => idx !== i);
+                    setForm({ ...form, portfolio: updated });
+                  }}
+                >
+                  Remove
+                </button>
+              </div>
             </div>
           ))}
+
           <button
             type="button"
             className="btn btn-sm btn-outline-primary"
@@ -346,32 +363,47 @@ function EditProfileModal({ profile, setProfile, onClose }) {
               })
             }
           >
-            + Add Portfolio Item
+            ➕ Add Portfolio Item
           </button>
         </div>
 
-        {/* COMPLETION */}
+        {/* COMPLETION BAR */}
         <div className="mb-3">
-          <label className="form-label fw-semibold">Profile Completion</label>
-          <div className="progress">
+          <div className="d-flex justify-content-between mb-2">
+            <label className="form-label fw-semibold mb-0">
+              Profile Completion
+            </label>
+            <span className="fw-bold text-success">{calculateCompletion()}%</span>
+          </div>
+          <div className="progress" style={{ height: "8px" }}>
             <div
-              className="progress-bar"
+              className="progress-bar bg-success"
               style={{ width: `${calculateCompletion()}%` }}
             />
           </div>
-          <small className="text-muted">{calculateCompletion()}% complete</small>
         </div>
 
         {/* BUTTONS */}
         <div className="d-flex gap-2">
           <button
-            className="btn btn-success flex-grow-1"
+            className="btn btn-success flex-grow-1 fw-bold"
             onClick={saveProfile}
             disabled={loading}
           >
-            {loading ? "Saving..." : "Save Profile"}
+            {loading ? (
+              <>
+                <span
+                  className="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                />
+                Saving...
+              </>
+            ) : (
+              "💾 Save Profile"
+            )}
           </button>
-          <button className="btn btn-secondary" onClick={onClose}>
+          <button className="btn btn-outline-secondary" onClick={onClose}>
             Cancel
           </button>
         </div>
