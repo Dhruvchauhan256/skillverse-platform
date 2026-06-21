@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./Navbar.css";
 
 const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
@@ -8,213 +9,311 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user") || "null");
-
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (token) {
-      fetchUnreadCount();
-
-      // Poll every 30 seconds for new messages
-      const interval = setInterval(fetchUnreadCount, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [token]);
-
-  const fetchUnreadCount = async () => {
+  // Fetch unread messages count
+  const fetchUnreadCount = useCallback(async () => {
+    if (!token) return;
     try {
       const res = await axios.get(`${API}/api/messages/unread/count`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUnreadCount(res.data.count || 0);
     } catch (err) {
-      console.log("UNREAD COUNT ERROR:", err);
+      console.log("Failed to fetch unread count");
     }
-  };
+  }, [token]);
 
-  const logout = () => {
+  useEffect(() => {
+    if (token) {
+      fetchUnreadCount();
+      const interval = setInterval(fetchUnreadCount, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [token, fetchUnreadCount]);
+
+  const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/login");
   };
 
-  const handleSearchSubmit = (e) => {
+  const handleSearch = (e) => {
     e.preventDefault();
-    const query = e.target.search.value;
-    if (query.trim()) {
-      navigate(`/search?q=${encodeURIComponent(query)}`);
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery("");
       setMenuOpen(false);
     }
   };
 
+  const isFreelancer = user?.role === "freelancer";
+  const isClient = user?.role === "client";
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top px-3 shadow-sm">
+    <nav className="navbar-custom">
+      <div className="navbar-container">
+        {/* LOGO */}
+        <Link to="/" className="navbar-logo">
+          <span className="logo-icon">🚀</span>
+          <span className="logo-text">SkillVerse</span>
+        </Link>
 
-      {/* BRAND */}
-      <Link className="navbar-brand fw-bold" to="/">
-        🚀 SkillVerse
-      </Link>
+        {/* MOBILE MENU TOGGLE */}
+        <button
+          className="mobile-menu-btn"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
-      {/* MOBILE TOGGLE */}
-      <button
-        className="navbar-toggler"
-        onClick={() => setMenuOpen(!menuOpen)}
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
-
-      {/* NAV CONTENT */}
-      <div className={`collapse navbar-collapse ${menuOpen ? "show" : ""}`}>
-
-        {/* LEFT LINKS */}
-        <ul className="navbar-nav me-auto gap-2">
-          <li className="nav-item">
-            <Link className="nav-link" to="/find-work">Find Work</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/find-talent">Find Talent</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/jobs">Jobs</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link position-relative" to="/messages">
-              Messages
-              {unreadCount > 0 && (
-                <span
-                  className="badge bg-danger rounded-pill ms-1"
-                  style={{ fontSize: "10px" }}
-                >
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </span>
-              )}
-            </Link>
-          </li>
-        </ul>
-
-        {/* CENTER SEARCH */}
-        <form className="d-flex me-3 w-50" onSubmit={handleSearchSubmit}>
-          <input
-            name="search"
-            className="form-control rounded-pill px-3"
-            type="search"
-            placeholder="Search freelancers, projects, skills..."
-          />
-        </form>
-
-        {/* RIGHT SIDE */}
-        <ul className="navbar-nav align-items-center gap-2">
-
-          {/* NOTIFICATION BELL — now connected to backend */}
-          <li className="nav-item">
-            <span
-              className="nav-link fs-5 position-relative"
-              style={{ cursor: "pointer" }}
-              onClick={() => navigate("/messages")}
-            >
-              🔔
-              {unreadCount > 0 && (
-                <span
-                  className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                  style={{ fontSize: "10px" }}
-                >
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </span>
-              )}
-            </span>
-          </li>
-
-          {/* POST JOB */}
-          <li className="nav-item">
-            <Link className="btn btn-success btn-sm" to="/post-project">
-              Post Job
-            </Link>
-          </li>
-
-          {/* AUTH */}
-          {!token ? (
-            <>
-              <li className="nav-item">
-                <Link className="nav-link" to="/login">Login</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="btn btn-primary btn-sm" to="/signup">
-                  Join
+        {/* NAVBAR CONTENT */}
+        <div className={`navbar-content ${menuOpen ? "active" : ""}`}>
+          {/* MAIN LINKS */}
+          <div className="navbar-links">
+            {!token ? (
+              <>
+                <Link to="/find-work" className="nav-link">
+                  Find Work
                 </Link>
-              </li>
-            </>
-          ) : (
-            <li className="nav-item dropdown position-relative">
+                <Link to="/find-talent" className="nav-link">
+                  Find Talent
+                </Link>
+              </>
+            ) : (
+              <>
+                {isFreelancer && (
+                  <>
+                    <Link to="/find-work" className="nav-link">
+                      📋 Find Work
+                    </Link>
+                    <Link to="/my-proposals" className="nav-link">
+                      📝 Proposals
+                    </Link>
+                  </>
+                )}
 
-              {/* USER BUTTON */}
-              <div
-                className="d-flex align-items-center gap-2 nav-link"
-                style={{ cursor: "pointer" }}
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-              >
-                <img
-                  src={user?.avatar || "https://via.placeholder.com/30"}
-                  width="32"
-                  height="32"
-                  className="rounded-circle"
-                  alt="user"
-                />
-                <span className="fw-semibold">
-                  {user?.name || "User"}
-                </span>
-                <span className="d-flex align-items-center gap-1">
-                  <span
-                    style={{
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "50%",
-                      background: user?.is_online ? "green" : "gray",
-                      display: "inline-block",
-                    }}
-                  />
-                </span>
-              </div>
+                {isClient && (
+                  <>
+                    <Link to="/find-talent" className="nav-link">
+                      🔍 Find Talent
+                    </Link>
+                    <Link to="/my-projects" className="nav-link">
+                      📊 My Projects
+                    </Link>
+                  </>
+                )}
 
-              {/* DROPDOWN */}
-              {dropdownOpen && (
-                <div
-                  className="position-absolute bg-dark text-white p-2 rounded shadow"
-                  style={{ right: 0, top: "45px", minWidth: "180px" }}
-                >
-                  <Link className="dropdown-item text-white" to="/freelancer-profile">
-                    My Profile
-                  </Link>
-                  <Link className="dropdown-item text-white" to="/dashboard">
-                    Dashboard
-                  </Link>
-                  <Link className="dropdown-item text-white" to="/my-projects">
-                    My Projects
-                  </Link>
-                  <Link className="dropdown-item text-white" to="/messages">
-                    Messages
-                    {unreadCount > 0 && (
-                      <span className="badge bg-danger ms-2">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </Link>
-                  <hr className="bg-secondary" />
-                  <button
-                    onClick={logout}
-                    className="btn btn-sm btn-danger w-100"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
+                <Link to="/messages" className="nav-link messages-link">
+                  💬 Messages
+                  {unreadCount > 0 && (
+                    <span className="notification-badge">{unreadCount}</span>
+                  )}
+                </Link>
+              </>
+            )}
+          </div>
 
-            </li>
+          {/* SEARCH BAR */}
+          {token && (
+            <form className="search-bar" onSubmit={handleSearch}>
+              <input
+                type="text"
+                placeholder="Search freelancers, projects, skills..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+              <button type="submit" className="search-btn">
+                🔍
+              </button>
+            </form>
           )}
 
-        </ul>
+          {/* RIGHT SIDE */}
+          <div className="navbar-right">
+            {!token ? (
+              <>
+                <Link to="/login" className="nav-link">
+                  Login
+                </Link>
+                <Link to="/signup" className="nav-btn signup-btn">
+                  Sign Up
+                </Link>
+              </>
+            ) : (
+              <>
+                {/* POST JOB / POST GIG BUTTON */}
+                {isClient && (
+                  <Link to="/post-project" className="nav-btn post-btn">
+                    ➕ Post a Project
+                  </Link>
+                )}
+
+                {isFreelancer && (
+                  <Link to="/freelancer-profile" className="nav-btn post-btn">
+                    ➕ Edit Profile
+                  </Link>
+                )}
+
+                {/* NOTIFICATION BELL */}
+                <div className="notification-container">
+                  <button
+                    className="notification-bell"
+                    onClick={() => navigate("/messages")}
+                    title="Messages"
+                  >
+                    🔔
+                    {unreadCount > 0 && (
+                      <span className="bell-badge">{unreadCount}</span>
+                    )}
+                  </button>
+                </div>
+
+                {/* USER DROPDOWN */}
+                <div className="user-dropdown">
+                  <button
+                    className="user-btn"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                  >
+                    <img
+                      src={user?.avatar || "https://via.placeholder.com/32"}
+                      alt="User"
+                      className="user-avatar"
+                    />
+                    <span className="user-name">{user?.name || "User"}</span>
+                    <span className="dropdown-icon">▼</span>
+                  </button>
+
+                  {dropdownOpen && (
+                    <div className="dropdown-menu">
+                      {/* PROFILE SECTION */}
+                      <div className="dropdown-header">
+                        <div className="user-info">
+                          <img
+                            src={user?.avatar || "https://via.placeholder.com/40"}
+                            alt="User"
+                            className="user-avatar-lg"
+                          />
+                          <div>
+                            <p className="user-name-large">{user?.name}</p>
+                            <p className="user-role">
+                              {isFreelancer ? "💼 Freelancer" : "🎯 Client"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <hr className="dropdown-divider" />
+
+                      {/* MENU ITEMS */}
+                      <Link
+                        to={
+                          isFreelancer
+                            ? "/freelancer-profile"
+                            : "/client-profile"
+                        }
+                        className="dropdown-item"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        👤 View Profile
+                      </Link>
+
+                      <Link
+                        to={
+                          isFreelancer
+                            ? "/dashboard"
+                            : "/client-dashboard"
+                        }
+                        className="dropdown-item"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        📈 Dashboard
+                      </Link>
+
+                      <Link
+                        to="/messages"
+                        className="dropdown-item"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        💬 Messages{" "}
+                        {unreadCount > 0 && (
+                          <span className="badge">{unreadCount}</span>
+                        )}
+                      </Link>
+
+                      {isFreelancer && (
+                        <>
+                          <Link
+                            to="/my-proposals"
+                            className="dropdown-item"
+                            onClick={() => setDropdownOpen(false)}
+                          >
+                            📝 My Proposals
+                          </Link>
+
+                          <Link
+                            to="/my-projects"
+                            className="dropdown-item"
+                            onClick={() => setDropdownOpen(false)}
+                          >
+                            📊 Active Projects
+                          </Link>
+                        </>
+                      )}
+
+                      {isClient && (
+                        <>
+                          <Link
+                            to="/my-projects"
+                            className="dropdown-item"
+                            onClick={() => setDropdownOpen(false)}
+                          >
+                            📊 My Projects
+                          </Link>
+
+                          <Link
+                            to="/proposal-management"
+                            className="dropdown-item"
+                            onClick={() => setDropdownOpen(false)}
+                          >
+                            📋 Manage Proposals
+                          </Link>
+                        </>
+                      )}
+
+                      <hr className="dropdown-divider" />
+
+                      {/* SETTINGS & LOGOUT */}
+                      <a href="#" className="dropdown-item">
+                        ⚙️ Settings
+                      </a>
+
+                      <a href="#" className="dropdown-item">
+                        ❓ Help & Support
+                      </a>
+
+                      <hr className="dropdown-divider" />
+
+                      <button
+                        className="dropdown-item logout-btn"
+                        onClick={handleLogout}
+                      >
+                        🚪 Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </nav>
   );
