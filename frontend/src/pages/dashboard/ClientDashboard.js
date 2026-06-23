@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./ClientDashboard.css"; // Import the CSS file
-import "./../../styles/GlobalStyles.css"; // Import if you have global styles
 
 function ClientDashboard() {
   const [projects, setProjects] = useState([]);
