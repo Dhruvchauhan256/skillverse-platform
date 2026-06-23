@@ -1,65 +1,102 @@
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const { PrismaClient } = require("@prisma/client");
 const cors = require("cors");
-const dotenv = require("dotenv");
-dotenv.config();
-console.log("🚀 Loading SkillVerse Backend...");
+require("dotenv").config();
+
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
 
-// MIDDLEWARE
-app.use(cors());
+const prisma = new PrismaClient();
+
+// Middleware
 app.use(express.json());
+app.use(cors());
 
-// ROUTES IMPORT
-const authRoutes = require("./routes/authRoutes");
-const gigRoutes = require("./routes/gigRoutes");
-const proposalRoutes = require("./routes/proposalRoutes");
-const projectRoutes = require("./routes/projectRoutes");
-const profileRoutes = require("./routes/profileRoutes");
-const userRoutes = require("./routes/userRoutes");
-const portfolioRoutes = require("./routes/portfolioRoutes");
-const messageRoutes = require("./routes/messageRoutes");
-const reviewRoutes = require("./routes/reviewRoutes");
+// Active users tracking
+const activeUsers = new Map();
 
-// ROUTES USE
-app.use("/api/auth", authRoutes);
-app.use("/api/gigs", gigRoutes);
-app.use("/api/projects", projectRoutes);
-app.use("/api/profile", profileRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/portfolio", portfolioRoutes);
-app.use("/api/proposals", proposalRoutes);
-app.use("/api/messages", messageRoutes);
-app.use("/api/reviews", reviewRoutes);
+// Routes
+const avatarRouter = require("./routes/avatar");
+const chatRouter = require("./routes/chat");
 
-// TEST ROUTES
-app.get("/", (req, res) => {
-  res.send("SkillVerse Backend Running 🚀");
-});
+app.use("/api/avatar", avatarRouter);
+app.use("/api/chats", chatRouter);
 
-app.get("/api/health", (req, res) => {
-  res.json({
-    success: true,
-    message: "API is working",
+// Socket.io
+io.on("connection", (socket) => {
+  console.log(`User connected: ${socket.id}`);
+
+  // User joins
+  socket.on("user-join", (userId) => {
+    activeUsers.set(userId, socket.id);
+    socket.userId = userId;
+  });
+
+  // Send message
+  socket.on("send-message", async (data) => {
+    const { chatId, senderId, receiverId, content } = data;
+
+    try {
+      const message = await prisma.message.create({
+        data: { content, chatId, senderId, receiverId },
+      });
+
+      const sender = await prisma.user.findUnique({
+        where: { id: senderId },
+        select: { name: true, avatarUrl: true },
+      });
+
+      const messageData = {
+        id: message.id,
+        content: message.content,
+        senderId: message.senderId,
+        senderName: sender.name,
+        senderAvatar: sender.avatarUrl,
+        timestamp: message.createdAt,
+      };
+
+      const receiverSocketId = activeUsers.get(receiverId);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("message-received", messageData);
+      }
+
+      socket.emit("message-sent", messageData);
+    } catch (error) {
+      socket.emit("error", { message: "Failed to send message" });
+    }
+  });
+
+  // Typing
+  socket.on("typing", (data) => {
+    const receiverSocketId = activeUsers.get(data.receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("user-typing", { isTyping: true });
+    }
+  });
+
+  socket.on("stop-typing", (data) => {
+    const receiverSocketId = activeUsers.get(data.receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("user-typing", { isTyping: false });
+    }
+  });
+
+  // Disconnect
+  socket.on("disconnect", () => {
+    if (socket.userId) {
+      activeUsers.delete(socket.userId);
+    }
   });
 });
 
-const prisma = require("./prisma/client");
-
-app.get("/test-users", async (req, res) => {
-  const users = await prisma.user.findMany();
-  res.json(users);
-});
-
-// 404 HANDLER
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "Route not found",
-  });
-});
-
-// START SERVER
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+server.listen(PORT, () => console.log(`Server on ${PORT}`));
