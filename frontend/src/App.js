@@ -173,8 +173,9 @@ function App() {
       </Routes>
 
       {/* MOBILE NAV (IMPORTANT: OUTSIDE ROUTES) */}
-      <MobileNav />
-    </>
+    <MobileNav />
+      </>
+    </AuthProvider>
   );
 }
 
