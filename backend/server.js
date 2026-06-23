@@ -4,7 +4,7 @@ const { Server } = require("socket.io");
 const { PrismaClient } = require("@prisma/client");
 const cors = require("cors");
 require("dotenv").config();
-
+const authRouter = require("./routes/auth");
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -30,6 +30,7 @@ const chatRouter = require("./routes/chat");
 
 app.use("/api/avatar", avatarRouter);
 app.use("/api/chats", chatRouter);
+app.use("/api/auth", authRouter);
 
 // Socket.io
 io.on("connection", (socket) => {
