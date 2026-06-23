@@ -105,7 +105,10 @@ function ClientDashboard() {
         ) : (
           projects.map((project) => (
             <div key={project.id} className="border rounded p-3 mb-3">
-              <div className="d-flex" style={{ justifyContent: "space-between", alignItems: "start" }}>
+              <div
+                className="d-flex"
+                style={{ justifyContent: "space-between", alignItems: "start" }}
+              >
                 <div style={{ flex: 1 }}>
                   <h5>{project.title}</h5>
                   <p>{project.description}</p>
