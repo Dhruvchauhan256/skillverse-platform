@@ -1,7 +1,8 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
-
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
 // Components
 import Navbar from "./components/common/Navbar.jsx";
 import MobileNav from "./components/common/MobileNav.jsx";
@@ -17,6 +18,7 @@ import JobsPage from "./pages/JobsPage";
 
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import Onboarding from "./pages/Onboarding";
 
 import FreelancerDashboard from "./pages/dashboard/FreelancerDashboard";
 import ClientDashboard from "./pages/dashboard/ClientDashboard";
@@ -39,8 +41,9 @@ import FreelancerSearch from "./pages/freelancer/FreelancerSearch";
 import CategorySearch from "./pages/search/CategorySearch";
 
 function App() {
-  return (
-    <>
+ return (
+    <AuthProvider>
+      <>
       {/* TOP NAVBAR */}
       <Navbar />
 
@@ -51,7 +54,7 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Register />} />
-
+<Route path="/onboarding" element={<Onboarding />} />
         <Route path="/find-work" element={<FindWork />} />
         <Route path="/find-talent" element={<FindTalent />} />
         <Route path="/freelancers" element={<FreelancerSearch />} />
