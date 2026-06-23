@@ -1,5 +1,5 @@
 /* ===================================
-   CLIENT DASHBOARD PREMIUM STYLES
+   FREELANCER DASHBOARD PREMIUM STYLES
    ================================== */
 
 /* Color Variables */
@@ -50,107 +50,245 @@ body {
   line-height: 1.6;
 }
 
-/* Container */
+/* ===================================
+   DASHBOARD CONTAINER
+   ================================== */
+
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* ===================================
-   HEADER & TITLE
-   ================================== */
+.container.mt-5 {
+  padding-top: 40px;
+}
 
-.container > h1 {
-  font-size: var(--font-h1);
-  font-weight: 700;
+.container h3 {
+  font-size: var(--font-h2);
+  font-weight: 600;
   color: var(--dark-text);
-  margin-bottom: 32px;
-  padding-top: 24px;
+  text-align: center;
+  padding: 40px 0;
 }
 
 /* ===================================
-   STATS CARDS SECTION
+   PROFILE SECTION
    ================================== */
 
-.row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--gap);
-  margin-bottom: 32px;
-}
-
-.col-md-4 {
-  width: 100%;
-}
-
-.card {
+.panel {
   background-color: var(--white);
-  border: none;
   border-radius: var(--border-radius);
+  padding: var(--card-padding);
   box-shadow: var(--shadow-sm);
+  margin-bottom: var(--gap);
   transition: all 0.3s ease;
 }
 
-.card:hover {
+.panel:hover {
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
 
-.card.shadow-sm {
-  padding: var(--card-padding);
+.panel h2 {
+  font-size: var(--font-h2);
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: 20px;
+  border-bottom: 3px solid var(--primary-blue);
+  padding-bottom: 16px;
 }
 
-.card h5 {
-  font-size: var(--font-body);
+.panel h3 {
+  font-size: var(--font-h3);
   font-weight: 600;
+  color: var(--dark-text);
+  margin-bottom: 16px;
+}
+
+.panel p {
+  font-size: var(--font-body);
   color: var(--dark-gray);
   margin-bottom: 12px;
+  line-height: 1.8;
+}
+
+.panel p strong {
+  color: var(--dark-text);
+  font-weight: 600;
+}
+
+/* Profile Info Details */
+.panel p:first-of-type {
+  margin-top: 12px;
+}
+
+/* ===================================
+   ALERT STYLES
+   ================================== */
+
+.alert {
+  padding: 16px 20px;
+  border-radius: var(--border-radius);
+  margin-bottom: var(--gap);
+  font-size: var(--font-body);
+  font-weight: 500;
+}
+
+.alert-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--pending-amber);
+  border-left: 4px solid var(--pending-amber);
+}
+
+/* ===================================
+   STATS GRID
+   ================================== */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--gap);
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+  border-radius: var(--border-radius);
+  padding: var(--card-padding);
+  text-align: center;
+  color: var(--white);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Individual stat card colors */
+.stat-card:nth-child(1) {
+  background: linear-gradient(135deg, #0052CC, #003D99);
+}
+
+.stat-card:nth-child(2) {
+  background: linear-gradient(135deg, #00D084, #00B876);
+}
+
+.stat-card:nth-child(3) {
+  background: linear-gradient(135deg, #7C3AED, #6D28D9);
+}
+
+.stat-card:nth-child(4) {
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card h3 {
+  font-size: var(--font-h4);
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  color: rgba(255, 255, 255, 0.9);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.card h2 {
-  font-size: 42px;
+.stat-card p {
+  font-size: 32px;
   font-weight: 700;
-  color: var(--primary-blue);
   margin: 0;
-}
-
-/* Individual stat card colors */
-.col-md-4:nth-child(1) .card h2 {
-  color: var(--primary-blue);
-}
-
-.col-md-4:nth-child(2) .card h2 {
-  color: var(--accent-green);
-}
-
-.col-md-4:nth-child(3) .card h2 {
-  color: var(--purple-accent);
+  color: var(--white);
 }
 
 /* ===================================
-   QUICK ACTIONS SECTION
+   DASHBOARD GRID
    ================================== */
 
-.card.p-4 {
-  padding: var(--card-padding);
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--gap);
   margin-bottom: 32px;
 }
 
-.card h4 {
-  font-size: var(--font-h2);
-  font-weight: 600;
-  color: var(--dark-text);
-  margin-bottom: 20px;
+.dashboard-grid .panel {
+  background-color: var(--white);
 }
 
-.d-flex {
-  display: flex;
-  gap: var(--gap);
-  flex-wrap: wrap;
+.dashboard-grid .panel h3 {
+  color: var(--primary-blue);
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--primary-blue);
+  padding-bottom: 12px;
 }
+
+/* Activity List */
+.panel p {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+  font-size: var(--font-body);
+}
+
+.panel p::before {
+  content: "✔";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+  background-color: rgba(16, 185, 129, 0.2);
+  color: var(--success-green);
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* ===================================
+   PROGRESS BAR
+   ================================== */
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background-color: var(--medium-gray);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-green), var(--primary-blue));
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.panel p:last-child {
+  font-size: var(--font-h4);
+  font-weight: 600;
+  color: var(--primary-blue);
+  margin: 0;
+  margin-top: 12px;
+}
+
+/* ===================================
+   BUTTONS
+   ================================== */
 
 .btn {
   padding: 12px 24px;
@@ -166,7 +304,6 @@ body {
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  min-width: 160px;
 }
 
 .btn-primary {
@@ -191,175 +328,129 @@ body {
   box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
 }
 
-.btn-dark {
-  background-color: var(--dark-text);
-  color: var(--white);
-}
-
-.btn-dark:hover {
-  background-color: #1f2937;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(17, 24, 39, 0.3);
-}
-
-/* ===================================
-   MY PROJECTS SECTION
-   ================================== */
-
-.card.p-4:last-child {
-  margin-bottom: 40px;
-}
-
-.card.p-4:last-child h4 {
-  margin-bottom: 24px;
-}
-
-/* Project Item */
-.border.rounded.p-3 {
-  border: 1px solid var(--medium-gray);
-  border-radius: var(--border-radius);
-  padding: var(--card-padding);
-  margin-bottom: 16px;
-  background-color: var(--white);
-  transition: all 0.3s ease;
-}
-
-.border.rounded.p-3:hover {
-  border-color: var(--primary-blue);
-  box-shadow: var(--shadow-md);
-}
-
-.border.rounded.p-3 h5 {
-  font-size: var(--font-h3);
-  font-weight: 600;
-  color: var(--dark-text);
-  margin-bottom: 12px;
-}
-
-.border.rounded.p-3 p {
-  font-size: var(--font-body);
-  color: var(--dark-gray);
-  margin-bottom: 10px;
-}
-
-.border.rounded.p-3 strong {
-  color: var(--dark-text);
-  font-weight: 600;
-}
-
-.border.rounded.p-3 small {
-  font-size: var(--font-small);
-  color: var(--inactive-gray);
-  display: block;
-  margin-top: 12px;
-}
-
-/* Loading & Empty States */
-.card h5:only-of-type {
-  text-align: center;
-  color: var(--dark-gray);
-  padding: 40px 0;
-}
-
-.card p:only-of-type {
-  text-align: center;
-  color: var(--dark-gray);
-  padding: 40px 0;
-  font-size: var(--font-body);
-}
-
 /* ===================================
    RESPONSIVE DESIGN
    ================================== */
 
 @media (max-width: 768px) {
+  .dashboard {
+    padding: 16px 16px;
+  }
+
   .container {
     padding: 0 16px;
   }
 
-  .container > h1 {
-    font-size: 24px;
-    margin-bottom: 24px;
+  .panel {
+    padding: 20px;
   }
 
-  .row {
-    grid-template-columns: 1fr;
+  .panel h2 {
+    font-size: 20px;
+  }
+
+  .panel h3 {
+    font-size: 16px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
     margin-bottom: 24px;
   }
 
-  .d-flex {
-    flex-direction: column;
-    gap: 12px;
+  .stat-card {
+    padding: 20px;
+    min-height: 140px;
   }
 
-  .btn {
-    width: 100%;
-    padding: 14px 20px;
+  .stat-card h3 {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .stat-card p {
+    font-size: 24px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .panel p {
     font-size: 13px;
-    min-width: unset;
-  }
-
-  .card h2 {
-    font-size: 36px;
-  }
-
-  .card h4 {
-    font-size: 18px;
-  }
-
-  .border.rounded.p-3 {
-    padding: 16px;
+    margin-bottom: 12px;
   }
 }
 
 @media (max-width: 480px) {
+  .dashboard {
+    padding: 12px 12px;
+  }
+
   .container {
     padding: 0 12px;
   }
 
-  .container > h1 {
-    font-size: 20px;
-    margin-bottom: 20px;
-  }
-
-  .card.shadow-sm {
+  .panel {
     padding: 16px;
+    margin-bottom: 16px;
   }
 
-  .card h5 {
-    font-size: 12px;
+  .panel h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
   }
 
-  .card h2 {
-    font-size: 28px;
-  }
-
-  .card h4 {
-    font-size: 16px;
-  }
-
-  .card p-4 {
-    padding: 16px;
-  }
-
-  .border.rounded.p-3 {
-    padding: 12px;
+  .panel h3 {
+    font-size: 14px;
     margin-bottom: 12px;
   }
 
-  .border.rounded.p-3 h5 {
-    font-size: 14px;
+  .panel p {
+    font-size: 12px;
+    margin-bottom: 8px;
   }
 
-  .btn {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    min-height: 120px;
+  }
+
+  .stat-card h3 {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+
+  .stat-card p {
+    font-size: 20px;
+  }
+
+  .dashboard-grid {
+    gap: 12px;
+  }
+
+  .progress-bar {
+    height: 8px;
+    margin-bottom: 10px;
+  }
+
+  .alert {
     padding: 12px 16px;
     font-size: 12px;
   }
 }
 
 /* ===================================
-   STATUS BADGES (For Project Status)
+   STATUS BADGES
    ================================== */
 
 .status-badge {
@@ -371,24 +462,19 @@ body {
   text-transform: capitalize;
 }
 
-.status-open {
+.status-active {
   background-color: rgba(0, 208, 132, 0.1);
   color: var(--accent-green);
 }
 
-.status-completed {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: var(--success-green);
-}
-
-.status-in-progress {
-  background-color: rgba(245, 158, 11, 0.1);
-  color: var(--pending-amber);
-}
-
-.status-closed {
+.status-inactive {
   background-color: rgba(107, 114, 128, 0.1);
   color: var(--inactive-gray);
+}
+
+.status-pending {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--pending-amber);
 }
 
 /* ===================================
@@ -403,6 +489,10 @@ body {
   margin-bottom: 16px;
 }
 
+.mt-5 {
+  margin-top: 40px;
+}
+
 .p-3 {
   padding: 16px;
 }
@@ -411,10 +501,34 @@ body {
   padding: 24px;
 }
 
-.mt-5 {
-  margin-top: 40px;
+.d-flex {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
 }
 
 .gap-3 {
   gap: 20px;
+}
+
+/* ===================================
+   SCROLLBAR CUSTOMIZATION (Optional)
+   ================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--medium-gray);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-gray);
 }
