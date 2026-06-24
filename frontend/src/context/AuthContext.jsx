@@ -7,7 +7,6 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is logged in on mount
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -19,9 +18,13 @@ export function AuthProvider({ children }) {
 
   const verifyToken = async (token) => {
     try {
-      const response = await axios.post("/api/auth/verify", {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.post(
+        "/api/auth/verify",
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setUser(response.data.user);
     } catch (error) {
       localStorage.removeItem("token");
