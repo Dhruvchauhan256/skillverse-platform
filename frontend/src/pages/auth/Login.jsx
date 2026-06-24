@@ -3,40 +3,44 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Login.css";
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  try {
+    console.log("Attempting login with:", { email, password });
 
-    try {
-      const response = await axios.post("/api/auth/login", {
-        email,
-        password,
-      });
+    const response = await axios.post("http://localhost:5000/api/auth/login", {
+      email,
+      password,
+    });
 
-      // Store token
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("userId", response.data.user.id);
-      localStorage.setItem("userRole", response.data.user.role);
-      localStorage.setItem("userName", response.data.user.name);
+    console.log("Login successful:", response.data);
 
-      // Redirect based on role
-      const redirectUrl = response.data.user.role === "freelancer" ? "/dashboard" : "/client-dashboard";
-      navigate(redirectUrl);
-    } catch (err) {
-      setError(err.response?.data?.error || "Login failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Store token
+    localStorage.setItem("token", response.data.token);
+    localStorage.setItem("userId", response.data.user.id);
+    localStorage.setItem("userRole", response.data.user.role);
+    localStorage.setItem("userName", response.data.user.name);
+
+    // Redirect based on role
+    const redirectUrl = response.data.user.role === "freelancer" ? "/dashboard" : "/client-dashboard";
+    navigate(redirectUrl);
+  } catch (err) {
+    console.error("Login error details:", err);
+    console.error("Response status:", err.response?.status);
+    console.error("Response data:", err.response?.data);
+    
+    setError(
+      err.response?.data?.error || 
+      err.message || 
+      "Login failed. Please try again."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="login-container">
