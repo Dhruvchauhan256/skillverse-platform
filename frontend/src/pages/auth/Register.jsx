@@ -25,52 +25,63 @@ export default function Register() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+  e.preventDefault();
+  setError("");
 
-    if (!formData.name || !formData.email || !formData.password) {
-      setError("Please fill all required fields");
-      return;
-    }
+  if (!formData.name || !formData.email || !formData.password) {
+    setError("Please fill all required fields");
+    return;
+  }
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords don't match");
-      return;
-    }
+  if (formData.password !== formData.confirmPassword) {
+    setError("Passwords don't match");
+    return;
+  }
 
-    if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters");
-      return;
-    }
+  if (formData.password.length < 8) {
+    setError("Password must be at least 8 characters");
+    return;
+  }
 
-    if (!agreeTerms) {
-      setError("Please agree to the Terms & Conditions");
-      return;
-    }
+  if (!agreeTerms) {
+    setError("Please agree to the Terms & Conditions");
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      const response = await axios.post("/api/auth/signup", {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        role,
-        bio: formData.bio || null,
-      });
+  try {
+    console.log("Sending signup data:", {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      role: role,
+      bio: formData.bio || "",
+    });
 
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("userId", response.data.user.id);
-      localStorage.setItem("userRole", response.data.user.role);
-      localStorage.setItem("userName", response.data.user.name);
+    const response = await axios.post("http://localhost:5000/api/auth/signup", {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      role: role,
+      bio: formData.bio || "",
+    });
 
-      navigate("/onboarding");
-    } catch (err) {
-      setError(err.response?.data?.error || "Signup failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    console.log("Signup response:", response.data);
+
+    localStorage.setItem("token", response.data.token);
+    localStorage.setItem("userId", response.data.user.id);
+    localStorage.setItem("userRole", response.data.user.role);
+    localStorage.setItem("userName", response.data.user.name);
+
+    navigate("/onboarding");
+  } catch (err) {
+    console.error("Signup error:", err.response?.data);
+    setError(err.response?.data?.error || "Signup failed. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="register-container">
