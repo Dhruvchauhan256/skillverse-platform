@@ -39,20 +39,19 @@ function Register() {
 
     try {
       setLoading(true);
-
-      const res = await axios.post(`${API}/api/auth/register`, {
+const res = await axios.post(`${API}/api/auth/signup`, {
         name,
         email,
         password,
         role,
       });
+if (res.data.token) {
+  setSuccess("✅ Account created! Redirecting to login...");
 
-      if (res.data.success) {
-        setSuccess("✅ Account created! Redirecting to login...");
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-      }
+  setTimeout(() => {
+    navigate("/login");
+  }, 2000);
+}
     } catch (err) {
       setError(
         err.response?.data?.message ||
