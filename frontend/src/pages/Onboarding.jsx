@@ -5,9 +5,8 @@ import "./Onboarding.css";
 
 export default function Onboarding() {
   const { user } = useContext(AuthContext);
-  const [step, setStep] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+ const [step, setStep] = useState(1);
+const navigate = useNavigate();
 
   const handleNext = () => {
     if (step < 3) setStep(step + 1);
@@ -94,7 +93,6 @@ export default function Onboarding() {
           <button
             onClick={step === 3 ? handleComplete : handleNext}
             className="btn btn-primary ms-2"
-            disabled={loading}
           >
             {step === 3 ? "Go to Dashboard" : "Next"}
           </button>
